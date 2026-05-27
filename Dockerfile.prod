@@ -1,0 +1,29 @@
+# Production Dockerfile for Medusa Monorepo
+# Builds both backend and storefront so the same image can be used
+# for either service (override the start command per service in Dokploy).
+
+FROM node:20-alpine
+
+WORKDIR /server
+
+RUN npm install pnpm@10.11.1 -g
+
+# 1. Copy workspace definition + lockfile first for layer caching
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json .npmrc ./
+COPY apps/backend/package.json ./apps/backend/
+COPY apps/storefront/package.json ./apps/storefront/
+
+# 2. Install dependencies (devDeps are required for the build step)
+RUN pnpm install --frozen-lockfile
+
+# 3. Copy source and build
+COPY . .
+RUN pnpm build
+
+# 4. Ports we may expose (Dokploy maps the ones it needs)
+EXPOSE 9000 8000
+
+# Default entrypoint – can be overridden per Dokploy service.
+#  - Backend service  → command: ./start.sh
+#  - Storefront service → command: ./start-storefront.sh
+ENTRYPOINT ["./start.sh"]
