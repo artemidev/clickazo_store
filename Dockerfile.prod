@@ -18,7 +18,7 @@ RUN pnpm install --frozen-lockfile
 
 # 3. Copy source and build
 COPY . .
-RUN pnpm build
+RUN pnpm --filter=@dtc/backend --filter=@dtc/storefront build
 
 # 4. Ports we may expose (Dokploy maps the ones it needs)
 EXPOSE 9000 8000
