@@ -29,7 +29,9 @@ services:
   # This service runs the Medusa backend application
   # and the admin dashboard.
   medusa:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/dev.Dockerfile
     container_name: medusa_backend
     restart: unless-stopped
     depends_on:
@@ -42,6 +44,7 @@ services:
       - NODE_ENV=development
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/medusa-store
       - REDIS_URL=redis://redis:6379
+    entrypoint: ["sh", "scripts/dev-backend.sh"]
     env_file:
       - apps/backend/.env
     volumes:
@@ -54,7 +57,9 @@ services:
   # Storefront
   # This service runs the Next.js Starter Storefront
   storefront:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/dev.Dockerfile
     container_name: medusa_storefront
     restart: unless-stopped
     depends_on:
@@ -71,7 +76,7 @@ services:
       - /server/apps/backend/node_modules
       - /server/apps/storefront/node_modules
       - /server/apps/storefront/.next
-    entrypoint: ["./start-storefront.sh"]
+    entrypoint: ["sh", "scripts/dev-storefront.sh"]
     networks:
       - medusa_network
 

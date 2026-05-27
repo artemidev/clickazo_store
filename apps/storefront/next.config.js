@@ -12,6 +12,11 @@ const S3_PATHNAME = process.env.MEDUSA_CLOUD_S3_PATHNAME
  * @type {import('next').NextConfig}
  */
 const nextConfig = {
+  // Emit a self-contained server for the production Docker image.
+  // outputFileTracingRoot is required in a monorepo so tracing resolves
+  // workspace deps from the repo root (output keeps the apps/storefront path).
+  output: "standalone",
+  outputFileTracingRoot: require("path").join(__dirname, "../../"),
   reactStrictMode: true,
   logging: {
     fetches: {

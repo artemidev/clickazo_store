@@ -1,4 +1,5 @@
 #!/bin/sh
+# Development entrypoint for the Medusa backend (used by docker-compose).
 set -e
 
 cd /server/apps/backend

@@ -69,4 +69,9 @@ Note: `next.config.js` sets `eslint.ignoreDuringBuilds` and `typescript.ignoreBu
 
 ## Docker
 
-`docker-compose.yml` brings up postgres (`:5432`), redis (`:6379`), the backend (`:9000`, admin HMR `:5173`), and the storefront (`:8000`). On startup `start.sh` runs migrations + seed before `medusa develop`; `start-storefront.sh` runs the Next.js dev server. Both apps mount the repo and run in dev mode.
+**Development** — `docker-compose.yml` brings up postgres (`:5432`), redis (`:6379`), the backend (`:9000`, admin HMR `:5173`), and the storefront (`:8000`). Both services build from `docker/dev.Dockerfile` (shared dev image), mount the repo, and run in dev mode. Entrypoints: `scripts/dev-backend.sh` (migrate + seed + `medusa develop`) and `scripts/dev-storefront.sh` (`next dev`).
+
+**Production** — one multi-stage image per app: `docker/backend.Dockerfile` and `docker/storefront.Dockerfile`.
+- Backend: stage 1 builds the workspace and runs `medusa build` (output in `apps/backend/.medusa/server`); stage 2 copies *only* that output to a clean `/app` (outside the pnpm workspace) and runs `npm install` there — required because `.medusa` is excluded from the workspace, so installing in place leaves the `medusa` binary missing. Entrypoint `scripts/backend-start.sh` runs `predeploy` (migrate) then `start`.
+- Storefront: built with Next.js `output: "standalone"`; `NEXT_PUBLIC_*` vars must be passed as build args (inlined at build time). Entrypoint `scripts/storefront-start.sh` runs the standalone `server.js`.
+- CI (`.github/workflows/deploy-production.yml`, on `v*` tags) builds and pushes both images (`clickazo-backend`, `clickazo-storefront`) and triggers Dokploy webhooks.
