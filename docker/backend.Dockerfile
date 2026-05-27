@@ -38,12 +38,14 @@ ENV NODE_ENV=production
 
 WORKDIR /app
 
+RUN npm install -g pnpm@10.11.1
+
 # The self-contained server produced by `medusa build`
 COPY --from=builder /workspace/apps/backend/.medusa/server ./
 
 # No pnpm-workspace.yaml above /app → this creates a real local node_modules
-# with the `medusa` binary linked. --omit=dev keeps it production-only.
-RUN npm install --omit=dev
+# with the `medusa` binary linked. --prod keeps it production-only.
+RUN pnpm install --prod
 
 COPY scripts/backend-start.sh ./backend-start.sh
 RUN chmod +x ./backend-start.sh

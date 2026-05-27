@@ -4,7 +4,7 @@
 set -e
 
 echo "Running database migrations..."
-npm run predeploy
+pnpm run predeploy
 
 echo "Starting Medusa server..."
-npm run start
+pnpm run start
