@@ -20,10 +20,13 @@ RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm --filter=@dtc/backend build
 
-# 4. Ports we may expose (Dokploy maps the ones it needs)
+# 4. Install production deps inside the Medusa build output
+RUN cd apps/backend/.medusa/server && pnpm install
+
+# 5. Ports we may expose (Dokploy maps the ones it needs)
 EXPOSE 9000 8000
 
 # Default entrypoint – can be overridden per Dokploy service.
 #  - Backend service  → command: ./start.sh
 #  - Storefront service → command: ./start-storefront.sh
-ENTRYPOINT ["./start.sh"]
+ENTRYPOINT ["./start-prod.sh"]
