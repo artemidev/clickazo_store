@@ -74,33 +74,33 @@ jobs:
           file: ./docker/backend.Dockerfile
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-backend:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-backend:${{ steps.tag.outputs.TAG }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-backend:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-store-backend:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-store-backend:${{ steps.tag.outputs.TAG }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-store-backend:${{ github.sha }}
           cache-from: type=gha,scope=backend
           cache-to: type=gha,mode=max,scope=backend
           platforms: linux/amd64
 
-      - name: Build and push storefront image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./docker/storefront.Dockerfile
-          push: true
-          tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-storefront:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-storefront:${{ steps.tag.outputs.TAG }}
-            ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-storefront:${{ github.sha }}
-          # NEXT_PUBLIC_* are inlined at build time, so they must be passed here
-          build-args: |
-            NEXT_PUBLIC_MEDUSA_BACKEND_URL=${{ secrets.MEDUSA_BACKEND_URL }}
-            NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${{ secrets.MEDUSA_PUBLISHABLE_KEY }}
-            NEXT_PUBLIC_DEFAULT_REGION=${{ vars.NEXT_PUBLIC_DEFAULT_REGION }}
-            NEXT_PUBLIC_BASE_URL=${{ secrets.STOREFRONT_BASE_URL }}
-            NEXT_PUBLIC_STRIPE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}
-          cache-from: type=gha,scope=storefront
-          cache-to: type=gha,mode=max,scope=storefront
-          platforms: linux/amd64
+      # - name: Build and push storefront image
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: .
+      #     file: ./docker/storefront.Dockerfile
+      #     push: true
+      #     tags: |
+      #       ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-storefront:latest
+      #       ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-storefront:${{ steps.tag.outputs.TAG }}
+      #       ${{ secrets.DOCKERHUB_USERNAME }}/clickazo-storefront:${{ github.sha }}
+      #     # NEXT_PUBLIC_* are inlined at build time, so they must be passed here
+      #     build-args: |
+      #       NEXT_PUBLIC_MEDUSA_BACKEND_URL=${{ secrets.MEDUSA_BACKEND_URL }}
+      #       NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=${{ secrets.MEDUSA_PUBLISHABLE_KEY }}
+      #       NEXT_PUBLIC_DEFAULT_REGION=${{ vars.NEXT_PUBLIC_DEFAULT_REGION }}
+      #       NEXT_PUBLIC_BASE_URL=${{ secrets.STOREFRONT_BASE_URL }}
+      #       NEXT_PUBLIC_STRIPE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY }}
+      #     cache-from: type=gha,scope=storefront
+      #     cache-to: type=gha,mode=max,scope=storefront
+      #     platforms: linux/amd64
 
       - name: Trigger Dokploy Backend deployment
         env:
@@ -111,11 +111,11 @@ jobs:
           curl -s -o /dev/null -w "%{http_code}" \
             -X POST "$WEBHOOK_URL"
 
-      - name: Trigger Dokploy Storefront deployment
-        env:
-          WEBHOOK_URL: ${{ secrets.DOKPLOY_STOREFRONT_WEBHOOK_URL }}
-        if: env.WEBHOOK_URL != ''
-        run: |
-          echo "Triggering Dokploy storefront deployment..."
-          curl -s -o /dev/null -w "%{http_code}" \
-            -X POST "$WEBHOOK_URL"
+      # - name: Trigger Dokploy Storefront deployment
+      #   env:
+      #     WEBHOOK_URL: ${{ secrets.DOKPLOY_STOREFRONT_WEBHOOK_URL }}
+      #   if: env.WEBHOOK_URL != ''
+      #   run: |
+      #     echo "Triggering Dokploy storefront deployment..."
+      #     curl -s -o /dev/null -w "%{http_code}" \
+      #       -X POST "$WEBHOOK_URL"
