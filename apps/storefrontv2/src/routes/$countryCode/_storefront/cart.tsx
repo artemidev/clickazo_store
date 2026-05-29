@@ -1,13 +1,12 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { cartQueryOptions, useApplyPromotions } from "@/application/cart";
+import { cartQueryOptions } from "@/application/cart.queries";
 import { LocalizedLink } from "@/components/localized-link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { CartLineItem } from "@/modules/cart/cart-line-item";
 import { CartTotals } from "@/modules/common/cart-totals";
+import { useCartViewModel } from "@/viewmodels/use-cart-view-model";
 
 export const Route = createFileRoute("/$countryCode/_storefront/cart")({
 	loader: ({ context }) =>
@@ -16,11 +15,9 @@ export const Route = createFileRoute("/$countryCode/_storefront/cart")({
 });
 
 function CartPage() {
-	const { data: cart } = useSuspenseQuery(cartQueryOptions());
-	const applyPromotions = useApplyPromotions();
-	const [promoCode, setPromoCode] = useState("");
+	const { state, actions } = useCartViewModel();
 
-	if (!cart || !cart.items?.length) {
+	if (state.isEmpty || !state.cart) {
 		return (
 			<div className="mx-auto flex max-w-2xl flex-col items-center gap-4 px-4 py-24 text-center">
 				<h1 className="text-2xl font-semibold">Your cart is empty</h1>
@@ -34,6 +31,7 @@ function CartPage() {
 		);
 	}
 
+	const cart = state.cart;
 	const currencyCode = cart.currency_code;
 
 	return (
@@ -42,7 +40,7 @@ function CartPage() {
 				<h1 className="mb-4 text-2xl font-semibold">Cart</h1>
 				<div className="divide-y border-y">
 					{cart.items
-						.sort((a, b) =>
+						?.sort((a, b) =>
 							(a.created_at ?? "") > (b.created_at ?? "") ? -1 : 1,
 						)
 						.map((item) => (
@@ -50,6 +48,11 @@ function CartPage() {
 								key={item.id}
 								item={item}
 								currencyCode={currencyCode}
+								isMutating={state.isMutating}
+								onChangeQuantity={(quantity) =>
+									actions.changeQuantity(item.id, quantity)
+								}
+								onRemove={() => actions.removeItem(item.id)}
 							/>
 						))}
 				</div>
@@ -63,21 +66,18 @@ function CartPage() {
 						className="flex gap-2"
 						onSubmit={(e) => {
 							e.preventDefault();
-							if (promoCode.trim()) {
-								applyPromotions.mutate([promoCode.trim()]);
-								setPromoCode("");
-							}
+							actions.applyPromo();
 						}}
 					>
 						<Input
 							placeholder="Promo code"
-							value={promoCode}
-							onChange={(e) => setPromoCode(e.target.value)}
+							value={state.promoCode}
+							onChange={(e) => actions.setPromoCode(e.target.value)}
 						/>
 						<Button
 							type="submit"
 							variant="outline"
-							disabled={applyPromotions.isPending}
+							disabled={state.isApplyingPromo}
 						>
 							Apply
 						</Button>

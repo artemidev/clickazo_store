@@ -1,17 +1,8 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Trash2 } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
-import {
-	customerQueryOptions,
-	useAddCustomerAddress,
-	useDeleteCustomerAddress,
-} from "@/application/customer";
-import { regionQueryOptions } from "@/application/regions";
+import { TextField } from "@/components/form/text-field";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
 	Select,
@@ -20,6 +11,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { useAddressesViewModel } from "@/viewmodels/use-addresses-view-model";
 
 export const Route = createFileRoute(
 	"/$countryCode/_storefront/account/addresses",
@@ -29,105 +21,118 @@ export const Route = createFileRoute(
 
 function AddressesPage() {
 	const { countryCode } = Route.useParams();
-	const { data: customer } = useSuspenseQuery(customerQueryOptions());
-	const { data: region } = useSuspenseQuery(regionQueryOptions(countryCode));
-	const addAddress = useAddCustomerAddress();
-	const deleteAddress = useDeleteCustomerAddress();
-	const [country, setCountry] = useState(region?.countries?.[0]?.iso_2 ?? "");
-	const [showForm, setShowForm] = useState(false);
+	const { state, actions } = useAddressesViewModel(countryCode);
+	const { region, form } = state;
 
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center justify-between">
 				<h1 className="text-2xl font-semibold">Addresses</h1>
-				<Button variant="outline" onClick={() => setShowForm((v) => !v)}>
-					{showForm ? "Cancel" : "Add address"}
+				<Button variant="outline" onClick={actions.toggleForm}>
+					{state.showForm ? "Cancel" : "Add address"}
 				</Button>
 			</div>
 
-			{showForm && (
+			{state.showForm && (
 				<Card className="p-6">
 					<form
 						className="flex flex-col gap-4"
 						onSubmit={(e) => {
 							e.preventDefault();
-							const data = new FormData(e.currentTarget);
-							addAddress.mutate(
-								{
-									first_name: String(data.get("first_name")),
-									last_name: String(data.get("last_name")),
-									address_1: String(data.get("address_1")),
-									city: String(data.get("city")),
-									postal_code: String(data.get("postal_code")),
-									country_code: country,
-									phone: String(data.get("phone") || ""),
-								},
-								{
-									onSuccess: () => {
-										toast.success("Address added");
-										setShowForm(false);
-									},
-									onError: (err) =>
-										toast.error(err instanceof Error ? err.message : "Failed"),
-								},
-							);
+							form.handleSubmit();
 						}}
 					>
 						<div className="grid grid-cols-2 gap-4">
-							<div className="flex flex-col gap-2">
-								<Label htmlFor="first_name">First name</Label>
-								<Input id="first_name" name="first_name" required />
-							</div>
-							<div className="flex flex-col gap-2">
-								<Label htmlFor="last_name">Last name</Label>
-								<Input id="last_name" name="last_name" required />
-							</div>
+							<form.Field name="first_name">
+								{(field) => (
+									<TextField
+										field={field}
+										label="First name"
+										autoComplete="given-name"
+									/>
+								)}
+							</form.Field>
+							<form.Field name="last_name">
+								{(field) => (
+									<TextField
+										field={field}
+										label="Last name"
+										autoComplete="family-name"
+									/>
+								)}
+							</form.Field>
 						</div>
-						<div className="flex flex-col gap-2">
-							<Label htmlFor="address_1">Address</Label>
-							<Input id="address_1" name="address_1" required />
+						<form.Field name="address_1">
+							{(field) => (
+								<TextField
+									field={field}
+									label="Address"
+									autoComplete="address-line1"
+								/>
+							)}
+						</form.Field>
+						<div className="grid grid-cols-2 gap-4">
+							<form.Field name="postal_code">
+								{(field) => (
+									<TextField
+										field={field}
+										label="Postal code"
+										autoComplete="postal-code"
+									/>
+								)}
+							</form.Field>
+							<form.Field name="city">
+								{(field) => (
+									<TextField
+										field={field}
+										label="City"
+										autoComplete="address-level2"
+									/>
+								)}
+							</form.Field>
 						</div>
 						<div className="grid grid-cols-2 gap-4">
-							<div className="flex flex-col gap-2">
-								<Label htmlFor="postal_code">Postal code</Label>
-								<Input id="postal_code" name="postal_code" required />
-							</div>
-							<div className="flex flex-col gap-2">
-								<Label htmlFor="city">City</Label>
-								<Input id="city" name="city" required />
-							</div>
+							<form.Field name="country_code">
+								{(field) => (
+									<div className="flex flex-col gap-2">
+										<Label htmlFor={field.name}>Country</Label>
+										<Select
+											value={field.state.value}
+											onValueChange={(value) => field.handleChange(value)}
+										>
+											<SelectTrigger className="w-full">
+												<SelectValue placeholder="Country" />
+											</SelectTrigger>
+											<SelectContent>
+												{(region?.countries ?? []).map((country) => (
+													<SelectItem
+														key={country.iso_2}
+														value={country.iso_2 ?? ""}
+													>
+														{country.display_name ?? country.iso_2}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+									</div>
+								)}
+							</form.Field>
+							<form.Field name="phone">
+								{(field) => (
+									<TextField field={field} label="Phone" autoComplete="tel" />
+								)}
+							</form.Field>
 						</div>
-						<div className="grid grid-cols-2 gap-4">
-							<div className="flex flex-col gap-2">
-								<Label>Country</Label>
-								<Select value={country} onValueChange={setCountry}>
-									<SelectTrigger className="w-full">
-										<SelectValue placeholder="Country" />
-									</SelectTrigger>
-									<SelectContent>
-										{(region?.countries ?? []).map((c) => (
-											<SelectItem key={c.iso_2} value={c.iso_2 ?? ""}>
-												{c.display_name ?? c.iso_2}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</div>
-							<div className="flex flex-col gap-2">
-								<Label htmlFor="phone">Phone</Label>
-								<Input id="phone" name="phone" />
-							</div>
-						</div>
-						<Button type="submit" disabled={addAddress.isPending}>
-							{addAddress.isPending ? "Saving…" : "Save address"}
+						<Button type="submit" disabled={state.isAdding}>
+							{state.isAdding ? "Saving…" : "Save address"}
 						</Button>
 					</form>
 				</Card>
 			)}
 
-			{customer?.addresses?.length ? (
+			{state.addresses.length ? (
 				<div className="grid gap-4 sm:grid-cols-2">
-					{customer.addresses.map((address) => (
+					{state.addresses.map((address) => (
 						<Card key={address.id} className="flex justify-between gap-4 p-4">
 							<div className="text-sm">
 								<p className="font-medium">
@@ -145,7 +150,7 @@ function AddressesPage() {
 								variant="ghost"
 								size="icon-sm"
 								aria-label="Delete address"
-								onClick={() => deleteAddress.mutate(address.id)}
+								onClick={() => actions.deleteAddress(address.id)}
 							>
 								<Trash2 className="size-4" />
 							</Button>

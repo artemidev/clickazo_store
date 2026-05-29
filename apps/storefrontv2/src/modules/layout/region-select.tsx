@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { regionsQueryOptions } from "@/application/regions";
+import { regionsQueryOptions } from "@/application/regions.queries";
 import {
 	Select,
 	SelectContent,

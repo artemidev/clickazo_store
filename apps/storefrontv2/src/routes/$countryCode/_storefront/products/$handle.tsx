@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { productByHandleQueryOptions } from "@/application/products";
+import { productByHandleQueryOptions } from "@/application/products.queries";
 import {
 	Accordion,
 	AccordionContent,

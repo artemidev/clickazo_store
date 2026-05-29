@@ -1,8 +1,8 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useSignout } from "@/application/customer";
 import { LocalizedLink } from "@/components/localized-link";
 import { Button } from "@/components/ui/button";
 import { useCountryCode } from "@/lib/hooks/use-country-code";
+import { useAccountNavViewModel } from "@/viewmodels/use-account-nav-view-model";
 
 const links = [
 	{ href: "/account", label: "Overview" },
@@ -12,7 +12,7 @@ const links = [
 ];
 
 export function AccountNav() {
-	const signout = useSignout();
+	const { state, actions } = useAccountNavViewModel();
 	const navigate = useNavigate();
 	const countryCode = useCountryCode();
 
@@ -32,15 +32,11 @@ export function AccountNav() {
 				variant="ghost"
 				size="sm"
 				className="mt-2 justify-start text-muted-foreground"
-				disabled={signout.isPending}
+				disabled={state.isSigningOut}
 				onClick={() =>
-					signout.mutate(undefined, {
-						onSuccess: () =>
-							navigate({
-								to: "/$countryCode/account",
-								params: { countryCode },
-							}),
-					})
+					actions.signout(() =>
+						navigate({ to: "/$countryCode/account", params: { countryCode } }),
+					)
 				}
 			>
 				Sign out

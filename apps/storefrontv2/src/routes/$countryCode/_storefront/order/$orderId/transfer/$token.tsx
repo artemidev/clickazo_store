@@ -1,11 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import {
-	useAcceptTransferRequest,
-	useDeclineTransferRequest,
-} from "@/application/orders";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useOrderTransferViewModel } from "@/viewmodels/use-order-transfer-view-model";
 
 export const Route = createFileRoute(
 	"/$countryCode/_storefront/order/$orderId/transfer/$token",
@@ -15,9 +11,7 @@ export const Route = createFileRoute(
 
 function TransferPage() {
 	const { orderId, token } = Route.useParams();
-	const accept = useAcceptTransferRequest();
-	const decline = useDeclineTransferRequest();
-	const [result, setResult] = useState<string | null>(null);
+	const { state, actions } = useOrderTransferViewModel({ orderId, token });
 
 	return (
 		<div className="mx-auto max-w-xl px-4 py-16">
@@ -29,44 +23,17 @@ function TransferPage() {
 					your account.
 				</p>
 
-				{result ? (
-					<p className="text-sm">{result}</p>
+				{state.result ? (
+					<p className="text-sm">{state.result}</p>
 				) : (
 					<div className="flex justify-center gap-3">
-						<Button
-							disabled={accept.isPending}
-							onClick={() =>
-								accept.mutate(
-									{ id: orderId, token },
-									{
-										onSuccess: (res) =>
-											setResult(
-												res.success
-													? "Transfer accepted."
-													: (res.error ?? "Failed to accept."),
-											),
-									},
-								)
-							}
-						>
+						<Button disabled={state.isAccepting} onClick={actions.accept}>
 							Accept transfer
 						</Button>
 						<Button
 							variant="outline"
-							disabled={decline.isPending}
-							onClick={() =>
-								decline.mutate(
-									{ id: orderId, token },
-									{
-										onSuccess: (res) =>
-											setResult(
-												res.success
-													? "Transfer declined."
-													: (res.error ?? "Failed to decline."),
-											),
-									},
-								)
-							}
+							disabled={state.isDeclining}
+							onClick={actions.decline}
 						>
 							Decline
 						</Button>

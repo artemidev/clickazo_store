@@ -1,11 +1,9 @@
-import type { HttpTypes } from "@medusajs/types";
-import { queryOptions, useMutation } from "@tanstack/react-query";
+import { queryOptions } from "@tanstack/react-query";
 import { listCartShippingMethods } from "@/infrastructure/server/fulfillment";
-import {
-	initiatePaymentSession,
-	listCartPaymentMethods,
-} from "@/infrastructure/server/payment";
+import { listCartPaymentMethods } from "@/infrastructure/server/payment";
 import { queryKeys } from "./query-keys";
+
+/** Checkout read model (shipping options + payment providers). */
 
 export const shippingOptionsQueryOptions = (cartId: string) =>
 	queryOptions({
@@ -20,12 +18,3 @@ export const paymentMethodsQueryOptions = (regionId: string) =>
 		queryFn: () => listCartPaymentMethods({ data: regionId }),
 		enabled: Boolean(regionId),
 	});
-
-export function useInitiatePaymentSession() {
-	return useMutation({
-		mutationFn: (input: {
-			cart: HttpTypes.StoreCart;
-			data: HttpTypes.StoreInitializePaymentSession;
-		}) => initiatePaymentSession({ data: input }),
-	});
-}

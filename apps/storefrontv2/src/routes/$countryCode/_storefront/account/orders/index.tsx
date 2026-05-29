@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { ordersListQueryOptions } from "@/application/orders";
+import { ordersListQueryOptions } from "@/application/orders.queries";
 import { LocalizedLink } from "@/components/localized-link";
 import { Card } from "@/components/ui/card";
 import { convertToLocale } from "@/lib/money";

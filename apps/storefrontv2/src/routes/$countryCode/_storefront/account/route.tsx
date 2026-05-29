@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { customerQueryOptions } from "@/application/customer";
+import { customerQueryOptions } from "@/application/customer.queries";
 import { AccountNav } from "@/modules/account/account-nav";
 import { AuthPanel } from "@/modules/account/auth-panel";
 

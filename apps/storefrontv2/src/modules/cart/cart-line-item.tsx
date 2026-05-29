@@ -1,6 +1,5 @@
 import type { HttpTypes } from "@medusajs/types";
 import { Trash2 } from "lucide-react";
-import { useDeleteLineItem, useUpdateLineItem } from "@/application/cart";
 import { LocalizedLink } from "@/components/localized-link";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,16 +11,23 @@ import {
 } from "@/components/ui/select";
 import { convertToLocale } from "@/lib/money";
 
+/**
+ * Presentational cart line item — receives data via props and emits intents
+ * through callbacks. All cart mutations live in the cart view model.
+ */
 export function CartLineItem({
 	item,
 	currencyCode,
+	onChangeQuantity,
+	onRemove,
+	isMutating,
 }: {
 	item: HttpTypes.StoreCartLineItem;
 	currencyCode: string;
+	onChangeQuantity: (quantity: number) => void;
+	onRemove: () => void;
+	isMutating: boolean;
 }) {
-	const updateLineItem = useUpdateLineItem();
-	const deleteLineItem = useDeleteLineItem();
-
 	const maxQuantity = Math.min(item.variant?.inventory_quantity ?? 10, 10);
 	const quantities = Array.from(
 		{ length: Math.max(maxQuantity, item.quantity) },
@@ -57,12 +63,7 @@ export function CartLineItem({
 				<div className="mt-auto flex items-center gap-3">
 					<Select
 						value={String(item.quantity)}
-						onValueChange={(value) =>
-							updateLineItem.mutate({
-								lineId: item.id,
-								quantity: Number(value),
-							})
-						}
+						onValueChange={(value) => onChangeQuantity(Number(value))}
 					>
 						<SelectTrigger size="sm" className="w-[72px]">
 							<SelectValue />
@@ -78,8 +79,8 @@ export function CartLineItem({
 					<Button
 						variant="ghost"
 						size="icon-sm"
-						onClick={() => deleteLineItem.mutate(item.id)}
-						disabled={deleteLineItem.isPending}
+						onClick={onRemove}
+						disabled={isMutating}
 						aria-label="Remove item"
 					>
 						<Trash2 className="size-4" />

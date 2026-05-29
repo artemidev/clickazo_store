@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { categoryByHandleQueryOptions } from "@/application/catalog";
-import { productsListQueryOptions } from "@/application/products";
+import { categoryByHandleQueryOptions } from "@/application/catalog.queries";
+import { productsListQueryOptions } from "@/application/products.queries";
 import { ProductCard } from "@/modules/products/product-card";
 
 export const Route = createFileRoute("/$countryCode/_storefront/categories/$")({

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ShoppingBag } from "lucide-react";
-import { cartQueryOptions } from "@/application/cart";
+import { cartQueryOptions } from "@/application/cart.queries";
 import { LocalizedLink } from "@/components/localized-link";
 import { Button } from "@/components/ui/button";
 

@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { productsListQueryOptions } from "@/application/products";
+import { productsListQueryOptions } from "@/application/products.queries";
 import { Button } from "@/components/ui/button";
 import {
 	Select,
