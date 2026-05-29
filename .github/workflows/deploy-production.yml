@@ -102,12 +102,26 @@ jobs:
       #     cache-to: type=gha,mode=max,scope=storefront
       #     platforms: linux/amd64
 
-      - name: Trigger Dokploy Backend deployment
+      # The backend image is built once and reused by two Dokploy services that
+      # differ only by runtime env (MEDUSA_WORKER_MODE / DISABLE_MEDUSA_ADMIN):
+      #   - server: MEDUSA_WORKER_MODE=server, DISABLE_MEDUSA_ADMIN=false
+      #   - worker: MEDUSA_WORKER_MODE=worker, DISABLE_MEDUSA_ADMIN=true
+      # Both must be redeployed on every release.
+      - name: Trigger Dokploy server deployment
         env:
           WEBHOOK_URL: ${{ secrets.DOKPLOY_BACKEND_WEBHOOK_URL }}
         if: env.WEBHOOK_URL != ''
         run: |
-          echo "Triggering Dokploy backend deployment..."
+          echo "Triggering Dokploy server deployment..."
+          curl -s -o /dev/null -w "%{http_code}" \
+            -X POST "$WEBHOOK_URL"
+
+      - name: Trigger Dokploy worker deployment
+        env:
+          WEBHOOK_URL: ${{ secrets.DOKPLOY_WORKER_WEBHOOK_URL }}
+        if: env.WEBHOOK_URL != ''
+        run: |
+          echo "Triggering Dokploy worker deployment..."
           curl -s -o /dev/null -w "%{http_code}" \
             -X POST "$WEBHOOK_URL"
 

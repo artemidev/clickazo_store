@@ -72,6 +72,20 @@ Note: `next.config.js` sets `eslint.ignoreDuringBuilds` and `typescript.ignoreBu
 **Development** — `docker-compose.yml` brings up postgres (`:5432`), redis (`:6379`), the backend (`:9000`, admin HMR `:5173`), and the storefront (`:8000`). Both services build from `docker/dev.Dockerfile` (shared dev image), mount the repo, and run in dev mode. Entrypoints: `scripts/dev-backend.sh` (migrate + seed + `medusa develop`) and `scripts/dev-storefront.sh` (`next dev`).
 
 **Production** — one multi-stage image per app: `docker/backend.Dockerfile` and `docker/storefront.Dockerfile`.
-- Backend: stage 1 builds the workspace and runs `medusa build` (output in `apps/backend/.medusa/server`); stage 2 copies *only* that output to a clean `/app` (outside the pnpm workspace) and runs `npm install` there — required because `.medusa` is excluded from the workspace, so installing in place leaves the `medusa` binary missing. Entrypoint `scripts/backend-start.sh` runs `predeploy` (migrate) then `start`.
+- Backend: stage 1 builds the workspace and runs `medusa build` (output in `apps/backend/.medusa/server`); stage 2 copies *only* that output to a clean `/app` (outside the pnpm workspace) and runs `npm install` there — required because `.medusa` is excluded from the workspace, so installing in place leaves the `medusa` binary missing. Entrypoint `scripts/backend-start.sh` is role-aware (see below).
 - Storefront: built with Next.js `output: "standalone"`; `NEXT_PUBLIC_*` vars must be passed as build args (inlined at build time). Entrypoint `scripts/storefront-start.sh` runs the standalone `server.js`.
 - CI (`.github/workflows/deploy-production.yml`, on `v*` tags) builds and pushes both images (`clickazo-backend`, `clickazo-storefront`) and triggers Dokploy webhooks.
+
+### Backend server/worker split (production)
+
+Following Medusa's [worker mode guidance](https://docs.medusajs.com/learn/production/worker-mode), production runs **two instances from the same backend image**, differentiated only by runtime env vars (no second Dockerfile):
+
+| Instance | `MEDUSA_WORKER_MODE` | `DISABLE_MEDUSA_ADMIN` | Role |
+|----------|----------------------|------------------------|------|
+| server   | `server`             | `false`                | HTTP/API + admin dashboard |
+| worker   | `worker`             | `true`                 | events, scheduled jobs, workflows |
+
+- Both read these via `medusa-config.ts` (`projectConfig.workerMode`, `admin.disable`) and share the same `DATABASE_URL` and `REDIS_URL` (the Redis modules in `medusa-config.ts` are what make the split work).
+- `scripts/backend-start.sh` runs `predeploy` (migrations) **only** when not in worker mode, so migrations execute exactly once (on the server instance).
+- Local dev stays in `shared` mode (single instance) — no env vars needed; defaults preserve current behavior.
+- Deployment: CI triggers two Dokploy webhooks — `DOKPLOY_BACKEND_WEBHOOK_URL` (server) and `DOKPLOY_WORKER_WEBHOOK_URL` (worker). The worker service must be created in Dokploy reusing the backend image with the worker env vars above.
