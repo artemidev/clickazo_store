@@ -106,7 +106,7 @@ jobs:
       # differ only by runtime env (MEDUSA_WORKER_MODE / DISABLE_MEDUSA_ADMIN):
       #   - server: MEDUSA_WORKER_MODE=server, DISABLE_MEDUSA_ADMIN=false
       #   - worker: MEDUSA_WORKER_MODE=worker, DISABLE_MEDUSA_ADMIN=true
-      # Both must be redeployed on every release.
+      # Both must be redeployed on every release
       - name: Trigger Dokploy server deployment
         env:
           WEBHOOK_URL: ${{ secrets.DOKPLOY_BACKEND_WEBHOOK_URL }}
