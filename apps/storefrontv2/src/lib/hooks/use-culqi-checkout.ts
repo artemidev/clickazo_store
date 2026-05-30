@@ -1,18 +1,22 @@
 import { useCallback } from "react";
 
 /**
- * Thin wrapper around Culqi Checkout V4 (https://checkout.culqi.com/js/v4).
+ * Thin wrapper around Culqi's **Custom Checkout** (https://js.culqi.com/checkout-js).
  *
- * The modal collects the card and handles 3DS in the browser, then hands back a
- * one-time token (`tkn_...`). The card data never touches our servers — only
- * the token is forwarded to the backend to create the charge.
+ * The hosted checkout collects the card and handles 3DS in the browser, then
+ * hands back a one-time token (`tkn_...`). The card data never touches our
+ * servers — only the token is forwarded to the backend to create the charge.
  *
- * Isolated here so a future migration to Culqi's "Custom Checkout" only touches
- * this file.
+ * Unlike the deprecated Checkout V4 (global `Culqi.settings()` + `window.culqi`
+ * callback), Custom Checkout is instance-based: a `CulqiCheckout` is constructed
+ * per transaction with its config and exposes the result on the instance
+ * (`instance.token` / `instance.error`) via the `instance.culqi` callback.
+ *
+ * Isolated here so the rest of the app never touches the Culqi global.
  */
 
-const CULQI_SCRIPT_URL = "https://checkout.culqi.com/js/v4";
-const CULQI_SCRIPT_ID = "culqi-checkout-v4";
+const CULQI_SCRIPT_URL = "https://js.culqi.com/checkout-js";
+const CULQI_SCRIPT_ID = "culqi-checkout-js";
 
 type CulqiSettings = {
 	title?: string;
@@ -22,20 +26,43 @@ type CulqiSettings = {
 	order?: string;
 };
 
-type CulqiGlobal = {
-	publicKey: string;
-	settings: (settings: CulqiSettings) => void;
-	options?: (options: Record<string, unknown>) => void;
+type CulqiClientInfo = {
+	email?: string;
+};
+
+type CulqiOptions = {
+	lang?: string;
+	installments?: boolean;
+	modal?: boolean;
+	container?: string;
+	paymentMethods?: Record<string, boolean>;
+	paymentMethodsSort?: string[];
+};
+
+type CulqiConfig = {
+	settings: CulqiSettings;
+	client?: CulqiClientInfo;
+	options?: CulqiOptions;
+	appearance?: Record<string, unknown>;
+};
+
+type CulqiCheckoutInstance = {
 	open: () => void;
-	close?: () => void;
+	close: () => void;
+	culqi: () => void;
 	token?: { id: string };
+	order?: { id: string };
 	error?: { user_message?: string; merchant_message?: string };
 };
 
+type CulqiCheckoutConstructor = new (
+	publicKey: string,
+	config: CulqiConfig,
+) => CulqiCheckoutInstance;
+
 declare global {
 	interface Window {
-		Culqi?: CulqiGlobal;
-		culqi?: () => void;
+		CulqiCheckout?: CulqiCheckoutConstructor;
 	}
 }
 
@@ -45,7 +72,7 @@ function loadCulqiScript(): Promise<void> {
 	if (typeof window === "undefined") {
 		return Promise.reject(new Error("Culqi is only available in the browser"));
 	}
-	if (window.Culqi) {
+	if (window.CulqiCheckout) {
 		return Promise.resolve();
 	}
 	if (scriptPromise) {
@@ -80,11 +107,17 @@ export type OpenCheckoutParams = {
 	amount: number;
 	title?: string;
 	order?: string;
+	email?: string;
 };
 
 export function useCulqiCheckout() {
 	const openCheckout = useCallback(
-		async ({ amount, title, order }: OpenCheckoutParams): Promise<string> => {
+		async ({
+			amount,
+			title,
+			order,
+			email,
+		}: OpenCheckoutParams): Promise<string> => {
 			const publicKey = import.meta.env.VITE_CULQI_PUBLIC_KEY as
 				| string
 				| undefined;
@@ -93,27 +126,35 @@ export function useCulqiCheckout() {
 			}
 
 			await loadCulqiScript();
-			const culqi = window.Culqi;
-			if (!culqi) {
+			const CulqiCheckout = window.CulqiCheckout;
+			if (!CulqiCheckout) {
 				throw new Error("Culqi Checkout failed to initialize");
 			}
 
-			culqi.publicKey = publicKey;
-			culqi.settings({ currency: "PEN", amount, title, order });
+			const instance = new CulqiCheckout(publicKey, {
+				settings: { title, currency: "PEN", amount, order },
+				client: email ? { email } : undefined,
+				options: {
+					lang: "auto",
+					modal: true,
+					paymentMethods: { tarjeta: true },
+				},
+			});
 
 			return new Promise<string>((resolve, reject) => {
-				window.culqi = () => {
-					if (window.Culqi?.token?.id) {
-						const tokenId = window.Culqi.token.id;
-						window.Culqi.close?.();
+				instance.culqi = () => {
+					if (instance.token?.id) {
+						const tokenId = instance.token.id;
+						instance.close();
 						resolve(tokenId);
 					} else {
 						const message =
-							window.Culqi?.error?.user_message ?? "Payment was not completed";
+							instance.error?.user_message ?? "Payment was not completed";
+						instance.close();
 						reject(new Error(message));
 					}
 				};
-				culqi.open();
+				instance.open();
 			});
 		},
 		[],

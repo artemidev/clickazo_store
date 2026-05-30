@@ -171,6 +171,7 @@ export function useCheckoutViewModel({
 				amount: Math.round((cart.total ?? 0) * 100),
 				title: "Checkout",
 				order: cart.id,
+				email: cart.email ?? undefined,
 			});
 
 			await initiatePaymentSession({
