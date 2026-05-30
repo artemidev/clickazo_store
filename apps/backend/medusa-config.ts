@@ -1,8 +1,13 @@
 import { loadEnv, defineConfig } from '@medusajs/framework/utils'
+import type { MeilisearchPluginOptions } from '@rokmohar/medusa-plugin-meilisearch'
+import { getReferenceTranslations } from './src/utils/translations'
 
 loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 
 module.exports = defineConfig({
+  featureFlags: {
+    translation: true,
+  },
   projectConfig: {
     databaseUrl: process.env.DATABASE_URL,
     workerMode:
@@ -44,6 +49,9 @@ module.exports = defineConfig({
     },
   },
   modules: [
+    {
+      resolve: "@medusajs/medusa/translation",
+    },
     {
       resolve: "@medusajs/medusa/event-bus-redis",
       options: {
@@ -127,6 +135,91 @@ module.exports = defineConfig({
           },
         ],
       },
+    },
+  ],
+  plugins: [
+    {
+      resolve: "@rokmohar/medusa-plugin-meilisearch",
+      options: {
+        config: {
+          host: process.env.MEILISEARCH_HOST ?? "",
+          apiKey: process.env.MEILISEARCH_API_KEY ?? "",
+        },
+        // Multi-language search backed by Medusa's native Translation module.
+        // `separate-index` creates one index per language: products_en, products_es.
+        i18n: {
+          strategy: "separate-index",
+          languages: ["en", "es"],
+          defaultLanguage: "en",
+        },
+        settings: {
+          products: {
+            type: "products",
+            enabled: true,
+            fields: [
+              "id",
+              "title",
+              "description",
+              "handle",
+              "thumbnail",
+              "variant_sku",
+            ],
+            indexSettings: {
+              searchableAttributes: ["title", "description", "variant_sku"],
+              displayedAttributes: [
+                "id",
+                "handle",
+                "title",
+                "description",
+                "thumbnail",
+              ],
+              filterableAttributes: ["id", "handle"],
+            },
+            primaryKey: "id",
+            // Pulls product translations from the Translation module so each
+            // language index is populated with the translated title/description.
+            transformer: async (product, defaultTransformer, options) => {
+              if (!options?.container) {
+                return defaultTransformer(product, options)
+              }
+              const translations = await getReferenceTranslations(
+                product.id as string,
+                options.container,
+              )
+              return defaultTransformer(product, {
+                ...options,
+                translations,
+                includeAllTranslations: true,
+              })
+            },
+          },
+          categories: {
+            type: "categories",
+            enabled: true,
+            fields: ["id", "name", "description", "handle", "is_active", "parent_id"],
+            indexSettings: {
+              searchableAttributes: ["name", "description"],
+              displayedAttributes: ["id", "name", "handle"],
+              filterableAttributes: ["id", "handle", "is_active", "parent_id"],
+            },
+            primaryKey: "id",
+            transformer: async (category, defaultTransformer, options) => {
+              if (!options?.container) {
+                return defaultTransformer(category, options)
+              }
+              const translations = await getReferenceTranslations(
+                category.id as string,
+                options.container,
+              )
+              return defaultTransformer(category, {
+                ...options,
+                translations,
+                includeAllTranslations: true,
+              })
+            },
+          },
+        },
+      } satisfies MeilisearchPluginOptions,
     },
   ],
 })

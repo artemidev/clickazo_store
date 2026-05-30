@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CountryCodeStorefrontRouteImport } from './routes/$countryCode/_storefront'
 import { Route as CountryCodeStorefrontIndexRouteImport } from './routes/$countryCode/_storefront/index'
 import { Route as CountryCodeStorefrontStoreRouteImport } from './routes/$countryCode/_storefront/store'
+import { Route as CountryCodeStorefrontSearchRouteImport } from './routes/$countryCode/_storefront/search'
 import { Route as CountryCodeStorefrontCheckoutRouteImport } from './routes/$countryCode/_storefront/checkout'
 import { Route as CountryCodeStorefrontCartRouteImport } from './routes/$countryCode/_storefront/cart'
 import { Route as CountryCodeStorefrontAccountRouteRouteImport } from './routes/$countryCode/_storefront/account/route'
@@ -52,6 +53,12 @@ const CountryCodeStorefrontStoreRoute =
   CountryCodeStorefrontStoreRouteImport.update({
     id: '/store',
     path: '/store',
+    getParentRoute: () => CountryCodeStorefrontRoute,
+  } as any)
+const CountryCodeStorefrontSearchRoute =
+  CountryCodeStorefrontSearchRouteImport.update({
+    id: '/search',
+    path: '/search',
     getParentRoute: () => CountryCodeStorefrontRoute,
   } as any)
 const CountryCodeStorefrontCheckoutRoute =
@@ -139,6 +146,7 @@ export interface FileRoutesByFullPath {
   '/$countryCode/account': typeof CountryCodeStorefrontAccountRouteRouteWithChildren
   '/$countryCode/cart': typeof CountryCodeStorefrontCartRoute
   '/$countryCode/checkout': typeof CountryCodeStorefrontCheckoutRoute
+  '/$countryCode/search': typeof CountryCodeStorefrontSearchRoute
   '/$countryCode/store': typeof CountryCodeStorefrontStoreRoute
   '/$countryCode/': typeof CountryCodeStorefrontIndexRoute
   '/$countryCode/account/addresses': typeof CountryCodeStorefrontAccountAddressesRoute
@@ -157,6 +165,7 @@ export interface FileRoutesByTo {
   '/$countryCode': typeof CountryCodeStorefrontIndexRoute
   '/$countryCode/cart': typeof CountryCodeStorefrontCartRoute
   '/$countryCode/checkout': typeof CountryCodeStorefrontCheckoutRoute
+  '/$countryCode/search': typeof CountryCodeStorefrontSearchRoute
   '/$countryCode/store': typeof CountryCodeStorefrontStoreRoute
   '/$countryCode/account/addresses': typeof CountryCodeStorefrontAccountAddressesRoute
   '/$countryCode/account/profile': typeof CountryCodeStorefrontAccountProfileRoute
@@ -177,6 +186,7 @@ export interface FileRoutesById {
   '/$countryCode/_storefront/account': typeof CountryCodeStorefrontAccountRouteRouteWithChildren
   '/$countryCode/_storefront/cart': typeof CountryCodeStorefrontCartRoute
   '/$countryCode/_storefront/checkout': typeof CountryCodeStorefrontCheckoutRoute
+  '/$countryCode/_storefront/search': typeof CountryCodeStorefrontSearchRoute
   '/$countryCode/_storefront/store': typeof CountryCodeStorefrontStoreRoute
   '/$countryCode/_storefront/': typeof CountryCodeStorefrontIndexRoute
   '/$countryCode/_storefront/account/addresses': typeof CountryCodeStorefrontAccountAddressesRoute
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/$countryCode/account'
     | '/$countryCode/cart'
     | '/$countryCode/checkout'
+    | '/$countryCode/search'
     | '/$countryCode/store'
     | '/$countryCode/'
     | '/$countryCode/account/addresses'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/$countryCode'
     | '/$countryCode/cart'
     | '/$countryCode/checkout'
+    | '/$countryCode/search'
     | '/$countryCode/store'
     | '/$countryCode/account/addresses'
     | '/$countryCode/account/profile'
@@ -235,6 +247,7 @@ export interface FileRouteTypes {
     | '/$countryCode/_storefront/account'
     | '/$countryCode/_storefront/cart'
     | '/$countryCode/_storefront/checkout'
+    | '/$countryCode/_storefront/search'
     | '/$countryCode/_storefront/store'
     | '/$countryCode/_storefront/'
     | '/$countryCode/_storefront/account/addresses'
@@ -289,6 +302,13 @@ declare module '@tanstack/react-router' {
       path: '/store'
       fullPath: '/$countryCode/store'
       preLoaderRoute: typeof CountryCodeStorefrontStoreRouteImport
+      parentRoute: typeof CountryCodeStorefrontRoute
+    }
+    '/$countryCode/_storefront/search': {
+      id: '/$countryCode/_storefront/search'
+      path: '/search'
+      fullPath: '/$countryCode/search'
+      preLoaderRoute: typeof CountryCodeStorefrontSearchRouteImport
       parentRoute: typeof CountryCodeStorefrontRoute
     }
     '/$countryCode/_storefront/checkout': {
@@ -416,6 +436,7 @@ interface CountryCodeStorefrontRouteChildren {
   CountryCodeStorefrontAccountRouteRoute: typeof CountryCodeStorefrontAccountRouteRouteWithChildren
   CountryCodeStorefrontCartRoute: typeof CountryCodeStorefrontCartRoute
   CountryCodeStorefrontCheckoutRoute: typeof CountryCodeStorefrontCheckoutRoute
+  CountryCodeStorefrontSearchRoute: typeof CountryCodeStorefrontSearchRoute
   CountryCodeStorefrontStoreRoute: typeof CountryCodeStorefrontStoreRoute
   CountryCodeStorefrontIndexRoute: typeof CountryCodeStorefrontIndexRoute
   CountryCodeStorefrontCategoriesSplatRoute: typeof CountryCodeStorefrontCategoriesSplatRoute
@@ -430,6 +451,7 @@ const CountryCodeStorefrontRouteChildren: CountryCodeStorefrontRouteChildren = {
     CountryCodeStorefrontAccountRouteRouteWithChildren,
   CountryCodeStorefrontCartRoute: CountryCodeStorefrontCartRoute,
   CountryCodeStorefrontCheckoutRoute: CountryCodeStorefrontCheckoutRoute,
+  CountryCodeStorefrontSearchRoute: CountryCodeStorefrontSearchRoute,
   CountryCodeStorefrontStoreRoute: CountryCodeStorefrontStoreRoute,
   CountryCodeStorefrontIndexRoute: CountryCodeStorefrontIndexRoute,
   CountryCodeStorefrontCategoriesSplatRoute:

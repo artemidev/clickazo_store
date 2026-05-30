@@ -69,6 +69,9 @@ importers:
       '@react-email/render':
         specifier: 1.1.4
         version: 1.1.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@rokmohar/medusa-plugin-meilisearch':
+        specifier: ^1.4.3
+        version: 1.4.3(@medusajs/admin-sdk@2.15.3)(@medusajs/framework@2.15.3(@medusajs/cli@2.15.3(@types/node@20.19.26))(@types/node@20.19.26)(ioredis@5.8.2)(vite@5.4.21(@types/node@20.19.26)(lightningcss@1.32.0)(terser@5.44.1))(zod@4.2.0))(@medusajs/medusa@2.15.3)(@medusajs/ui@4.1.13(@types/react-dom@19.0.5(@types/react@19.0.5))(@types/react@19.0.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(@tanstack/react-query@5.64.2(react@18.3.1))(awilix@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
         specifier: 5.64.2
         version: 5.64.2(react@18.3.1)
@@ -5603,6 +5606,19 @@ packages:
     resolution: {integrity: sha512-Ic6m2U/rMjTkhERIa/0ZtXJP17QUi2CbWE7cqx4J58M8aA3QTfW+2UlQ4psvTX9IO1RfNVhK3pcpdjej7L+t2w==}
     engines: {node: '>=14.0.0'}
 
+  '@rokmohar/medusa-plugin-meilisearch@1.4.3':
+    resolution: {integrity: sha512-+iStv5sc2vuLk+O7OcQLlNR99fMBhGdBOJMCmDJYoTFGhzBA4ZEV18IIr2xqxUDgdQo1haF0TtYv3JmRQUuY1w==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      '@medusajs/admin-sdk': ^2.15.2
+      '@medusajs/framework': ^2.15.2
+      '@medusajs/medusa': ^2.15.2
+      '@medusajs/ui': ^4.1.12
+      '@tanstack/react-query': 5.64.2
+      awilix: ^8.0.1
+      react: ^18
+      react-dom: ^18
+
   '@rolldown/binding-android-arm64@1.0.2':
     resolution: {integrity: sha512-ZS4D1JPGn/MYQN/SYDWftIE/nVsM8j/AFOYEzAoOE2O3NktQOZru+/vYXGbR/qtdLdIfGCP0lcoJiYVzsEz+iQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -9673,6 +9689,9 @@ packages:
   media-typer@0.3.0:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
     engines: {node: '>= 0.6'}
+
+  meilisearch@0.56.0:
+    resolution: {integrity: sha512-kBXba8DcSrLWHYqopCm2JL90oBy97VdIfHkP1ii7/eHufeEEEk9Zu5Vv/IFQpNzmhEpWszVFVlGvZoI6QJeGzA==}
 
   merge-descriptors@1.0.3:
     resolution: {integrity: sha512-gaNvAS7TZ897/rVaZ0nMtAyxNyi/pdbjbAwUpFQpN70GqnVfOiXpeUUMKRBmzXaSQ8DdTX4/0ms62r2K+hE6mQ==}
@@ -18881,6 +18900,18 @@ snapshots:
 
   '@remix-run/router@1.23.2': {}
 
+  '@rokmohar/medusa-plugin-meilisearch@1.4.3(@medusajs/admin-sdk@2.15.3)(@medusajs/framework@2.15.3(@medusajs/cli@2.15.3(@types/node@20.19.26))(@types/node@20.19.26)(ioredis@5.8.2)(vite@5.4.21(@types/node@20.19.26)(lightningcss@1.32.0)(terser@5.44.1))(zod@4.2.0))(@medusajs/medusa@2.15.3)(@medusajs/ui@4.1.13(@types/react-dom@19.0.5(@types/react@19.0.5))(@types/react@19.0.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(@tanstack/react-query@5.64.2(react@18.3.1))(awilix@8.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@medusajs/admin-sdk': 2.15.3
+      '@medusajs/framework': 2.15.3(@medusajs/cli@2.15.3(@types/node@20.19.26))(@types/node@20.19.26)(ioredis@5.8.2)(vite@5.4.21(@types/node@20.19.26)(lightningcss@1.32.0)(terser@5.44.1))(zod@4.2.0)
+      '@medusajs/medusa': 2.15.3(@medusajs/admin-sdk@2.15.3)(@medusajs/cli@2.15.3(@types/node@20.19.26))(@medusajs/framework@2.15.3(@medusajs/cli@2.15.3(@types/node@20.19.26))(@types/node@20.19.26)(ioredis@5.8.2)(vite@5.4.21(@types/node@20.19.26)(lightningcss@1.32.0)(terser@5.44.1))(zod@4.2.0))(@medusajs/icons@2.15.3(react@18.3.1))(@medusajs/test-utils@2.15.3)(@medusajs/ui@4.1.13(@types/react-dom@19.0.5(@types/react@19.0.5))(@types/react@19.0.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3))(@swc/core@1.15.3(@swc/helpers@0.5.17))(@types/node@20.19.26)(@types/react-dom@19.0.5(@types/react@19.0.5))(@types/react@19.0.5)(awilix@8.0.1)(lightningcss@1.32.0)(posthog-node@5.17.2)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.3(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(terser@5.44.1)(typescript@5.9.3)(yalc@1.0.0-pre.53)
+      '@medusajs/ui': 4.1.13(@types/react-dom@19.0.5(@types/react@19.0.5))(@types/react@19.0.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.9.3)
+      '@tanstack/react-query': 5.64.2(react@18.3.1)
+      awilix: 8.0.1
+      meilisearch: 0.56.0
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+
   '@rolldown/binding-android-arm64@1.0.2':
     optional: true
 
@@ -23684,6 +23715,8 @@ snapshots:
   meant@1.0.3: {}
 
   media-typer@0.3.0: {}
+
+  meilisearch@0.56.0: {}
 
   merge-descriptors@1.0.3: {}
 

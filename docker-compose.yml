@@ -25,6 +25,39 @@ services:
     networks:
       - medusa_network
 
+  # Meilisearch
+  # Search engine backing the @rokmohar/medusa-plugin-meilisearch plugin.
+  meilisearch:
+    image: getmeili/meilisearch:v1.13
+    container_name: medusa_meilisearch
+    restart: unless-stopped
+    environment:
+      MEILI_MASTER_KEY: devMasterKey
+      MEILI_ENV: development
+    ports:
+      - "7700:7700"
+    volumes:
+      - meili_data:/meili_data
+    networks:
+      - medusa_network
+
+  # Meilisearch admin dashboard (development only).
+  # Browse indexes/documents at http://localhost:24900.
+  meilisearch-ui:
+    image: riccoxie/meilisearch-ui:latest
+    container_name: medusa_meilisearch_ui
+    restart: unless-stopped
+    depends_on:
+      - meilisearch
+    environment:
+      SINGLETON_MODE: "true"
+      SINGLETON_HOST: http://localhost:7700
+      SINGLETON_API_KEY: devMasterKey
+    ports:
+      - "24900:24900"
+    networks:
+      - medusa_network
+
   # Medusa Server
   # This service runs the Medusa backend application
   # and the admin dashboard.
@@ -37,6 +70,7 @@ services:
     depends_on:
       - postgres
       - redis
+      - meilisearch
     ports:
       - "9000:9000"
       - "5173:5173"
@@ -44,6 +78,8 @@ services:
       - NODE_ENV=development
       - DATABASE_URL=postgres://postgres:postgres@postgres:5432/medusa-store
       - REDIS_URL=redis://redis:6379
+      - MEILISEARCH_HOST=http://meilisearch:7700
+      - MEILISEARCH_API_KEY=devMasterKey
     entrypoint: ["sh", "scripts/dev-backend.sh"]
     env_file:
       - apps/backend/.env
@@ -82,6 +118,7 @@ services:
 
 volumes:
   postgres_data:
+  meili_data:
 
 networks:
   medusa_network:

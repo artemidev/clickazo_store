@@ -89,3 +89,11 @@ Following Medusa's [worker mode guidance](https://docs.medusajs.com/learn/produc
 - `scripts/backend-start.sh` runs `predeploy` (migrations) **only** when not in worker mode, so migrations execute exactly once (on the server instance).
 - Local dev stays in `shared` mode (single instance) — no env vars needed; defaults preserve current behavior.
 - Deployment: CI triggers two Dokploy webhooks — `DOKPLOY_BACKEND_WEBHOOK_URL` (server) and `DOKPLOY_WORKER_WEBHOOK_URL` (worker). The worker service must be created in Dokploy reusing the backend image with the worker env vars above.
+
+## Search (Meilisearch)
+
+Product/category search is powered by `@rokmohar/medusa-plugin-meilisearch`, registered in `apps/backend/medusa-config.ts` (`plugins` array). It indexes into per-language indexes (`products_en`, `products_es`) via the `i18n: { strategy: "separate-index", languages: ["en","es"] }` option, and pulls translated fields from Medusa's **native Translation module** (`featureFlags.translation` + `@medusajs/medusa/translation`) through the transformers in `medusa-config.ts` (helper: `apps/backend/src/utils/translations.ts`).
+
+- **Indexing** is event-driven (plugin subscribers) plus a scheduled job (`meilisearch-products-index`) that runs a full sync on boot. To force a re-sync: `POST /admin/meilisearch/sync`.
+- **Storefront** searches via the plugin's store route `GET /store/meilisearch/products-hits` (no direct browser→Meilisearch access). The index language is derived from the locale cookie. Frontend code: `apps/storefrontv2/src/infrastructure/{medusa,server}/search.ts`, `application/search.queries.ts`, `modules/search/*`, and the `/$countryCode/_storefront/search` route.
+- **Env vars** `MEILISEARCH_HOST` and `MEILISEARCH_API_KEY` are required on **both** the server and worker instances in production (the worker runs the indexing subscribers/job; the server serves the store route). In docker dev they point at the bundled `meilisearch` service (`docker-compose.yml`), which also includes a `meilisearch-ui` dashboard on `:24900`.

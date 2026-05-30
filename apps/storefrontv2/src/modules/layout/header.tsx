@@ -2,6 +2,7 @@ import { User } from "lucide-react";
 import { ThemeToggle } from "@/components/brand/theme-toggle";
 import { LocalizedLink } from "@/components/localized-link";
 import { Button } from "@/components/ui/button";
+import { SearchBox } from "@/modules/search/search-box";
 import { CartButton } from "./cart-button";
 import { RegionSelect } from "./region-select";
 
@@ -28,7 +29,8 @@ export function Header() {
 						Store
 					</LocalizedLink>
 				</nav>
-				<div className="ml-auto flex items-center gap-2">
+				<SearchBox className="relative ml-auto hidden w-full max-w-sm md:block" />
+				<div className="ml-auto flex items-center gap-2 md:ml-4">
 					<RegionSelect />
 					<ThemeToggle />
 					<LocalizedLink href="/account" aria-label="Account">

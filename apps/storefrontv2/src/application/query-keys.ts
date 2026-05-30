@@ -46,6 +46,12 @@ export const queryKeys = {
 		detail: (handle: string) => ["collections", "detail", handle] as const,
 	},
 
+	search: {
+		all: () => ["search"] as const,
+		products: (params: { query: string; limit?: number }) =>
+			["search", "products", params] as const,
+	},
+
 	shippingOptions: (cartId: string) => ["shipping-options", cartId] as const,
 	paymentMethods: (regionId: string) => ["payment-methods", regionId] as const,
 	locales: () => ["locales"] as const,
