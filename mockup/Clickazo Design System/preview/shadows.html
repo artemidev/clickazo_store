@@ -1,0 +1,21 @@
+<!-- @dsCard group="Spacing" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0;background:var(--bg);}
+  body{padding:28px 26px 32px;}
+  .lbl{font-family:var(--font-mono);font-size:10.5px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:22px;}
+  .row{display:flex;gap:26px;flex-wrap:wrap;}
+  .sw{display:flex;flex-direction:column;gap:12px;align-items:center;}
+  .box{width:96px;height:60px;background:var(--surface);border:1px solid var(--border);border-radius:14px;}
+  .n{font-family:var(--font-mono);font-size:10px;color:var(--fg-3);}
+  .n b{color:var(--fg-1);font-weight:600;}
+</style></head><body>
+  <div class="lbl">Elevation — soft in light, lime glow for emphasis</div>
+  <div class="row">
+    <div class="sw"><div class="box" style="box-shadow:var(--shadow-sm);"></div><span class="n"><b>sm</b> · resting card</span></div>
+    <div class="sw"><div class="box" style="box-shadow:var(--shadow-md);"></div><span class="n"><b>md</b> · menu / popover</span></div>
+    <div class="sw"><div class="box" style="box-shadow:var(--shadow-lg);"></div><span class="n"><b>lg</b> · modal</span></div>
+    <div class="sw"><div class="box" style="box-shadow:var(--shadow-pop);"></div><span class="n"><b>pop</b> · card hover</span></div>
+    <div class="sw"><div class="box" style="box-shadow:var(--glow-lime);border-color:var(--lime-500);"></div><span class="n"><b>glow</b> · active/selected</span></div>
+  </div>
+</body></html>

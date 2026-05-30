@@ -1,0 +1,48 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0;background:var(--bg);}
+  body{padding:24px 26px;display:flex;flex-direction:column;gap:18px;}
+  .lbl{font-family:var(--font-mono);font-size:10px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+  .bc{font-size:13px;color:var(--fg-3);display:flex;gap:8px;align-items:center;}
+  .bc a{color:var(--fg-3);text-decoration:none;}
+  .bc .cur{color:var(--fg-1);font-weight:500;}
+  .stars{display:flex;gap:2px;}
+  .stars svg{width:18px;height:18px;color:var(--amber-500);fill:var(--amber-500);}
+  .stars svg.empty{fill:none;color:var(--ink-200);}
+  .pr{display:flex;align-items:baseline;gap:12px;}
+  .pr .now{font-family:var(--font-mono);font-weight:700;font-size:30px;color:var(--fg-1);}
+  .pr .was{font-family:var(--font-mono);font-size:17px;color:var(--fg-4);text-decoration:line-through;}
+  .pr .off{font-family:var(--font-mono);font-size:12px;font-weight:700;color:#fff;background:var(--red-500);padding:3px 8px;border-radius:999px;}
+  .tabs{display:flex;gap:4px;background:var(--surface-inset);padding:4px;border-radius:12px;width:fit-content;}
+  .tabs button{border:none;background:transparent;font-family:var(--font-sans);font-size:13px;font-weight:500;color:var(--fg-3);padding:8px 16px;border-radius:8px;cursor:pointer;}
+  .tabs button.active{background:var(--surface);color:var(--fg-1);box-shadow:var(--shadow-xs);}
+</style></head><body>
+  <div>
+    <div class="lbl">Breadcrumb</div>
+    <div class="bc"><a href="#">Home</a><span>/</span><a href="#">Apparel</a><span>/</span><span class="cur">Compiles under pressure tee</span></div>
+  </div>
+  <div style="display:flex;gap:48px;align-items:flex-start;">
+    <div>
+      <div class="lbl">Rating</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div class="stars">
+          <svg viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/></svg>
+          <svg class="empty" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="m12 2 3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/></svg>
+        </div>
+        <span style="font-family:var(--font-mono);font-size:13px;color:var(--fg-3);">4.8 · 214 reviews</span>
+      </div>
+    </div>
+    <div>
+      <div class="lbl">Price block</div>
+      <div class="pr"><span class="now">$19.60</span><span class="was">$28.00</span><span class="off">−30%</span></div>
+    </div>
+  </div>
+  <div>
+    <div class="lbl">Segmented tabs</div>
+    <div class="tabs"><button class="active">Details</button><button>Sizing</button><button>Reviews</button><button>Shipping</button></div>
+  </div>
+</body></html>

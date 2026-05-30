@@ -1,0 +1,31 @@
+<!-- @dsCard group="Colors" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0;background:var(--bg);}
+  body{padding:22px 26px;display:flex;flex-direction:column;gap:18px;}
+  .lbl{font-family:var(--font-mono);font-size:10.5px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;}
+  .row{display:flex;gap:10px;}
+  .tok{flex:1;border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+  .tok .v{height:30px;border-radius:6px;margin-bottom:8px;}
+  .tok .n{font-family:var(--font-mono);font-size:10.5px;color:var(--fg-1);}
+  .tok .d{font-family:var(--font-mono);font-size:9.5px;color:var(--fg-3);}
+</style></head><body>
+  <div>
+    <div class="lbl">Foreground tokens — ink at descending opacity</div>
+    <div class="row">
+      <div class="tok"><div class="v" style="background:var(--fg-1);"></div><div class="n">--fg-1</div><div class="d">0.96 · headings</div></div>
+      <div class="tok"><div class="v" style="background:var(--fg-2);"></div><div class="n">--fg-2</div><div class="d">0.88 · body</div></div>
+      <div class="tok"><div class="v" style="background:var(--fg-3);"></div><div class="n">--fg-3</div><div class="d">0.60 · muted</div></div>
+      <div class="tok"><div class="v" style="background:var(--fg-4);"></div><div class="n">--fg-4</div><div class="d">0.40 · disabled</div></div>
+    </div>
+  </div>
+  <div>
+    <div class="lbl">Surfaces &amp; borders — alpha-ink adapts to any background</div>
+    <div class="row">
+      <div class="tok"><div class="v" style="background:var(--surface);border:1px solid var(--border);"></div><div class="n">--surface</div><div class="d">cards / menus</div></div>
+      <div class="tok"><div class="v" style="background:var(--surface-inset);"></div><div class="n">--surface-inset</div><div class="d">inputs / wells</div></div>
+      <div class="tok"><div class="v" style="background:var(--bg-subtle);border:1px solid var(--border);"></div><div class="n">--bg-subtle</div><div class="d">alt section</div></div>
+      <div class="tok"><div class="v" style="border:2px solid var(--border-strong);background:transparent;"></div><div class="n">--border-strong</div><div class="d">0.24 · inputs</div></div>
+    </div>
+  </div>
+</body></html>

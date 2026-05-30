@@ -1,0 +1,21 @@
+<!-- @dsCard group="Spacing" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0;background:var(--bg);}
+  body{padding:24px 26px;}
+  .lbl{font-family:var(--font-mono);font-size:10.5px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px;}
+  .row{display:flex;gap:14px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+  .track{position:relative;width:150px;height:34px;background:var(--surface-inset);border-radius:999px;overflow:hidden;border:1px solid var(--border);}
+  .dot{position:absolute;top:5px;left:5px;width:24px;height:24px;border-radius:50%;background:var(--lime-500);}
+  .meta{font-family:var(--font-mono);font-size:11px;color:var(--fg-3);}
+  .meta b{color:var(--fg-1);font-weight:600;}
+  @keyframes slideOut{0%,12%{left:5px;}55%,100%{left:121px;}}
+  @keyframes slideSpring{0%,12%{left:5px;}55%,100%{left:121px;}}
+  .eo .dot{animation:slideOut 2.4s var(--ease-out) infinite;}
+  .sp .dot{animation:slideSpring 2.4s var(--ease-spring) infinite;background:var(--violet-500);}
+</style></head><body>
+  <div class="lbl">Motion — ease &amp; duration</div>
+  <div class="row eo"><div class="track"><div class="dot"></div></div><span class="meta"><b>ease-out</b> · cubic-bezier(.22,1,.36,1) · UI default 140–240ms</span></div>
+  <div class="row sp"><div class="track"><div class="dot"></div></div><span class="meta"><b>ease-spring</b> · cubic-bezier(.34,1.56,.64,1) · add-to-cart pops only</span></div>
+  <div class="row" style="margin-top:6px;"><span class="meta"><b>fast</b> 140ms · <b>base</b> 240ms · <b>slow</b> 420ms &nbsp;|&nbsp; product card: lift −6px + image scale(1.05)</span></div>
+</body></html>

@@ -1,0 +1,58 @@
+<!-- @dsCard group="Components" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0;background:var(--bg);}
+  body{padding:26px;display:flex;gap:22px;align-items:flex-start;}
+  .lbl{font-family:var(--font-mono);font-size:10px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.1em;position:absolute;top:8px;left:10px;}
+
+  .card{width:240px;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);transition:transform var(--dur-base) var(--ease-out),box-shadow var(--dur-base) var(--ease-out);cursor:pointer;}
+  .card:hover{transform:translateY(-6px);box-shadow:var(--shadow-pop);}
+  .media{position:relative;aspect-ratio:1;background:radial-gradient(circle at 30% 30%, var(--lime-300), var(--ink-100));overflow:hidden;}
+  .card.v2 .media{background:radial-gradient(circle at 30% 30%, var(--violet-300), var(--ink-100));}
+  .photo{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;color:rgb(20 22 15 / .4);transition:transform var(--dur-slow) var(--ease-out);}
+  .card:hover .photo{transform:scale(1.06);}
+  .sale{position:absolute;top:10px;left:10px;font-family:var(--font-mono);font-size:11px;font-weight:700;background:var(--red-500);color:#fff;padding:4px 9px;border-radius:999px;letter-spacing:.04em;}
+  .wish{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:999px;background:rgb(255 255 255 / .85);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;color:var(--ink-900);}
+  .wish svg{width:16px;height:16px;}
+  .quick{position:absolute;left:10px;right:10px;bottom:10px;background:var(--ink-900);color:var(--ink-50);font-weight:600;font-size:13px;text-align:center;padding:10px;border-radius:10px;opacity:0;transform:translateY(12px);transition:opacity var(--dur-base) var(--ease-out),transform var(--dur-base) var(--ease-out);}
+  .card:hover .quick{opacity:1;transform:translateY(0);}
+  .body{padding:13px 14px 15px;}
+  .cat{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--fg-3);}
+  .ttl{font-weight:600;font-size:15px;color:var(--fg-1);margin:3px 0 8px;letter-spacing:-.01em;line-height:1.25;}
+  .meta{display:flex;align-items:center;justify-content:space-between;}
+  .price{font-family:var(--font-mono);font-weight:700;font-size:16px;color:var(--fg-1);}
+  .price s{color:var(--fg-4);font-weight:400;font-size:12px;margin-left:5px;}
+  .rate{font-family:var(--font-mono);font-size:12px;color:var(--fg-3);display:flex;align-items:center;gap:3px;}
+  .rate svg{width:13px;height:13px;color:var(--amber-500);fill:var(--amber-500);}
+  .hint{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:10px;color:var(--fg-4);}
+</style></head><body>
+  <span class="lbl">Product card — hover me</span>
+  <div class="card">
+    <div class="media">
+      <span class="sale">−30%</span>
+      <button class="wish" aria-label="Wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg></button>
+      <div class="photo">product photo</div>
+      <div class="quick">Add to cart</div>
+    </div>
+    <div class="body">
+      <div class="cat">Apparel</div>
+      <div class="ttl">Compiles under pressure tee</div>
+      <div class="meta"><span class="price">$19.60 <s>$28</s></span><span class="rate"><svg viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/></svg>4.8</span></div>
+    </div>
+  </div>
+
+  <div class="card v2">
+    <div class="media">
+      <span class="sale" style="background:var(--lime-500);color:var(--ink-900);">New</span>
+      <button class="wish" aria-label="Wishlist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/></svg></button>
+      <div class="photo">product photo</div>
+      <div class="quick">Add to cart</div>
+    </div>
+    <div class="body">
+      <div class="cat">Cubes</div>
+      <div class="ttl">Speed cube — magnetic 3×3</div>
+      <div class="meta"><span class="price">$24</span><span class="rate"><svg viewBox="0 0 24 24"><path d="m12 2 3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/></svg>4.9</span></div>
+    </div>
+  </div>
+  <div class="hint">lift −6px · image scale 1.06 · quick-add reveals · 240ms ease-out</div>
+</body></html>

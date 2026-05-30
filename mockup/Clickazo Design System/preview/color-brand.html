@@ -1,0 +1,26 @@
+<!-- @dsCard group="Colors" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0;background:var(--bg);}
+  body{padding:22px 26px;}
+  .lbl{font-family:var(--font-mono);font-size:10.5px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;}
+  .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+  .sw{display:flex;flex-direction:column;gap:6px;}
+  .chip{height:62px;border-radius:10px;border:1px solid var(--border);display:flex;align-items:flex-end;padding:7px;font-family:var(--font-mono);font-size:10.5px;font-weight:600;}
+  .name{font-size:12px;font-weight:600;color:var(--fg-1);letter-spacing:-.01em;}
+  .sub{font-family:var(--font-mono);font-size:10px;color:var(--fg-3);}
+</style></head><body>
+  <div class="lbl">Brand accents — lime is the signature; violet is secondary</div>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:var(--lime-300);color:#14160F;">#DBF98A</div><span class="name">Lime 300</span><span class="sub">tint / wash</span></div>
+    <div class="sw"><div class="chip" style="background:var(--lime-400);color:#14160F;">#CDF45C</div><span class="name">Lime 400</span><span class="sub">hover</span></div>
+    <div class="sw"><div class="chip" style="background:var(--lime-500);color:#14160F;box-shadow:var(--glow-lime);">#C2F23C</div><span class="name">Lime 500 ★</span><span class="sub">CTA / brand</span></div>
+    <div class="sw"><div class="chip" style="background:var(--lime-600);color:#14160F;">#A8D914</div><span class="name">Lime 600</span><span class="sub">pressed</span></div>
+    <div class="sw"><div class="chip" style="background:var(--lime-ink);color:#fff;">#45600A</div><span class="name">Lime ink</span><span class="sub">text on light</span></div>
+    <div class="sw"><div class="chip" style="background:var(--violet-300);color:#14160F;">#B9ABFF</div><span class="name">Violet 300</span><span class="sub">dark hover</span></div>
+    <div class="sw"><div class="chip" style="background:var(--violet-400);color:#fff;">#9B86FF</div><span class="name">Violet 400</span><span class="sub">dark accent</span></div>
+    <div class="sw"><div class="chip" style="background:var(--violet-500);color:#fff;">#7B61FF</div><span class="name">Violet 500</span><span class="sub">accent / focus</span></div>
+    <div class="sw"><div class="chip" style="background:var(--violet-600);color:#fff;">#6344E6</div><span class="name">Violet 600</span><span class="sub">pressed</span></div>
+    <div class="sw"><div class="chip" style="background:var(--violet-ink);color:#fff;">#4B2EC9</div><span class="name">Violet ink</span><span class="sub">link on light</span></div>
+  </div>
+</body></html>

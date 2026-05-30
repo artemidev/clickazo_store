@@ -1,0 +1,29 @@
+<!-- @dsCard group="Colors" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0;background:#888;}
+  body{padding:0;display:flex;height:230px;}
+  .pane{flex:1;padding:22px 24px;display:flex;flex-direction:column;gap:14px;}
+  .lbl{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
+  .card{border-radius:14px;padding:14px 16px;border:1px solid var(--border);background:var(--surface);box-shadow:var(--shadow-sm);}
+  .ttl{font-weight:700;font-size:17px;color:var(--fg-1);letter-spacing:-.01em;}
+  .price{font-family:var(--font-mono);font-weight:700;font-size:16px;color:var(--fg-1);margin-top:4px;}
+  .cta{margin-top:12px;display:inline-block;background:var(--primary);color:var(--primary-fg);font-weight:600;font-size:13px;padding:9px 16px;border-radius:10px;}
+</style></head><body>
+  <div class="pane" style="background:var(--bg);color:var(--fg-2);">
+    <div class="lbl" style="color:var(--fg-3);">Light theme</div>
+    <div class="card">
+      <div class="ttl">Mechanical keyboard</div>
+      <div class="price">$129</div>
+      <span class="cta">Add to cart</span>
+    </div>
+  </div>
+  <div class="pane dark" style="background:var(--bg);color:var(--fg-2);">
+    <div class="lbl" style="color:var(--fg-3);">Dark theme</div>
+    <div class="card" style="box-shadow:none;">
+      <div class="ttl">Mechanical keyboard</div>
+      <div class="price">$129</div>
+      <span class="cta">Add to cart</span>
+    </div>
+  </div>
+</body></html>

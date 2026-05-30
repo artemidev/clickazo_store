@@ -1,0 +1,323 @@
+/* ============================================================
+   Clickazo Design System — Foundations
+   "CZ" — an ecommerce store for developers & tech people:
+   code tees, rubik's cubes, programmer mugs, gadgets, gym gear.
+   Modern, confident, a little playful. Full light + dark parity.
+   Base stack: shadcn-style tokens on Tailwind. Signature: electric lime.
+   ============================================================ */
+
+/* ---- Web fonts ----
+   Outfit (brand sans, REQUIRED), JetBrains Mono (technical / prices /
+   SKUs — on-brand for a dev store), Instrument Serif (editorial display
+   for drops & quotes, used sparingly). All three live on Google Fonts —
+   no substitutions. Self-hosted .woff2 can replace these later; see
+   fonts/README.md. */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300..900&family=JetBrains+Mono:ital,wght@0,400..800;1,400..700&family=Instrument+Serif:ital@0;1&display=swap');
+
+:root {
+  /* ============================================================
+     COLOR — RAW BRAND PALETTE (theme-independent hex)
+     One signature accent (lime) + one secondary (violet) + a warm
+     near-black + a warm paper. Everything else is a neutral ramp
+     or opacity. Don't invent new tints — lean on the ramp + alpha.
+     ============================================================ */
+
+  --lime-300:  #DBF98A;   /* soft lime — tints, dark-mode hover wash */
+  --lime-400:  #CDF45C;   /* hover state of brand lime */
+  --lime-500:  #C2F23C;   /* ★ SIGNATURE — CTA fill, logo, highlight */
+  --lime-600:  #A8D914;   /* pressed / deeper lime */
+  --lime-ink:  #45600A;   /* lime used as TEXT/links on light bg (legible) */
+
+  --violet-300: #B9ABFF;
+  --violet-400: #9B86FF;
+  --violet-500: #7B61FF;  /* secondary accent — links, focus, "new" */
+  --violet-600: #6344E6;
+  --violet-ink: #4B2EC9;  /* violet as text on light bg */
+
+  /* Warm, very-slightly-green-tinted neutral ramp (ink → paper) */
+  --ink-950: #0E0F0B;     /* darkest — dark-theme page bg */
+  --ink-900: #14160F;     /* near-black — light-theme text */
+  --ink-800: #1C1F16;     /* dark-theme elevated surface */
+  --ink-700: #2A2E22;
+  --ink-600: #43483A;
+  --ink-500: #5E6453;
+  --ink-400: #838A75;
+  --ink-300: #A9AF9D;
+  --ink-200: #CDD1C4;
+  --ink-150: #DEE1D6;
+  --ink-100: #E9EBE2;
+  --ink-75:  #F0F1EA;
+  --ink-50:  #F6F7F1;     /* warm paper — light-theme page bg */
+  --paper:   #FFFFFF;     /* pure white — product cards on paper */
+
+  /* Semantic status hues (ecommerce-tuned) */
+  --green-500:  #1FBF6B;   /* in stock / success / "added" */
+  --green-ink:  #137A44;
+  --amber-500:  #F4A720;   /* low stock / warning */
+  --amber-ink:  #9A6400;
+  --red-500:    #FF4D4D;   /* SALE / price drop / error / destructive */
+  --red-ink:    #C42525;
+  --blue-500:   #2E8FF5;   /* info / shipping / tracking */
+  --blue-ink:   #1664B8;
+
+  /* ============================================================
+     SEMANTIC TOKENS (shadcn-shaped) — LIGHT THEME defaults
+     ============================================================ */
+  --bg:            var(--ink-50);     /* page */
+  --bg-subtle:     var(--ink-75);     /* alternating section */
+  --surface:       var(--paper);      /* cards, popovers, menus */
+  --surface-2:     var(--ink-50);     /* nested surface */
+  --surface-inset: var(--ink-100);    /* inputs, wells, code blocks */
+
+  --fg:            var(--ink-900);    /* primary text (~95% via tokens below) */
+  --fg-1:          rgb(20 22 15 / 0.96);   /* headings */
+  --fg-2:          rgb(20 22 15 / 0.88);   /* body */
+  --fg-3:          rgb(20 22 15 / 0.60);   /* secondary / captions */
+  --fg-4:          rgb(20 22 15 / 0.40);   /* tertiary / disabled / placeholder */
+
+  --border:        rgb(20 22 15 / 0.12);   /* hairline borders */
+  --border-strong: rgb(20 22 15 / 0.24);   /* emphasised borders, inputs */
+  --ring:          var(--violet-500);       /* focus ring */
+
+  /* Brand roles */
+  --primary:        var(--lime-500);   /* primary CTA fill */
+  --primary-hover:  var(--lime-400);
+  --primary-press:  var(--lime-600);
+  --primary-fg:     var(--ink-900);    /* text on lime is always ink */
+  --accent:         var(--violet-500); /* secondary accent */
+  --accent-fg:      #FFFFFF;
+  --link:           var(--violet-ink);
+  --link-hover:     var(--violet-500);
+
+  /* Status roles */
+  --success:  var(--green-500);  --success-fg: #06301B; --success-ink: var(--green-ink);
+  --warning:  var(--amber-500);  --warning-fg: #3A2500; --warning-ink: var(--amber-ink);
+  --danger:   var(--red-500);    --danger-fg:  #FFFFFF; --danger-ink:  var(--red-ink);
+  --info:     var(--blue-500);   --info-fg:    #FFFFFF; --info-ink:    var(--blue-ink);
+  --sale:     var(--red-500);    --sale-fg:    #FFFFFF;
+
+  /* ============================================================
+     TYPOGRAPHY
+     ============================================================ */
+  --font-sans:  'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono:  'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-serif: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+
+  /* Weights — Outfit is variable 300–900 */
+  --fw-light:    300;
+  --fw-regular:  400;
+  --fw-medium:   500;
+  --fw-semibold: 600;
+  --fw-bold:     700;
+  --fw-black:    800;
+
+  /* Type scale (1.25-ish modular, display-led) */
+  --text-display: 84px;   /* hero numerals / drop headlines */
+  --text-h1: 60px;
+  --text-h2: 44px;
+  --text-h3: 32px;
+  --text-h4: 24px;
+  --text-h5: 19px;
+  --text-h6: 16px;
+  --text-lead: 21px;
+  --text-base: 16px;
+  --text-sm:   14px;
+  --text-xs:   12.5px;
+  --text-mono-label: 12px;  /* uppercase mono eyebrow / SKU */
+
+  --lh-tight: 1.02;
+  --lh-snug:  1.14;
+  --lh-base:  1.4;
+  --lh-body:  1.6;
+
+  --tracking-tight:  -0.03em;   /* big display */
+  --tracking-snug:   -0.015em;  /* h1–h4 */
+  --tracking-normal: 0;
+  --tracking-wide:   0.02em;
+  --tracking-label:  0.12em;    /* uppercase mono labels */
+
+  /* ============================================================
+     SPACING (4px base)
+     ============================================================ */
+  --space-0: 0;     --space-1: 4px;   --space-2: 8px;   --space-3: 12px;
+  --space-4: 16px;  --space-5: 20px;  --space-6: 24px;  --space-8: 32px;
+  --space-10: 40px; --space-12: 48px; --space-16: 64px; --space-20: 80px;
+  --space-24: 96px; --space-32: 128px;
+
+  /* ============================================================
+     RADII — modern, friendly commerce (rounder than a dev tool)
+     ============================================================ */
+  --radius-xs:  6px;
+  --radius-sm:  8px;
+  --radius-md:  10px;   /* buttons, inputs, chips */
+  --radius-lg:  14px;   /* cards */
+  --radius-xl:  20px;   /* feature cards, modals */
+  --radius-2xl: 28px;   /* hero panels, big media */
+  --radius-pill: 999px;
+
+  /* ============================================================
+     SHADOWS — soft, neutral, lift on hover. (Dark theme overrides
+     these to lean on borders + a faint lime glow instead.)
+     ============================================================ */
+  --shadow-xs: 0 1px 2px rgb(20 22 15 / 0.06);
+  --shadow-sm: 0 1px 3px rgb(20 22 15 / 0.08), 0 1px 2px rgb(20 22 15 / 0.04);
+  --shadow-md: 0 4px 12px rgb(20 22 15 / 0.08), 0 2px 4px rgb(20 22 15 / 0.05);
+  --shadow-lg: 0 12px 28px rgb(20 22 15 / 0.12), 0 4px 8px rgb(20 22 15 / 0.06);
+  --shadow-xl: 0 24px 56px rgb(20 22 15 / 0.16), 0 8px 16px rgb(20 22 15 / 0.08);
+  --shadow-pop: 0 18px 40px -8px rgb(20 22 15 / 0.22);   /* product-card hover lift */
+  --glow-lime: 0 0 0 1px var(--lime-500), 0 8px 28px -6px rgb(194 242 60 / 0.45);
+
+  /* ============================================================
+     MOTION
+     ============================================================ */
+  --ease-out:    cubic-bezier(0.22, 1, 0.36, 1);    /* default UI ease */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* add-to-cart pop, badges */
+  --dur-fast: 140ms;
+  --dur-base: 240ms;
+  --dur-slow: 420ms;
+
+  color-scheme: light;
+}
+
+/* ============================================================
+   DARK THEME — set data-theme="dark" (or .dark) on <html>
+   Don Fuego-style deep, warm near-black with lime that glows.
+   ============================================================ */
+[data-theme="dark"], .dark {
+  --bg:            var(--ink-950);
+  --bg-subtle:     #111308;
+  --surface:       var(--ink-800);
+  --surface-2:     #23271B;
+  --surface-inset: #0A0B07;
+
+  --fg-1: rgb(242 244 236 / 0.97);
+  --fg-2: rgb(242 244 236 / 0.86);
+  --fg-3: rgb(242 244 236 / 0.58);
+  --fg-4: rgb(242 244 236 / 0.38);
+
+  --border:        rgb(242 244 236 / 0.12);
+  --border-strong: rgb(242 244 236 / 0.22);
+
+  --primary-fg: var(--ink-950);
+  --accent:     var(--violet-400);
+  --link:       var(--violet-300);
+  --link-hover: #FFFFFF;
+
+  --success-ink: #58E59B;
+  --warning-ink: #F6C265;
+  --danger-ink:  #FF8585;
+  --info-ink:    #79BEFF;
+
+  /* Shadows become near-invisible on black; lean on borders + glow */
+  --shadow-xs: none;
+  --shadow-sm: 0 1px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 8px 24px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 16px 40px rgb(0 0 0 / 0.6);
+  --shadow-xl: 0 28px 64px rgb(0 0 0 / 0.7);
+  --shadow-pop: 0 22px 48px -10px rgb(0 0 0 / 0.7);
+
+  color-scheme: dark;
+}
+
+/* ============================================================
+   BASE ELEMENT STYLES
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg-2);
+  font-family: var(--font-sans);
+  font-weight: var(--fw-regular);
+  font-size: var(--text-base);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans);
+  color: var(--fg-1);
+  margin: 0;
+  text-wrap: balance;
+  font-weight: var(--fw-bold);
+}
+h1 { font-size: var(--text-h1); letter-spacing: var(--tracking-snug); line-height: var(--lh-tight); font-weight: var(--fw-black); }
+h2 { font-size: var(--text-h2); letter-spacing: var(--tracking-snug); line-height: var(--lh-snug); font-weight: var(--fw-bold); }
+h3 { font-size: var(--text-h3); letter-spacing: var(--tracking-snug); line-height: var(--lh-snug); }
+h4 { font-size: var(--text-h4); letter-spacing: var(--tracking-snug); line-height: var(--lh-base); }
+h5 { font-size: var(--text-h5); letter-spacing: var(--tracking-normal); line-height: var(--lh-base); font-weight: var(--fw-semibold); }
+h6 { font-size: var(--text-h6); letter-spacing: var(--tracking-normal); line-height: var(--lh-base); font-weight: var(--fw-semibold); }
+
+.display { font-size: var(--text-display); font-weight: var(--fw-black); letter-spacing: var(--tracking-tight); line-height: var(--lh-tight); }
+.serif   { font-family: var(--font-serif); font-weight: var(--fw-regular); letter-spacing: 0; }
+
+p { margin: 0 0 var(--space-4); text-wrap: pretty; }
+.lead  { font-size: var(--text-lead); line-height: 1.5; color: var(--fg-2); }
+.small { font-size: var(--text-sm); line-height: 1.5; }
+.muted { color: var(--fg-3); }
+
+/* Mono eyebrow / label — a recurring brand device */
+.eyebrow, .mono-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-label);
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.price {
+  font-family: var(--font-mono);
+  font-weight: var(--fw-bold);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+a {
+  color: var(--link);
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+a:hover { color: var(--link-hover); text-decoration: underline; }
+
+code, pre, kbd {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+code {
+  background: var(--surface-inset);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border);
+}
+pre {
+  background: var(--ink-900);
+  color: var(--ink-50);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  line-height: 1.55;
+}
+.dark pre { background: var(--surface-inset); border: 1px solid var(--border); }
+pre code { background: none; border: none; padding: 0; color: inherit; }
+
+hr { border: none; border-top: 1px solid var(--border); margin: var(--space-6) 0; }
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+::selection { background: var(--lime-500); color: var(--ink-900); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

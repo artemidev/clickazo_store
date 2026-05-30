@@ -1,0 +1,20 @@
+<!-- @dsCard group="Colors" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../colors_and_type.css">
+<style>
+  html,body{margin:0;background:var(--bg);}
+  body{padding:22px 26px;}
+  .lbl{font-family:var(--font-mono);font-size:10.5px;color:var(--fg-3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px;}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .sw{display:flex;flex-direction:column;gap:6px;}
+  .chip{height:56px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:700;}
+  .name{font-size:12px;font-weight:600;color:var(--fg-1);}
+  .sub{font-size:11px;color:var(--fg-3);}
+</style></head><body>
+  <div class="lbl">Semantic status — ecommerce-tuned</div>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:var(--green-500);color:#06301B;">In stock</div><span class="name">Success</span><span class="sub">#1FBF6B · added, in stock</span></div>
+    <div class="sw"><div class="chip" style="background:var(--amber-500);color:#3A2500;">Low stock</div><span class="name">Warning</span><span class="sub">#F4A720 · only 4 left</span></div>
+    <div class="sw"><div class="chip" style="background:var(--red-500);color:#fff;">−30%</div><span class="name">Sale / danger</span><span class="sub">#FF4D4D · price drop, error</span></div>
+    <div class="sw"><div class="chip" style="background:var(--blue-500);color:#fff;">Ships free</div><span class="name">Info</span><span class="sub">#2E8FF5 · shipping, tracking</span></div>
+  </div>
+</body></html>
