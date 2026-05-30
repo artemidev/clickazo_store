@@ -9,6 +9,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
+import { Eyebrow } from "@/components/brand/eyebrow";
 import { type SortOptions, sortOptions } from "@/domain/product/sort";
 import { ProductCard } from "@/modules/products/product-card";
 
@@ -45,16 +46,21 @@ function StorePage() {
 	const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
 
 	return (
-		<div className="mx-auto max-w-7xl px-4 py-10">
-			<div className="mb-6 flex items-center justify-between gap-4">
-				<h1 className="text-2xl font-semibold">All products</h1>
+		<div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-10">
+			<div className="mb-7 flex items-end justify-between gap-4">
+				<div className="flex flex-col gap-1.5">
+					<Eyebrow>All products</Eyebrow>
+					<h1 className="text-h3 font-bold tracking-tight text-foreground">
+						The store
+					</h1>
+				</div>
 				<Select
 					value={sortBy}
 					onValueChange={(value) =>
 						navigate({ search: { page: 1, sortBy: value as SortOptions } })
 					}
 				>
-					<SelectTrigger size="sm" className="w-[180px]">
+					<SelectTrigger className="w-[180px]">
 						<SelectValue placeholder="Sort by" />
 					</SelectTrigger>
 					<SelectContent>
@@ -70,7 +76,7 @@ function StorePage() {
 			{products.length === 0 ? (
 				<p className="text-muted-foreground">No products found.</p>
 			) : (
-				<div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+				<div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
 					{products.map((product) => (
 						<ProductCard key={product.id} product={product} />
 					))}

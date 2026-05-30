@@ -9,6 +9,7 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { DefaultCatchBoundary } from "../components/default-catch-boundary";
 import { NotFound } from "../components/not-found";
+import { ThemeProvider } from "../components/theme-provider";
 import { DependencyProvider } from "../di/context";
 import appCss from "../styles.css?url";
 
@@ -37,7 +38,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body className="min-h-screen bg-background text-foreground antialiased">
-				<DependencyProvider>{children}</DependencyProvider>
+				<ThemeProvider>
+					<DependencyProvider>{children}</DependencyProvider>
+				</ThemeProvider>
 				<TanStackDevtools
 					config={{ position: "bottom-right" }}
 					plugins={[

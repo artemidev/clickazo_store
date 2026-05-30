@@ -16,11 +16,13 @@ function TransferPage() {
 	return (
 		<div className="mx-auto max-w-xl px-4 py-16">
 			<Card className="flex flex-col gap-4 p-8 text-center">
-				<h1 className="text-2xl font-semibold">Transfer request</h1>
+				<h1 className="text-h4 font-bold tracking-tight text-foreground">
+					Transfer request
+				</h1>
 				<p className="text-muted-foreground">
 					Accept or decline the request to transfer order{" "}
-					<span className="font-medium text-foreground">#{orderId}</span> to
-					your account.
+					<span className="font-mono font-bold text-foreground">#{orderId}</span>{" "}
+					to your account.
 				</p>
 
 				{state.result ? (

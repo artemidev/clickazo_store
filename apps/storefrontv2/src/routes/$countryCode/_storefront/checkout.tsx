@@ -43,7 +43,9 @@ function CheckoutPage() {
 			<div className="flex flex-col gap-8">
 				{/* 1. Address */}
 				<section>
-					<h2 className="mb-4 text-lg font-semibold">Shipping address</h2>
+					<h2 className="mb-4 text-h5 font-bold text-foreground">
+						Shipping address
+					</h2>
 					<AddressForm
 						form={state.addressForm}
 						region={region}
@@ -57,7 +59,7 @@ function CheckoutPage() {
 						state.deliveryUnlocked ? "" : "pointer-events-none opacity-50"
 					}
 				>
-					<h2 className="mb-4 text-lg font-semibold">Delivery</h2>
+					<h2 className="mb-4 text-h5 font-bold text-foreground">Delivery</h2>
 					<RadioGroup
 						value={state.selectedShippingId ?? ""}
 						onValueChange={actions.selectShipping}
@@ -66,7 +68,7 @@ function CheckoutPage() {
 						{(state.shippingOptions ?? []).map((option) => (
 							<Label
 								key={option.id}
-								className="flex items-center justify-between rounded-md border p-3"
+								className="flex cursor-pointer items-center justify-between rounded-md border border-border-strong p-3.5 transition-colors hover:bg-accent has-data-[state=checked]:border-foreground"
 							>
 								<span className="flex items-center gap-3">
 									<RadioGroupItem value={option.id} />
@@ -94,7 +96,7 @@ function CheckoutPage() {
 						state.paymentUnlocked ? "" : "pointer-events-none opacity-50"
 					}
 				>
-					<h2 className="mb-4 text-lg font-semibold">Payment</h2>
+					<h2 className="mb-4 text-h5 font-bold text-foreground">Payment</h2>
 					<RadioGroup
 						value={state.activeSession?.provider_id ?? ""}
 						onValueChange={actions.selectPayment}
@@ -103,7 +105,7 @@ function CheckoutPage() {
 						{(state.paymentMethods ?? []).map((method) => (
 							<Label
 								key={method.id}
-								className="flex items-center gap-3 rounded-md border p-3"
+								className="flex cursor-pointer items-center gap-3 rounded-md border border-border-strong p-3.5 transition-colors hover:bg-accent has-data-[state=checked]:border-foreground"
 							>
 								<RadioGroupItem value={method.id} />
 								{method.id}

@@ -1,4 +1,5 @@
 import type { HttpTypes } from "@medusajs/types";
+import { Price } from "@/components/brand/price";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useProductActionsViewModel } from "@/viewmodels/use-product-actions-view-model";
@@ -10,12 +11,28 @@ export function ProductActions({
 }) {
 	const { state, actions } = useProductActionsViewModel(product);
 	const { options, selectedVariant, price, inStock, canAdd, isAdding } = state;
+	const isSale = price?.price_type === "sale";
 
 	return (
-		<div className="flex flex-col gap-6">
+		<div className="flex flex-col gap-7">
+			{price ? (
+				<Price
+					className="text-h3"
+					amount={price.calculated_price}
+					originalAmount={isSale ? price.original_price : null}
+					isSale={isSale}
+				/>
+			) : (
+				<span className="text-h3 font-mono font-bold text-muted-foreground">
+					—
+				</span>
+			)}
+
 			{(product.options ?? []).map((option) => (
-				<div key={option.id} className="flex flex-col gap-2">
-					<span className="text-sm font-medium">{option.title}</span>
+				<div key={option.id} className="flex flex-col gap-2.5">
+					<span className="text-sm font-semibold text-foreground">
+						{option.title}
+					</span>
 					<div className="flex flex-wrap gap-2">
 						{(option.values ?? []).map((optionValue) => {
 							const value = optionValue.value;
@@ -26,10 +43,10 @@ export function ProductActions({
 									type="button"
 									onClick={() => actions.selectOption(option.id, value)}
 									className={cn(
-										"rounded-md border px-3 py-1.5 text-sm transition-colors",
+										"inline-flex min-h-11 min-w-12 items-center justify-center rounded-md border px-3.5 font-mono text-sm font-semibold transition-colors",
 										selected
-											? "border-primary bg-primary text-primary-foreground"
-											: "border-input hover:bg-muted",
+											? "border-secondary bg-secondary text-secondary-foreground"
+											: "border-input text-foreground hover:border-foreground/40 hover:bg-accent",
 									)}
 								>
 									{value}
@@ -40,12 +57,9 @@ export function ProductActions({
 				</div>
 			))}
 
-			<div className="text-2xl font-semibold">
-				{price ? price.calculated_price : "—"}
-			</div>
-
 			<Button
 				size="lg"
+				className="w-full"
 				disabled={!canAdd || isAdding}
 				onClick={actions.addToCart}
 			>

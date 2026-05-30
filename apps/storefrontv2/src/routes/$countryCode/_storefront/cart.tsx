@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ShoppingBag } from "lucide-react";
 import { cartQueryOptions } from "@/application/cart.queries";
+import { Eyebrow } from "@/components/brand/eyebrow";
 import { LocalizedLink } from "@/components/localized-link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -20,12 +22,15 @@ function CartPage() {
 	if (state.isEmpty || !state.cart) {
 		return (
 			<div className="mx-auto flex max-w-2xl flex-col items-center gap-4 px-4 py-24 text-center">
-				<h1 className="text-2xl font-semibold">Your cart is empty</h1>
+				<div className="flex size-16 items-center justify-center rounded-full bg-surface-inset text-muted-foreground">
+					<ShoppingBag className="size-7" />
+				</div>
+				<h1 className="text-h4 font-bold text-foreground">Your cart is empty</h1>
 				<p className="text-muted-foreground">
 					Looks like you haven't added anything yet.
 				</p>
-				<LocalizedLink href="/store">
-					<Button>Continue shopping</Button>
+				<LocalizedLink href="/store" className="no-underline">
+					<Button size="lg">Continue shopping</Button>
 				</LocalizedLink>
 			</div>
 		);
@@ -35,10 +40,15 @@ function CartPage() {
 	const currencyCode = cart.currency_code;
 
 	return (
-		<div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 lg:grid-cols-[1fr_360px]">
+		<div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1fr_360px] lg:px-10">
 			<div>
-				<h1 className="mb-4 text-2xl font-semibold">Cart</h1>
-				<div className="divide-y border-y">
+				<div className="mb-5 flex flex-col gap-1.5">
+					<Eyebrow>Your bag</Eyebrow>
+					<h1 className="text-h3 font-bold tracking-tight text-foreground">
+						Cart
+					</h1>
+				</div>
+				<div className="divide-y divide-border border-y border-border">
 					{cart.items
 						?.sort((a, b) =>
 							(a.created_at ?? "") > (b.created_at ?? "") ? -1 : 1,

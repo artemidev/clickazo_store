@@ -27,7 +27,9 @@ function AddressesPage() {
 	return (
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center justify-between">
-				<h1 className="text-2xl font-semibold">Addresses</h1>
+				<h1 className="text-h3 font-bold tracking-tight text-foreground">
+					Addresses
+				</h1>
 				<Button variant="outline" onClick={actions.toggleForm}>
 					{state.showForm ? "Cancel" : "Add address"}
 				</Button>
@@ -123,7 +125,7 @@ function AddressesPage() {
 								)}
 							</form.Field>
 						</div>
-						<Button type="submit" disabled={state.isAdding}>
+						<Button type="submit" className="w-full" disabled={state.isAdding}>
 							{state.isAdding ? "Saving…" : "Save address"}
 						</Button>
 					</form>

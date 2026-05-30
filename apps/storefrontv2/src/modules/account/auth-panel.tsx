@@ -49,7 +49,7 @@ export function AuthPanel() {
 									/>
 								)}
 							</loginForm.Field>
-							<Button type="submit" disabled={state.isLoggingIn}>
+							<Button type="submit" className="w-full" disabled={state.isLoggingIn}>
 								{state.isLoggingIn ? "Signing in…" : "Sign in"}
 							</Button>
 						</form>
@@ -115,7 +115,7 @@ export function AuthPanel() {
 									/>
 								)}
 							</signupForm.Field>
-							<Button type="submit" disabled={state.isSigningUp}>
+							<Button type="submit" className="w-full" disabled={state.isSigningUp}>
 								{state.isSigningUp ? "Creating account…" : "Create account"}
 							</Button>
 						</form>

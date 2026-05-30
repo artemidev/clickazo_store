@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { productByHandleQueryOptions } from "@/application/products.queries";
+import { Eyebrow } from "@/components/brand/eyebrow";
 import {
 	Accordion,
 	AccordionContent,
@@ -36,9 +37,9 @@ function ProductPage() {
 	const images = product.images ?? [];
 
 	return (
-		<div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 lg:grid-cols-2">
+		<div className="mx-auto grid max-w-6xl gap-12 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:px-10">
 			<div className="flex flex-col gap-4">
-				<div className="aspect-square overflow-hidden rounded-lg bg-muted">
+				<div className="aspect-square overflow-hidden rounded-2xl border border-border bg-surface-inset">
 					{product.thumbnail || images[0] ? (
 						<img
 							src={product.thumbnail ?? images[0]?.url}
@@ -52,7 +53,7 @@ function ProductPage() {
 						{images.slice(0, 8).map((image) => (
 							<div
 								key={image.id}
-								className="aspect-square overflow-hidden rounded-md bg-muted"
+								className="aspect-square overflow-hidden rounded-md border border-border bg-surface-inset"
 							>
 								<img
 									src={image.url}
@@ -67,22 +68,22 @@ function ProductPage() {
 			</div>
 
 			<div className="flex flex-col gap-6">
-				<div>
+				<div className="flex flex-col gap-2">
 					{product.collection ? (
-						<p className="text-sm text-muted-foreground">
-							{product.collection.title}
-						</p>
+						<Eyebrow>{product.collection.title}</Eyebrow>
 					) : null}
-					<h1 className="text-3xl font-semibold tracking-tight">
+					<h1 className="text-h3 font-bold tracking-tight text-foreground">
 						{product.title}
 					</h1>
 					{product.subtitle ? (
-						<p className="mt-1 text-muted-foreground">{product.subtitle}</p>
+						<p className="text-lead text-muted-foreground">
+							{product.subtitle}
+						</p>
 					) : null}
 				</div>
 
 				{product.description ? (
-					<p className="text-sm leading-relaxed text-muted-foreground">
+					<p className="text-base leading-relaxed text-muted-foreground">
 						{product.description}
 					</p>
 				) : null}
@@ -93,15 +94,25 @@ function ProductPage() {
 					<AccordionItem value="details">
 						<AccordionTrigger>Product information</AccordionTrigger>
 						<AccordionContent>
-							<dl className="grid grid-cols-2 gap-2 text-sm">
-								<dt className="text-muted-foreground">Material</dt>
-								<dd>{product.material || "-"}</dd>
-								<dt className="text-muted-foreground">Country of origin</dt>
-								<dd>{product.origin_country || "-"}</dd>
-								<dt className="text-muted-foreground">Type</dt>
-								<dd>{product.type?.value || "-"}</dd>
-								<dt className="text-muted-foreground">Weight</dt>
-								<dd>{product.weight ? `${product.weight} g` : "-"}</dd>
+							<dl className="grid grid-cols-2 gap-2.5 text-sm">
+								<dt className="font-mono text-mono-label uppercase text-muted-foreground">
+									Material
+								</dt>
+								<dd className="font-medium">{product.material || "—"}</dd>
+								<dt className="font-mono text-mono-label uppercase text-muted-foreground">
+									Country of origin
+								</dt>
+								<dd className="font-medium">{product.origin_country || "—"}</dd>
+								<dt className="font-mono text-mono-label uppercase text-muted-foreground">
+									Type
+								</dt>
+								<dd className="font-medium">{product.type?.value || "—"}</dd>
+								<dt className="font-mono text-mono-label uppercase text-muted-foreground">
+									Weight
+								</dt>
+								<dd className="font-medium">
+									{product.weight ? `${product.weight} g` : "—"}
+								</dd>
 							</dl>
 						</AccordionContent>
 					</AccordionItem>

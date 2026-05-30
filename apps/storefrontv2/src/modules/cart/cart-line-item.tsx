@@ -1,14 +1,9 @@
 import type { HttpTypes } from "@medusajs/types";
 import { Trash2 } from "lucide-react";
+import { Eyebrow } from "@/components/brand/eyebrow";
+import { QuantityStepper } from "@/components/brand/quantity-stepper";
 import { LocalizedLink } from "@/components/localized-link";
 import { Button } from "@/components/ui/button";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
 import { convertToLocale } from "@/lib/money";
 
 /**
@@ -29,16 +24,12 @@ export function CartLineItem({
 	isMutating: boolean;
 }) {
 	const maxQuantity = Math.min(item.variant?.inventory_quantity ?? 10, 10);
-	const quantities = Array.from(
-		{ length: Math.max(maxQuantity, item.quantity) },
-		(_, i) => i + 1,
-	);
 
 	return (
 		<div className="flex gap-4 py-4">
 			<LocalizedLink
 				href={`/products/${item.product_handle}`}
-				className="size-20 shrink-0 overflow-hidden rounded-md bg-muted"
+				className="size-20 shrink-0 overflow-hidden rounded-md border border-border bg-surface-inset"
 			>
 				{item.thumbnail ? (
 					<img
@@ -52,30 +43,19 @@ export function CartLineItem({
 			<div className="flex flex-1 flex-col gap-1">
 				<LocalizedLink
 					href={`/products/${item.product_handle}`}
-					className="text-sm font-medium hover:underline"
+					className="text-sm font-semibold text-foreground no-underline hover:underline"
 				>
 					{item.product_title}
 				</LocalizedLink>
-				<span className="text-xs text-muted-foreground">
-					{item.variant_title}
-				</span>
+				{item.variant_title ? <Eyebrow>{item.variant_title}</Eyebrow> : null}
 
-				<div className="mt-auto flex items-center gap-3">
-					<Select
-						value={String(item.quantity)}
-						onValueChange={(value) => onChangeQuantity(Number(value))}
-					>
-						<SelectTrigger size="sm" className="w-[72px]">
-							<SelectValue />
-						</SelectTrigger>
-						<SelectContent>
-							{quantities.map((quantity) => (
-								<SelectItem key={quantity} value={String(quantity)}>
-									{quantity}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+				<div className="mt-auto flex items-center gap-3 pt-2">
+					<QuantityStepper
+						value={item.quantity}
+						onChange={onChangeQuantity}
+						max={Math.max(maxQuantity, item.quantity)}
+						disabled={isMutating}
+					/>
 					<Button
 						variant="ghost"
 						size="icon-sm"
@@ -83,12 +63,12 @@ export function CartLineItem({
 						disabled={isMutating}
 						aria-label="Remove item"
 					>
-						<Trash2 className="size-4" />
+						<Trash2 />
 					</Button>
 				</div>
 			</div>
 
-			<div className="text-sm font-medium">
+			<div className="font-mono text-sm font-bold tabular-nums">
 				{convertToLocale({
 					amount: item.total ?? 0,
 					currency_code: currencyCode,

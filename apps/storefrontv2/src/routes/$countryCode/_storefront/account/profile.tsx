@@ -18,7 +18,9 @@ function ProfilePage() {
 
 	return (
 		<div className="max-w-lg">
-			<h1 className="mb-4 text-2xl font-semibold">Profile</h1>
+			<h1 className="mb-5 text-h3 font-bold tracking-tight text-foreground">
+				Profile
+			</h1>
 			<Card className="p-6">
 				<form
 					className="flex flex-col gap-4"
@@ -56,7 +58,7 @@ function ProfilePage() {
 						<Label>Email</Label>
 						<Input value={customer?.email ?? ""} disabled />
 					</div>
-					<Button type="submit" disabled={state.isSaving}>
+					<Button type="submit" className="w-full" disabled={state.isSaving}>
 						{state.isSaving ? "Saving…" : "Save changes"}
 					</Button>
 				</form>

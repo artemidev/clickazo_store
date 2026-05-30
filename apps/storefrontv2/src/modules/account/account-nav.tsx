@@ -23,7 +23,7 @@ export function AccountNav() {
 					key={link.href}
 					href={link.href}
 					activeOptions={{ exact: link.href === "/account" }}
-					className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground [&.active]:bg-muted [&.active]:font-medium [&.active]:text-foreground"
+					className="rounded-md px-3 py-2 text-sm text-muted-foreground no-underline transition-colors hover:bg-accent hover:text-foreground [&.active]:bg-accent [&.active]:font-semibold [&.active]:text-foreground"
 				>
 					{link.label}
 				</LocalizedLink>

@@ -1,4 +1,5 @@
 import { User } from "lucide-react";
+import { ThemeToggle } from "@/components/brand/theme-toggle";
 import { LocalizedLink } from "@/components/localized-link";
 import { Button } from "@/components/ui/button";
 import { CartButton } from "./cart-button";
@@ -6,30 +7,33 @@ import { RegionSelect } from "./region-select";
 
 export function Header() {
 	return (
-		<header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-			<div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4">
-				<div className="flex items-center gap-6">
+		<header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-xl backdrop-saturate-150">
+			<div className="mx-auto flex h-[68px] max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-10">
+				<LocalizedLink href="/" className="flex items-center gap-2.5">
+					<img
+						src="/brand/clickazo-mark.svg"
+						alt=""
+						aria-hidden
+						className="size-9"
+					/>
+					<span className="text-[21px] font-extrabold tracking-tight text-foreground">
+						Clickazo
+					</span>
+				</LocalizedLink>
+				<nav className="hidden items-center gap-1 sm:flex">
 					<LocalizedLink
-						href="/"
-						className="text-lg font-semibold tracking-tight"
+						href="/store"
+						className="rounded-sm px-3 py-2 text-sm font-medium text-foreground/80 no-underline transition-colors hover:bg-accent hover:text-foreground"
 					>
-						Medusa Store
+						Store
 					</LocalizedLink>
-					<nav className="hidden items-center gap-4 text-sm sm:flex">
-						<LocalizedLink
-							href="/store"
-							className="text-muted-foreground transition-colors hover:text-foreground"
-						>
-							Store
-						</LocalizedLink>
-					</nav>
-				</div>
-				<div className="flex items-center gap-2">
+				</nav>
+				<div className="ml-auto flex items-center gap-2">
 					<RegionSelect />
-					<LocalizedLink href="/account">
-						<Button variant="ghost" size="sm" className="gap-2">
-							<User className="size-4" />
-							<span className="hidden sm:inline">Account</span>
+					<ThemeToggle />
+					<LocalizedLink href="/account" aria-label="Account">
+						<Button variant="ghost" size="icon-sm">
+							<User />
 						</Button>
 					</LocalizedLink>
 					<CartButton />

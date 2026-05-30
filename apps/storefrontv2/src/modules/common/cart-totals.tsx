@@ -26,35 +26,37 @@ export function CartTotals({ totals }: { totals: Totals }) {
 	const money = (amount?: number | null) =>
 		convertToLocale({ amount: amount ?? 0, currency_code });
 
+	const mono = "font-mono tabular-nums";
+
 	return (
-		<div className="flex flex-col gap-2 text-sm">
+		<div className="flex flex-col gap-2.5 text-sm">
 			<div className="flex justify-between text-muted-foreground">
 				<span>Subtotal</span>
-				<span>{money(subtotal)}</span>
+				<span className={mono}>{money(subtotal)}</span>
 			</div>
 			{!!discount_total && (
-				<div className="flex justify-between text-muted-foreground">
+				<div className="flex justify-between text-success-ink">
 					<span>Discount</span>
-					<span>- {money(discount_total)}</span>
+					<span className={mono}>- {money(discount_total)}</span>
 				</div>
 			)}
 			<div className="flex justify-between text-muted-foreground">
 				<span>Shipping</span>
-				<span>{money(shipping_subtotal)}</span>
+				<span className={mono}>{money(shipping_subtotal)}</span>
 			</div>
 			<div className="flex justify-between text-muted-foreground">
 				<span>Taxes</span>
-				<span>{money(tax_total)}</span>
+				<span className={mono}>{money(tax_total)}</span>
 			</div>
 			{!!gift_card_total && (
-				<div className="flex justify-between text-muted-foreground">
+				<div className="flex justify-between text-success-ink">
 					<span>Gift card</span>
-					<span>- {money(gift_card_total)}</span>
+					<span className={mono}>- {money(gift_card_total)}</span>
 				</div>
 			)}
-			<div className="mt-2 flex justify-between border-t pt-2 text-base font-semibold">
+			<div className="mt-2 flex items-baseline justify-between border-t border-border pt-3 text-base font-semibold text-foreground">
 				<span>Total</span>
-				<span>{money(total)}</span>
+				<span className={`${mono} text-h5 font-bold`}>{money(total)}</span>
 			</div>
 		</div>
 	);

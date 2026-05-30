@@ -3,10 +3,10 @@ import { convertToLocale } from "@/lib/money";
 
 export function OrderItems({ order }: { order: HttpTypes.StoreOrder }) {
 	return (
-		<div className="divide-y border-y">
+		<div className="divide-y divide-border border-y border-border">
 			{order.items?.map((item) => (
 				<div key={item.id} className="flex items-center gap-4 py-4">
-					<div className="size-16 shrink-0 overflow-hidden rounded-md bg-muted">
+					<div className="size-16 shrink-0 overflow-hidden rounded-md border border-border bg-surface-inset">
 						{item.thumbnail ? (
 							<img
 								src={item.thumbnail}
@@ -16,13 +16,17 @@ export function OrderItems({ order }: { order: HttpTypes.StoreOrder }) {
 						) : null}
 					</div>
 					<div className="flex-1">
-						<p className="text-sm font-medium">{item.product_title}</p>
+						<p className="text-sm font-semibold text-foreground">
+							{item.product_title}
+						</p>
 						<p className="text-xs text-muted-foreground">
 							{item.variant_title}
 						</p>
 					</div>
-					<p className="text-sm text-muted-foreground">x{item.quantity}</p>
-					<p className="text-sm font-medium">
+					<p className="font-mono text-sm text-muted-foreground tabular-nums">
+						×{item.quantity}
+					</p>
+					<p className="font-mono text-sm font-bold tabular-nums">
 						{convertToLocale({
 							amount: item.total ?? 0,
 							currency_code: order.currency_code,

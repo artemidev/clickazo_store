@@ -1,82 +1,255 @@
+/* ============================================================
+   Clickazo storefront — design system foundation
+   Ported from mockup/Clickazo Design System (colors_and_type.css).
+   Stack: Tailwind v4 + shadcn. Signature: electric lime, warm ink,
+   violet accent/focus. Full light + dark parity.
+   ============================================================ */
+
+/* ---- Self-hosted brand fonts (see fonts/README in the design system) ---- */
+@import "@fontsource-variable/outfit/index.css";
+@import "@fontsource-variable/jetbrains-mono/index.css";
+@import "@fontsource/instrument-serif/index.css";
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-	--radius: 0.625rem;
-	--background: oklch(1 0 0);
-	--foreground: oklch(0.145 0 0);
-	--card: oklch(1 0 0);
-	--card-foreground: oklch(0.145 0 0);
-	--popover: oklch(1 0 0);
-	--popover-foreground: oklch(0.145 0 0);
-	--primary: oklch(0.205 0 0);
-	--primary-foreground: oklch(0.985 0 0);
-	--secondary: oklch(0.97 0 0);
-	--secondary-foreground: oklch(0.205 0 0);
-	--muted: oklch(0.97 0 0);
-	--muted-foreground: oklch(0.556 0 0);
-	--accent: oklch(0.97 0 0);
-	--accent-foreground: oklch(0.205 0 0);
-	--destructive: oklch(0.577 0.245 27.325);
-	--border: oklch(0.922 0 0);
-	--input: oklch(0.922 0 0);
-	--ring: oklch(0.708 0 0);
-	--chart-1: oklch(0.646 0.222 41.116);
-	--chart-2: oklch(0.6 0.118 184.704);
-	--chart-3: oklch(0.398 0.07 227.392);
-	--chart-4: oklch(0.828 0.189 84.429);
-	--chart-5: oklch(0.769 0.188 70.08);
-	--sidebar: oklch(0.985 0 0);
-	--sidebar-foreground: oklch(0.145 0 0);
-	--sidebar-primary: oklch(0.205 0 0);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.97 0 0);
-	--sidebar-accent-foreground: oklch(0.205 0 0);
-	--sidebar-border: oklch(0.922 0 0);
-	--sidebar-ring: oklch(0.708 0 0);
+	/* ========================================================
+	   RAW BRAND PALETTE (theme-independent hex) — verbatim DS
+	   ======================================================== */
+	--lime-300: #dbf98a;
+	--lime-400: #cdf45c;
+	--lime-500: #c2f23c; /* ★ signature — CTA fill, logo, highlight */
+	--lime-600: #a8d914;
+	--lime-ink: #45600a;
+
+	--violet-300: #b9abff;
+	--violet-400: #9b86ff;
+	--violet-500: #7b61ff; /* secondary accent — links, focus, "new" */
+	--violet-600: #6344e6;
+	--violet-ink: #4b2ec9;
+
+	--ink-950: #0e0f0b;
+	--ink-900: #14160f;
+	--ink-800: #1c1f16;
+	--ink-700: #2a2e22;
+	--ink-600: #43483a;
+	--ink-500: #5e6453;
+	--ink-400: #838a75;
+	--ink-300: #a9af9d;
+	--ink-200: #cdd1c4;
+	--ink-150: #dee1d6;
+	--ink-100: #e9ebe2;
+	--ink-75: #f0f1ea;
+	--ink-50: #f6f7f1;
+	--paper: #ffffff;
+
+	--green-500: #1fbf6b;
+	--green-ink: #137a44;
+	--amber-500: #f4a720;
+	--amber-ink: #9a6400;
+	--red-500: #ff4d4d;
+	--red-ink: #c42525;
+	--blue-500: #2e8ff5;
+	--blue-ink: #1664b8;
+
+	/* ========================================================
+	   DS SEMANTIC TOKENS — LIGHT defaults
+	   ======================================================== */
+	--bg: var(--ink-50);
+	--bg-subtle: var(--ink-75);
+	--surface: var(--paper);
+	--surface-2: var(--ink-50);
+	--surface-inset: var(--ink-100);
+
+	--fg: var(--ink-900);
+	--fg-1: rgb(20 22 15 / 0.96);
+	--fg-2: rgb(20 22 15 / 0.88);
+	--fg-3: rgb(20 22 15 / 0.6);
+	--fg-4: rgb(20 22 15 / 0.4);
+
+	--border-hairline: rgb(20 22 15 / 0.12);
+	--border-strong: rgb(20 22 15 / 0.24);
+
+	/* Brand roles */
+	--primary-base: var(--lime-500);
+	--primary-hover: var(--lime-400);
+	--primary-press: var(--lime-600);
+	--primary-fg: var(--ink-900);
+	--accent-brand-base: var(--violet-500);
+	--accent-brand-fg: #ffffff;
+	--link: var(--violet-ink);
+	--link-hover: var(--violet-500);
+
+	/* Status roles */
+	--success: var(--green-500);
+	--success-fg: #06301b;
+	--success-ink: var(--green-ink);
+	--warning: var(--amber-500);
+	--warning-fg: #3a2500;
+	--warning-ink: var(--amber-ink);
+	--danger: var(--red-500);
+	--danger-fg: #ffffff;
+	--danger-ink: var(--red-ink);
+	--info: var(--blue-500);
+	--info-fg: #ffffff;
+	--info-ink: var(--blue-ink);
+	--sale: var(--red-500);
+	--sale-fg: #ffffff;
+
+	/* Neutral hover wash (shadcn "accent" role — kept neutral on purpose) */
+	--accent-wash: var(--ink-100);
+	--accent-wash-fg: var(--fg-1);
+
+	/* ========================================================
+	   ELEVATION — theme-switchable shadow values
+	   ======================================================== */
+	--ds-shadow-xs: 0 1px 2px rgb(20 22 15 / 0.06);
+	--ds-shadow-sm: 0 1px 3px rgb(20 22 15 / 0.08), 0 1px 2px rgb(20 22 15 / 0.04);
+	--ds-shadow-md: 0 4px 12px rgb(20 22 15 / 0.08), 0 2px 4px rgb(20 22 15 / 0.05);
+	--ds-shadow-lg: 0 12px 28px rgb(20 22 15 / 0.12), 0 4px 8px rgb(20 22 15 / 0.06);
+	--ds-shadow-xl: 0 24px 56px rgb(20 22 15 / 0.16), 0 8px 16px rgb(20 22 15 / 0.08);
+	--ds-shadow-pop: 0 18px 40px -8px rgb(20 22 15 / 0.22);
+	--ds-glow-lime: 0 0 0 1px var(--lime-500), 0 8px 28px -6px rgb(194 242 60 / 0.45);
+
+	/* ========================================================
+	   shadcn SEMANTIC MAPPING (derived from DS tokens above)
+	   ======================================================== */
+	--radius: 10px;
+	--background: var(--bg);
+	--foreground: var(--fg);
+	--card: var(--surface);
+	--card-foreground: var(--fg-1);
+	--popover: var(--surface);
+	--popover-foreground: var(--fg-1);
+	--primary: var(--primary-base);
+	--primary-foreground: var(--primary-fg);
+	--secondary: var(--ink-900);
+	--secondary-foreground: var(--ink-50);
+	--muted: var(--surface-inset);
+	--muted-foreground: var(--fg-3);
+	--accent: var(--accent-wash);
+	--accent-foreground: var(--accent-wash-fg);
+	--accent-brand: var(--accent-brand-base);
+	--accent-brand-foreground: var(--accent-brand-fg);
+	--destructive: var(--danger);
+	--destructive-foreground: var(--danger-fg);
+	--border: var(--border-hairline);
+	--input: var(--border-strong);
+	--ring: var(--violet-500);
+
+	color-scheme: light;
 }
 
+/* ============================================================
+   DARK THEME — Don Fuego-style warm near-black, lime glows.
+   ============================================================ */
 .dark {
-	--background: oklch(0.145 0 0);
-	--foreground: oklch(0.985 0 0);
-	--card: oklch(0.205 0 0);
-	--card-foreground: oklch(0.985 0 0);
-	--popover: oklch(0.205 0 0);
-	--popover-foreground: oklch(0.985 0 0);
-	--primary: oklch(0.922 0 0);
-	--primary-foreground: oklch(0.205 0 0);
-	--secondary: oklch(0.269 0 0);
-	--secondary-foreground: oklch(0.985 0 0);
-	--muted: oklch(0.269 0 0);
-	--muted-foreground: oklch(0.708 0 0);
-	--accent: oklch(0.269 0 0);
-	--accent-foreground: oklch(0.985 0 0);
-	--destructive: oklch(0.704 0.191 22.216);
-	--border: oklch(1 0 0 / 10%);
-	--input: oklch(1 0 0 / 15%);
-	--ring: oklch(0.556 0 0);
-	--chart-1: oklch(0.488 0.243 264.376);
-	--chart-2: oklch(0.696 0.17 162.48);
-	--chart-3: oklch(0.769 0.188 70.08);
-	--chart-4: oklch(0.627 0.265 303.9);
-	--chart-5: oklch(0.645 0.246 16.439);
-	--sidebar: oklch(0.205 0 0);
-	--sidebar-foreground: oklch(0.985 0 0);
-	--sidebar-primary: oklch(0.488 0.243 264.376);
-	--sidebar-primary-foreground: oklch(0.985 0 0);
-	--sidebar-accent: oklch(0.269 0 0);
-	--sidebar-accent-foreground: oklch(0.985 0 0);
-	--sidebar-border: oklch(1 0 0 / 10%);
-	--sidebar-ring: oklch(0.556 0 0);
+	--bg: var(--ink-950);
+	--bg-subtle: #111308;
+	--surface: var(--ink-800);
+	--surface-2: #23271b;
+	--surface-inset: #0a0b07;
+
+	--fg-1: rgb(242 244 236 / 0.97);
+	--fg-2: rgb(242 244 236 / 0.86);
+	--fg-3: rgb(242 244 236 / 0.58);
+	--fg-4: rgb(242 244 236 / 0.38);
+
+	--border-hairline: rgb(242 244 236 / 0.12);
+	--border-strong: rgb(242 244 236 / 0.22);
+
+	--primary-fg: var(--ink-950);
+	--accent-brand-base: var(--violet-400);
+	--link: var(--violet-300);
+	--link-hover: #ffffff;
+
+	--success-ink: #58e59b;
+	--warning-ink: #f6c265;
+	--danger-ink: #ff8585;
+	--info-ink: #79beff;
+
+	--accent-wash: rgb(242 244 236 / 0.08);
+
+	/* Shadows near-invisible on black; lean on borders + glow */
+	--ds-shadow-xs: none;
+	--ds-shadow-sm: 0 1px 0 rgb(0 0 0 / 0.4);
+	--ds-shadow-md: 0 8px 24px rgb(0 0 0 / 0.5);
+	--ds-shadow-lg: 0 16px 40px rgb(0 0 0 / 0.6);
+	--ds-shadow-xl: 0 28px 64px rgb(0 0 0 / 0.7);
+	--ds-shadow-pop: 0 22px 48px -10px rgb(0 0 0 / 0.7);
+
+	/* re-point shadcn roles that change in dark */
+	--foreground: var(--fg-1);
+	--secondary: var(--ink-100);
+	--secondary-foreground: var(--ink-900);
+
+	color-scheme: dark;
 }
 
+/* ============================================================
+   TYPOGRAPHY / RADII / EASING — static design tokens
+   ============================================================ */
+@theme {
+	--font-sans: "Outfit Variable", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", sans-serif;
+	--font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo,
+		monospace;
+	--font-serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+
+	/* Display-led modular scale */
+	--text-display: 84px;
+	--text-display--line-height: 1.02;
+	--text-display--letter-spacing: -0.03em;
+	--text-display--font-weight: 800;
+	--text-h1: 60px;
+	--text-h1--line-height: 1.02;
+	--text-h1--letter-spacing: -0.015em;
+	--text-h1--font-weight: 800;
+	--text-h2: 44px;
+	--text-h2--line-height: 1.14;
+	--text-h2--letter-spacing: -0.015em;
+	--text-h2--font-weight: 700;
+	--text-h3: 32px;
+	--text-h3--line-height: 1.14;
+	--text-h3--letter-spacing: -0.015em;
+	--text-h3--font-weight: 700;
+	--text-h4: 24px;
+	--text-h4--line-height: 1.4;
+	--text-h4--letter-spacing: -0.015em;
+	--text-h4--font-weight: 700;
+	--text-h5: 19px;
+	--text-h5--line-height: 1.4;
+	--text-h5--font-weight: 600;
+	--text-h6: 16px;
+	--text-h6--line-height: 1.4;
+	--text-h6--font-weight: 600;
+	--text-lead: 21px;
+	--text-lead--line-height: 1.5;
+	--text-mono-label: 12px;
+	--text-mono-label--line-height: 1;
+	--text-mono-label--letter-spacing: 0.12em;
+
+	/* Radii — DS px scale */
+	--radius-xs: 6px;
+	--radius-sm: 8px;
+	--radius-md: 10px;
+	--radius-lg: 14px;
+	--radius-xl: 20px;
+	--radius-2xl: 28px;
+
+	/* Easing */
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+	--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================================
+   COLOR + ELEVATION UTILITIES (inline → resolve var() per theme)
+   ============================================================ */
 @theme inline {
-	--radius-sm: calc(var(--radius) - 4px);
-	--radius-md: calc(var(--radius) - 2px);
-	--radius-lg: var(--radius);
-	--radius-xl: calc(var(--radius) + 4px);
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
 	--color-card: var(--card);
@@ -85,36 +258,95 @@
 	--color-popover-foreground: var(--popover-foreground);
 	--color-primary: var(--primary);
 	--color-primary-foreground: var(--primary-foreground);
+	--color-primary-hover: var(--primary-hover);
+	--color-primary-press: var(--primary-press);
 	--color-secondary: var(--secondary);
 	--color-secondary-foreground: var(--secondary-foreground);
 	--color-muted: var(--muted);
 	--color-muted-foreground: var(--muted-foreground);
 	--color-accent: var(--accent);
 	--color-accent-foreground: var(--accent-foreground);
+	--color-accent-brand: var(--accent-brand);
+	--color-accent-brand-foreground: var(--accent-brand-foreground);
 	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
 	--color-border: var(--border);
+	--color-border-strong: var(--border-strong);
 	--color-input: var(--input);
 	--color-ring: var(--ring);
-	--color-chart-1: var(--chart-1);
-	--color-chart-2: var(--chart-2);
-	--color-chart-3: var(--chart-3);
-	--color-chart-4: var(--chart-4);
-	--color-chart-5: var(--chart-5);
-	--color-sidebar: var(--sidebar);
-	--color-sidebar-foreground: var(--sidebar-foreground);
-	--color-sidebar-primary: var(--sidebar-primary);
-	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-	--color-sidebar-accent: var(--sidebar-accent);
-	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-	--color-sidebar-border: var(--sidebar-border);
-	--color-sidebar-ring: var(--sidebar-ring);
+
+	--color-success: var(--success);
+	--color-success-foreground: var(--success-fg);
+	--color-success-ink: var(--success-ink);
+	--color-warning: var(--warning);
+	--color-warning-foreground: var(--warning-fg);
+	--color-warning-ink: var(--warning-ink);
+	--color-info: var(--info);
+	--color-info-foreground: var(--info-fg);
+	--color-info-ink: var(--info-ink);
+	--color-sale: var(--sale);
+	--color-sale-foreground: var(--sale-fg);
+	--color-link: var(--link);
+	--color-link-hover: var(--link-hover);
+
+	--color-surface: var(--surface);
+	--color-surface-2: var(--surface-2);
+	--color-surface-inset: var(--surface-inset);
+	--color-bg-subtle: var(--bg-subtle);
+
+	--color-ink-50: var(--ink-50);
+	--color-ink-75: var(--ink-75);
+	--color-ink-100: var(--ink-100);
+	--color-ink-150: var(--ink-150);
+	--color-ink-200: var(--ink-200);
+	--color-ink-300: var(--ink-300);
+	--color-ink-400: var(--ink-400);
+	--color-ink-500: var(--ink-500);
+	--color-ink-600: var(--ink-600);
+	--color-ink-700: var(--ink-700);
+	--color-ink-800: var(--ink-800);
+	--color-ink-900: var(--ink-900);
+	--color-ink-950: var(--ink-950);
+	--color-paper: var(--paper);
+	--color-lime: var(--lime-500);
+	--color-lime-ink: var(--lime-ink);
+	--color-amber: var(--amber-500);
+
+	--shadow-xs: var(--ds-shadow-xs);
+	--shadow-sm: var(--ds-shadow-sm);
+	--shadow-md: var(--ds-shadow-md);
+	--shadow-lg: var(--ds-shadow-lg);
+	--shadow-xl: var(--ds-shadow-xl);
+	--shadow-pop: var(--ds-shadow-pop);
+	--shadow-glow: var(--ds-glow-lime);
+}
+
+/* Cart-count badge spring pop */
+@keyframes cz-pop {
+	0% {
+		transform: scale(0.4);
+	}
+	60% {
+		transform: scale(1.18);
+	}
+	100% {
+		transform: scale(1);
+	}
 }
 
 @layer base {
 	* {
 		@apply border-border outline-ring/50;
 	}
+	html {
+		font-family: var(--font-sans);
+	}
 	body {
-		@apply bg-background text-foreground;
+		@apply bg-background text-foreground antialiased;
+		text-rendering: optimizeLegibility;
+	}
+	::selection {
+		background: var(--lime-500);
+		color: var(--ink-900);
 	}
 }

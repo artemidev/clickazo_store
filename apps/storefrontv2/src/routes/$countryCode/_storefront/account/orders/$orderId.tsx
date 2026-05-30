@@ -22,11 +22,11 @@ function OrderDetailPage() {
 		<div>
 			<LocalizedLink
 				href="/account/orders"
-				className="text-sm text-muted-foreground hover:text-foreground"
+				className="text-sm text-muted-foreground no-underline hover:text-foreground"
 			>
 				← Back to orders
 			</LocalizedLink>
-			<h1 className="mb-1 mt-2 text-2xl font-semibold">
+			<h1 className="mt-2 mb-1 font-mono text-h3 font-bold tracking-tight text-foreground">
 				Order #{order.display_id}
 			</h1>
 			<p className="mb-6 text-sm text-muted-foreground">

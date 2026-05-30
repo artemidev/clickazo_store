@@ -23,11 +23,15 @@ function OrderConfirmedPage() {
 	return (
 		<div className="mx-auto max-w-3xl px-4 py-12">
 			<div className="mb-8 flex flex-col items-center gap-3 text-center">
-				<CheckCircle2 className="size-12 text-primary" />
-				<h1 className="text-2xl font-semibold">Thank you for your order!</h1>
+				<div className="flex size-14 items-center justify-center rounded-full bg-success/15 text-success-ink">
+					<CheckCircle2 className="size-7" />
+				</div>
+				<h1 className="text-h3 font-bold tracking-tight text-foreground">
+					Thank you for your order!
+				</h1>
 				<p className="text-muted-foreground">
 					Your order{" "}
-					<span className="font-medium text-foreground">
+					<span className="font-mono font-bold text-foreground">
 						#{order.display_id}
 					</span>{" "}
 					was placed successfully. A confirmation was sent to {order.email}.
