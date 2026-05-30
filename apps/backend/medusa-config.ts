@@ -107,6 +107,22 @@ module.exports = defineConfig({
       },
     },
     {
+      resolve: "@medusajs/medusa/payment",
+      options: {
+        providers: [
+          {
+            // Custom Culqi payment provider. Resulting provider id: pp_culqi_culqi.
+            resolve: "./src/modules/culqi",
+            id: "culqi",
+            options: {
+              secretKey: process.env.CULQI_SECRET_KEY,
+              publicKey: process.env.CULQI_PUBLIC_KEY,
+            },
+          },
+        ],
+      },
+    },
+    {
       resolve: "@medusajs/medusa/notification",
       options: {
         providers: [

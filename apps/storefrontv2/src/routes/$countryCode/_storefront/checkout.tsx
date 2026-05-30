@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { convertToLocale } from "@/lib/money";
 import { AddressForm } from "@/modules/checkout/address-form";
+import { CulqiPayment } from "@/modules/checkout/culqi-payment";
 import { CartTotals } from "@/modules/common/cart-totals";
 import { useCheckoutViewModel } from "@/viewmodels/use-checkout-view-model";
 
@@ -123,13 +124,21 @@ function CheckoutPage() {
 			<aside className="h-fit">
 				<Card className="flex flex-col gap-4 p-6">
 					<CartTotals totals={cart} />
-					<Button
-						size="lg"
-						disabled={!state.canPlaceOrder || state.isPlacingOrder}
-						onClick={actions.placeOrder}
-					>
-						{state.isPlacingOrder ? "Placing order…" : "Place order"}
-					</Button>
+					{state.isCulqiSelected ? (
+						<CulqiPayment
+							isPaying={state.isPayingWithCulqi}
+							error={state.culqiError}
+							onPay={actions.payWithCulqi}
+						/>
+					) : (
+						<Button
+							size="lg"
+							disabled={!state.canPlaceOrder || state.isPlacingOrder}
+							onClick={actions.placeOrder}
+						>
+							{state.isPlacingOrder ? "Placing order…" : "Place order"}
+						</Button>
+					)}
 				</Card>
 			</aside>
 		</div>

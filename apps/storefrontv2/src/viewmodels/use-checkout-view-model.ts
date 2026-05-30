@@ -17,6 +17,10 @@ import { queryKeys } from "@/application/query-keys";
 import { regionQueryOptions } from "@/application/regions.queries";
 import { useUseCases } from "@/di/context";
 import { canPlaceOrder as canPlaceOrderRule } from "@/domain/cart/cart-rules";
+import { useCulqiCheckout } from "@/lib/hooks/use-culqi-checkout";
+
+/** Provider id of the custom Culqi provider (`pp_{identifier}_{id}`). */
+export const CULQI_PROVIDER_ID = "pp_culqi_culqi";
 
 export const addressSchema = z.object({
 	email: z.string().email("A valid email is required"),
@@ -97,6 +101,7 @@ export function useCheckoutViewModel({
 		initiatePaymentSession,
 		placeOrder,
 	} = useUseCases();
+	const { openCheckout } = useCulqiCheckout();
 	const queryClient = useQueryClient();
 	const invalidateCart = () =>
 		queryClient.invalidateQueries({ queryKey: queryKeys.cart() });
@@ -141,6 +146,42 @@ export function useCheckoutViewModel({
 	const placeOrderMut = useMutation({
 		mutationFn: placeOrder,
 		onSuccess: (result) => {
+			if (result.type === "order") {
+				onOrderPlaced(result.order.id);
+			}
+		},
+	});
+
+	/**
+	 * One-shot Culqi flow: open the hosted modal to tokenize the card, attach
+	 * the token to the payment session, then place the order. The charge is
+	 * created (and captured) by the backend provider during cart completion.
+	 */
+	const payWithCulqiMut = useMutation({
+		mutationFn: async () => {
+			if (!cart) {
+				throw new Error("Cart is not available");
+			}
+			const providerId =
+				cart.payment_collection?.payment_sessions?.find((session) =>
+					session.provider_id.includes("culqi"),
+				)?.provider_id ?? CULQI_PROVIDER_ID;
+
+			const token = await openCheckout({
+				amount: Math.round((cart.total ?? 0) * 100),
+				title: "Checkout",
+				order: cart.id,
+			});
+
+			await initiatePaymentSession({
+				cart,
+				data: { provider_id: providerId, data: { culqi_token: token } },
+			});
+
+			return placeOrder(cart.id);
+		},
+		onSuccess: (result) => {
+			invalidateCart();
 			if (result.type === "order") {
 				onOrderPlaced(result.order.id);
 			}
@@ -206,6 +247,9 @@ export function useCheckoutViewModel({
 			isInitiatingPayment: initiatePaymentMut.isPending,
 			isPlacingOrder: placeOrderMut.isPending,
 			canPlaceOrder: Boolean(activeSession) && canPlaceOrderRule(cart),
+			isCulqiSelected: Boolean(activeSession?.provider_id?.includes("culqi")),
+			isPayingWithCulqi: payWithCulqiMut.isPending,
+			culqiError: payWithCulqiMut.error?.message ?? null,
 		},
 		actions: {
 			selectShipping: (optionId: string) => {
@@ -225,6 +269,7 @@ export function useCheckoutViewModel({
 				}
 			},
 			placeOrder: () => placeOrderMut.mutate(undefined),
+			payWithCulqi: () => payWithCulqiMut.mutate(),
 			goToStep: (target: CheckoutStep) =>
 				dispatch({ type: "GO_TO", step: target }),
 		},
