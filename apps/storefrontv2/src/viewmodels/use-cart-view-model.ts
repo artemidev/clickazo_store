@@ -1,3 +1,4 @@
+import type { HttpTypes } from "@medusajs/types";
 import {
 	useMutation,
 	useQueryClient,
@@ -17,23 +18,25 @@ import { isCartEmpty } from "@/domain/cart/cart-rules";
 export function useCartViewModel() {
 	const { updateLineItem, removeLineItem, applyPromotions } = useUseCases();
 	const queryClient = useQueryClient();
-	const invalidate = () =>
-		queryClient.invalidateQueries({ queryKey: queryKeys.cart() });
+	// The cart commands return the updated cart, so seed the cache directly for
+	// instant, flicker-free updates instead of triggering a refetch.
+	const onCartUpdated = (cart: HttpTypes.StoreCart | null) =>
+		queryClient.setQueryData(queryKeys.cart(), cart);
 
 	const { data: cart } = useSuspenseQuery(cartQueryOptions());
 	const [promoCode, setPromoCode] = useState("");
 
 	const updateMut = useMutation({
 		mutationFn: updateLineItem,
-		onSuccess: invalidate,
+		onSuccess: onCartUpdated,
 	});
 	const removeMut = useMutation({
 		mutationFn: removeLineItem,
-		onSuccess: invalidate,
+		onSuccess: onCartUpdated,
 	});
 	const promoMut = useMutation({
 		mutationFn: applyPromotions,
-		onSuccess: invalidate,
+		onSuccess: onCartUpdated,
 	});
 
 	return {

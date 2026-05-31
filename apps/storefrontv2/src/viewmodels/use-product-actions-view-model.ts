@@ -22,20 +22,29 @@ function variantToOptionRecord(
 	return record;
 }
 
+type ProductActionsOptions = {
+	/** Called after a successful add-to-cart (e.g. to open the cart drawer). */
+	onAdded?: () => void;
+};
+
 /**
  * Product detail view model: owns variant/option selection and the add-to-cart
  * command (via the injected use case). Keeps the presentational component free
  * of business logic.
  */
-export function useProductActionsViewModel(product: HttpTypes.StoreProduct) {
+export function useProductActionsViewModel(
+	product: HttpTypes.StoreProduct,
+	config: ProductActionsOptions = {},
+) {
 	const countryCode = useCountryCode();
 	const { addToCart } = useUseCases();
 	const queryClient = useQueryClient();
 
 	const addToCartMut = useMutation({
 		mutationFn: addToCart,
-		onSuccess: () =>
-			queryClient.invalidateQueries({ queryKey: queryKeys.cart() }),
+		// Seed the cache with the returned cart so the drawer shows the new item
+		// instantly, with no refetch flicker.
+		onSuccess: (cart) => queryClient.setQueryData(queryKeys.cart(), cart),
 	});
 
 	const [options, setOptions] = useState<OptionRecord>(() => {
@@ -87,7 +96,7 @@ export function useProductActionsViewModel(product: HttpTypes.StoreProduct) {
 				addToCartMut.mutate(
 					{ variantId: selectedVariant.id, quantity: 1, countryCode },
 					{
-						onSuccess: () => toast.success("Added to cart"),
+						onSuccess: () => config.onAdded?.(),
 						onError: (error) =>
 							toast.error(
 								error instanceof Error ? error.message : "Failed to add",

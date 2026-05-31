@@ -1,12 +1,16 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { ShoppingBag } from "lucide-react";
 import { cartQueryOptions } from "@/application/cart.queries";
+import { shippingOptionsQueryOptions } from "@/application/checkout.queries";
 import { Eyebrow } from "@/components/brand/eyebrow";
 import { LocalizedLink } from "@/components/localized-link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { computeFreeShipping } from "@/domain/cart/free-shipping";
 import { CartLineItem } from "@/modules/cart/cart-line-item";
+import { FreeShippingBar } from "@/modules/cart/free-shipping-bar";
 import { CartTotals } from "@/modules/common/cart-totals";
 import { useCartViewModel } from "@/viewmodels/use-cart-view-model";
 
@@ -18,6 +22,11 @@ export const Route = createFileRoute("/$countryCode/_storefront/cart")({
 
 function CartPage() {
 	const { state, actions } = useCartViewModel();
+	const { data: shippingOptions } = useQuery({
+		...shippingOptionsQueryOptions(state.cart?.id ?? ""),
+		enabled: Boolean(state.cart?.id),
+	});
+	const freeShipping = computeFreeShipping(state.cart, shippingOptions);
 
 	if (state.isEmpty || !state.cart) {
 		return (
@@ -48,6 +57,11 @@ function CartPage() {
 						Cart
 					</h1>
 				</div>
+				{freeShipping ? (
+					<div className="mb-5 overflow-hidden rounded-lg border border-border">
+						<FreeShippingBar progress={freeShipping} />
+					</div>
+				) : null}
 				<div className="divide-y divide-border border-y border-border">
 					{cart.items
 						?.sort((a, b) =>

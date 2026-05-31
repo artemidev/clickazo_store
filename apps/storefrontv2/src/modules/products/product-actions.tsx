@@ -1,6 +1,7 @@
 import type { HttpTypes } from "@medusajs/types";
 import { Price } from "@/components/brand/price";
 import { Button } from "@/components/ui/button";
+import { useCartUI } from "@/lib/context/cart-ui";
 import { cn } from "@/lib/utils";
 import { useProductActionsViewModel } from "@/viewmodels/use-product-actions-view-model";
 
@@ -9,7 +10,10 @@ export function ProductActions({
 }: {
 	product: HttpTypes.StoreProduct;
 }) {
-	const { state, actions } = useProductActionsViewModel(product);
+	const { openCart } = useCartUI();
+	const { state, actions } = useProductActionsViewModel(product, {
+		onAdded: openCart,
+	});
 	const { options, selectedVariant, price, inStock, canAdd, isAdding } = state;
 	const isSale = price?.price_type === "sale";
 

@@ -36,6 +36,12 @@ export default async function initial_data_seed({
 
   const countries = ["gb", "de", "dk", "se", "fr", "es", "it"];
 
+  // Order subtotal (in the cart currency, major units) from which Standard
+  // Shipping becomes free. Read by the storefront's free-shipping bar via the
+  // shipping option's conditional price rule. Keep in sync with the
+  // `add-free-shipping` script.
+  const FREE_SHIPPING_THRESHOLD = 50;
+
   logger.info("Seeding store data...");
   const {
     result: [defaultSalesChannel],
@@ -229,6 +235,40 @@ export default async function initial_data_seed({
           {
             region_id: region.id,
             amount: 10,
+          },
+          // Free shipping once the cart item total reaches the threshold.
+          {
+            currency_code: "usd",
+            amount: 0,
+            rules: [
+              {
+                attribute: "item_total",
+                operator: "gte",
+                value: FREE_SHIPPING_THRESHOLD,
+              },
+            ],
+          },
+          {
+            currency_code: "eur",
+            amount: 0,
+            rules: [
+              {
+                attribute: "item_total",
+                operator: "gte",
+                value: FREE_SHIPPING_THRESHOLD,
+              },
+            ],
+          },
+          {
+            region_id: region.id,
+            amount: 0,
+            rules: [
+              {
+                attribute: "item_total",
+                operator: "gte",
+                value: FREE_SHIPPING_THRESHOLD,
+              },
+            ],
           },
         ],
         rules: [
