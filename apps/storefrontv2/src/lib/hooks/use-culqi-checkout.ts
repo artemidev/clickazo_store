@@ -131,12 +131,24 @@ export function useCulqiCheckout() {
 				throw new Error("Culqi Checkout failed to initialize");
 			}
 
+      console.log("Initializing Culqi Checkout with:", {
+        settings: { title, currency: "PEN", amount, order },
+        client: email ? { email } : undefined,
+        options: {
+          lang: "auto",
+          modal: true,
+          installments: false,
+          paymentMethods: { tarjeta: true },
+        },
+      });
+
 			const instance = new CulqiCheckout(publicKey, {
 				settings: { title, currency: "PEN", amount, order },
 				client: email ? { email } : undefined,
 				options: {
 					lang: "auto",
 					modal: true,
+          installments: false,
 					paymentMethods: { tarjeta: true },
 				},
 			});
@@ -146,11 +158,13 @@ export function useCulqiCheckout() {
 					if (instance.token?.id) {
 						const tokenId = instance.token.id;
 						instance.close();
+            console.log("Culqi Checkout success");
 						resolve(tokenId);
 					} else {
 						const message =
 							instance.error?.user_message ?? "Payment was not completed";
 						instance.close();
+            console.log("Culqi Checkout error:");
 						reject(new Error(message));
 					}
 				};

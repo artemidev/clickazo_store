@@ -161,8 +161,6 @@ module.exports = defineConfig({
           host: process.env.MEILISEARCH_HOST ?? "",
           apiKey: process.env.MEILISEARCH_API_KEY ?? "",
         },
-        // Multi-language search backed by Medusa's native Translation module.
-        // `separate-index` creates one index per language: products_en, products_es.
         i18n: {
           strategy: "separate-index",
           languages: ["en", "es"],

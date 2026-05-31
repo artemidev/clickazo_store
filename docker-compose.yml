@@ -27,9 +27,8 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: 'True'
     volumes:
       - pgadmin_data:/var/lib/pgadmin
-    depends_on:
-      postgres:
-        condition: service_healthy
+    networks:
+      - medusa_network
 
   # Redis
   redis:
