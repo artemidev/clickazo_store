@@ -10,7 +10,7 @@ const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [devtools(), tailwindcss(), tanstackStart(), viteReact()],
   server: {
-    allowedHosts: ['localhost', 'macbook'],
+    allowedHosts: ['localhost', 'macbook']
   }
 })
 

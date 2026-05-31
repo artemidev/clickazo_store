@@ -170,7 +170,6 @@ export function useCheckoutViewModel({
 			const token = await openCheckout({
 				amount: Math.round((cart.total ?? 0) * 100),
 				title: "Checkout",
-				order: cart.id,
 				email: cart.email ?? undefined,
 			});
 
