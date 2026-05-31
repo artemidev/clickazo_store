@@ -17,7 +17,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: atlas_backend_pgadmin
+    container_name: medusa_pgadmin
     restart: unless-stopped
     ports:
       - '5050:80'
