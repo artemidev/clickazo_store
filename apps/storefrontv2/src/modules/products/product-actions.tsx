@@ -3,7 +3,7 @@ import { Price } from "@/components/brand/price";
 import { Button } from "@/components/ui/button";
 import { useCartUI } from "@/lib/context/cart-ui";
 import { cn } from "@/lib/utils";
-import { useProductActionsViewModel } from "@/viewmodels/use-product-actions-view-model";
+import { useProductActionsViewModel } from "@/presentation/pages/product-detail/use-product-actions-view-model";
 
 export function ProductActions({
 	product,

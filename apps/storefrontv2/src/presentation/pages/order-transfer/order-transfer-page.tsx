@@ -1,7 +1,7 @@
 import { useParams } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useOrderTransferViewModel } from "@/viewmodels/use-order-transfer-view-model";
+import { useOrderTransferViewModel } from "./use-order-transfer-view-model";
 
 export function TransferPage() {
 	const { orderId, token } = useParams({ from: "/$countryCode/_storefront/order/$orderId/transfer/$token" });
