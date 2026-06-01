@@ -1,12 +1,7 @@
-import type { HttpTypes } from "@medusajs/types";
-import {
-	useMutation,
-	useQueryClient,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { useCacheActions } from "@/application/cache";
 import { cartQueryOptions } from "@/application/cart.queries";
-import { queryKeys } from "@/application/query-keys";
 import { useUseCases } from "@/di/context";
 import { isCartEmpty } from "@/domain/cart/cart-rules";
 
@@ -16,27 +11,27 @@ import { isCartEmpty } from "@/domain/cart/cart-rules";
  * `{ state, actions }` surface so the screen stays presentational.
  */
 export function useCartViewModel() {
-	const { updateLineItem, removeLineItem, applyPromotions } = useUseCases();
-	const queryClient = useQueryClient();
-	// The cart commands return the updated cart, so seed the cache directly for
-	// instant, flicker-free updates instead of triggering a refetch.
-	const onCartUpdated = (cart: HttpTypes.StoreCart | null) =>
-		queryClient.setQueryData(queryKeys.cart(), cart);
+	const useCases = useUseCases();
+	const cache = useCacheActions();
 
-	const { data: cart } = useSuspenseQuery(cartQueryOptions());
+	const cartQuery = useSuspenseQuery(cartQueryOptions());
+	const cart = cartQuery.data;
+
 	const [promoCode, setPromoCode] = useState("");
 
+	// The cart commands return the updated cart, so seed the cache directly for
+	// instant, flicker-free updates instead of triggering a refetch.
 	const updateMut = useMutation({
-		mutationFn: updateLineItem,
-		onSuccess: onCartUpdated,
+		mutationFn: useCases.updateLineItem,
+		onSuccess: cache.seedCart,
 	});
 	const removeMut = useMutation({
-		mutationFn: removeLineItem,
-		onSuccess: onCartUpdated,
+		mutationFn: useCases.removeLineItem,
+		onSuccess: cache.seedCart,
 	});
 	const promoMut = useMutation({
-		mutationFn: applyPromotions,
-		onSuccess: onCartUpdated,
+		mutationFn: useCases.applyPromotions,
+		onSuccess: cache.seedCart,
 	});
 
 	return {

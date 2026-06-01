@@ -1,92 +1,30 @@
-import type { HttpTypes } from "@medusajs/types";
 import { useForm } from "@tanstack/react-form";
-import {
-	useMutation,
-	useQuery,
-	useQueryClient,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useReducer } from "react";
-import { z } from "zod";
+import { useCacheActions } from "@/application/cache";
 import { cartQueryOptions } from "@/application/cart.queries";
 import {
 	paymentMethodsQueryOptions,
 	shippingOptionsQueryOptions,
 } from "@/application/checkout.queries";
-import { queryKeys } from "@/application/query-keys";
 import { regionQueryOptions } from "@/application/regions.queries";
 import { useUseCases } from "@/di/context";
 import { canPlaceOrder as canPlaceOrderRule } from "@/domain/cart/cart-rules";
+import {
+	type AddressFormValues,
+	addressSchema,
+} from "@/domain/checkout/address-schema";
+import {
+	isCulqiSession,
+	resolveCulqiProviderId,
+} from "@/domain/checkout/payment";
 import { useCulqiCheckout } from "@/lib/hooks/use-culqi-checkout";
-
-/** Provider id of the custom Culqi provider (`pp_{identifier}_{id}`). */
-export const CULQI_PROVIDER_ID = "pp_culqi_culqi";
-
-export const addressSchema = z.object({
-	email: z.string().email("A valid email is required"),
-	first_name: z.string().min(1, "Required"),
-	last_name: z.string().min(1, "Required"),
-	company: z.string().optional(),
-	address_1: z.string().min(1, "Required"),
-	postal_code: z.string().min(1, "Required"),
-	city: z.string().min(1, "Required"),
-	province: z.string().optional(),
-	country_code: z.string().min(1, "Required"),
-	phone: z.string().optional(),
-});
-
-export type AddressFormValues = z.infer<typeof addressSchema>;
-
-/**
- * Checkout is a multi-step flow, so its UI step lives in a reducer (the BLoC
- * event→state variant). The cart itself remains the source of truth in React
- * Query; the reducer only tracks which step is unlocked, seeded from the cart
- * on mount and advanced by command-success events.
- */
-export type CheckoutStep = "address" | "delivery" | "payment" | "review";
-
-const STEP_ORDER: CheckoutStep[] = ["address", "delivery", "payment", "review"];
-
-type CheckoutEvent =
-	| { type: "ADDRESS_SAVED" }
-	| { type: "SHIPPING_SAVED" }
-	| { type: "PAYMENT_SAVED" }
-	| { type: "GO_TO"; step: CheckoutStep };
-
-function checkoutReducer(
-	step: CheckoutStep,
-	event: CheckoutEvent,
-): CheckoutStep {
-	switch (event.type) {
-		case "ADDRESS_SAVED":
-			return "delivery";
-		case "SHIPPING_SAVED":
-			return "payment";
-		case "PAYMENT_SAVED":
-			return "review";
-		case "GO_TO":
-			return event.step;
-		default:
-			return step;
-	}
-}
-
-function deriveInitialStep(cart: HttpTypes.StoreCart | null): CheckoutStep {
-	if (
-		cart?.payment_collection?.payment_sessions?.some(
-			(session) => session.status === "pending",
-		)
-	) {
-		return "review";
-	}
-	if (cart?.shipping_methods?.length) {
-		return "payment";
-	}
-	if (cart?.shipping_address) {
-		return "delivery";
-	}
-	return "address";
-}
+import {
+	type CheckoutStep,
+	checkoutReducer,
+	deriveInitialStep,
+	isStepReached,
+} from "./checkout.machine";
 
 export function useCheckoutViewModel({
 	countryCode,
@@ -95,56 +33,50 @@ export function useCheckoutViewModel({
 	countryCode: string;
 	onOrderPlaced: (orderId: string) => void;
 }) {
-	const {
-		setCartAddresses,
-		setShippingMethod,
-		initiatePaymentSession,
-		placeOrder,
-	} = useUseCases();
-	const { openCheckout } = useCulqiCheckout();
-	const queryClient = useQueryClient();
-	const invalidateCart = () =>
-		queryClient.invalidateQueries({ queryKey: queryKeys.cart() });
+	const useCases = useUseCases();
+	const cache = useCacheActions();
+	const culqi = useCulqiCheckout();
 
-	const { data: cart } = useSuspenseQuery(cartQueryOptions());
-	const { data: region } = useSuspenseQuery(regionQueryOptions(countryCode));
+	const cartQuery = useSuspenseQuery(cartQueryOptions());
+	const cart = cartQuery.data;
 
-	const { data: shippingOptions } = useQuery({
+	const regionQuery = useSuspenseQuery(regionQueryOptions(countryCode));
+	const region = regionQuery.data;
+
+	const shippingOptionsQuery = useQuery({
 		...shippingOptionsQueryOptions(cart?.id ?? ""),
 		enabled: Boolean(cart?.id && cart?.shipping_address),
 	});
-	const { data: paymentMethods } = useQuery({
+	const paymentMethodsQuery = useQuery({
 		...paymentMethodsQueryOptions(region?.id ?? ""),
 		enabled: Boolean(region?.id),
 	});
 
 	const [step, dispatch] = useReducer(checkoutReducer, cart, deriveInitialStep);
-	const reached = (target: CheckoutStep) =>
-		STEP_ORDER.indexOf(step) >= STEP_ORDER.indexOf(target);
 
 	const setAddressesMut = useMutation({
-		mutationFn: setCartAddresses,
+		mutationFn: useCases.setCartAddresses,
 		onSuccess: () => {
-			invalidateCart();
+			cache.invalidateCart();
 			dispatch({ type: "ADDRESS_SAVED" });
 		},
 	});
 	const setShippingMut = useMutation({
-		mutationFn: setShippingMethod,
+		mutationFn: useCases.setShippingMethod,
 		onSuccess: () => {
-			invalidateCart();
+			cache.invalidateCart();
 			dispatch({ type: "SHIPPING_SAVED" });
 		},
 	});
 	const initiatePaymentMut = useMutation({
-		mutationFn: initiatePaymentSession,
+		mutationFn: useCases.initiatePaymentSession,
 		onSuccess: () => {
-			invalidateCart();
+			cache.invalidateCart();
 			dispatch({ type: "PAYMENT_SAVED" });
 		},
 	});
 	const placeOrderMut = useMutation({
-		mutationFn: placeOrder,
+		mutationFn: useCases.placeOrder,
 		onSuccess: (result) => {
 			if (result.type === "order") {
 				onOrderPlaced(result.order.id);
@@ -162,26 +94,23 @@ export function useCheckoutViewModel({
 			if (!cart) {
 				throw new Error("Cart is not available");
 			}
-			const providerId =
-				cart.payment_collection?.payment_sessions?.find((session) =>
-					session.provider_id.includes("culqi"),
-				)?.provider_id ?? CULQI_PROVIDER_ID;
+			const providerId = resolveCulqiProviderId(cart);
 
-			const token = await openCheckout({
+			const token = await culqi.openCheckout({
 				amount: Math.round((cart.total ?? 0) * 100),
 				title: "Checkout",
 				email: cart.email ?? undefined,
 			});
 
-			await initiatePaymentSession({
+			await useCases.initiatePaymentSession({
 				cart,
 				data: { provider_id: providerId, data: { culqi_token: token } },
 			});
 
-			return placeOrder(cart.id);
+			return useCases.placeOrder(cart.id);
 		},
 		onSuccess: (result) => {
-			invalidateCart();
+			cache.invalidateCart();
 			if (result.type === "order") {
 				onOrderPlaced(result.order.id);
 			}
@@ -234,20 +163,20 @@ export function useCheckoutViewModel({
 		state: {
 			cart,
 			region,
-			shippingOptions,
-			paymentMethods,
+			shippingOptions: shippingOptionsQuery.data,
+			paymentMethods: paymentMethodsQuery.data,
 			step,
 			addressForm,
 			selectedShippingId,
 			activeSession,
-			deliveryUnlocked: reached("delivery"),
-			paymentUnlocked: reached("payment"),
+			deliveryUnlocked: isStepReached(step, "delivery"),
+			paymentUnlocked: isStepReached(step, "payment"),
 			isSavingAddress: setAddressesMut.isPending,
 			isSavingShipping: setShippingMut.isPending,
 			isInitiatingPayment: initiatePaymentMut.isPending,
 			isPlacingOrder: placeOrderMut.isPending,
 			canPlaceOrder: Boolean(activeSession) && canPlaceOrderRule(cart),
-			isCulqiSelected: Boolean(activeSession?.provider_id?.includes("culqi")),
+			isCulqiSelected: isCulqiSession(activeSession),
 			isPayingWithCulqi: payWithCulqiMut.isPending,
 			culqiError: payWithCulqiMut.error?.message ?? null,
 		},

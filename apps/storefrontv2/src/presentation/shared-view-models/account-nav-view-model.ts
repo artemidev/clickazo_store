@@ -1,18 +1,15 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/application/query-keys";
+import { useMutation } from "@tanstack/react-query";
+import { useCacheActions } from "@/application/cache";
 import { useUseCases } from "@/di/context";
 
 /** Account navigation view model: exposes the signout command. */
 export function useAccountNavViewModel() {
-	const { signout } = useUseCases();
-	const queryClient = useQueryClient();
+	const useCases = useUseCases();
+	const cache = useCacheActions();
 
 	const signoutMut = useMutation({
-		mutationFn: signout,
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: queryKeys.customer() });
-			queryClient.invalidateQueries({ queryKey: queryKeys.cart() });
-		},
+		mutationFn: useCases.signout,
+		onSuccess: cache.invalidateSession,
 	});
 
 	return {

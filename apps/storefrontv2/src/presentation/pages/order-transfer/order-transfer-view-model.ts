@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { queryKeys } from "@/application/query-keys";
+import { useCacheActions } from "@/application/cache";
 import { useUseCases } from "@/di/context";
 
 /**
@@ -14,26 +14,24 @@ export function useOrderTransferViewModel({
 	orderId: string;
 	token: string;
 }) {
-	const { acceptTransferRequest, declineTransferRequest } = useUseCases();
-	const queryClient = useQueryClient();
-	const invalidateOrders = () =>
-		queryClient.invalidateQueries({ queryKey: queryKeys.orders.all() });
+	const useCases = useUseCases();
+	const cache = useCacheActions();
 
 	const [result, setResult] = useState<string | null>(null);
 
 	const acceptMut = useMutation({
-		mutationFn: acceptTransferRequest,
+		mutationFn: useCases.acceptTransferRequest,
 		onSuccess: (res) => {
-			invalidateOrders();
+			cache.invalidateOrders();
 			setResult(
 				res.success ? "Transfer accepted." : (res.error ?? "Failed to accept."),
 			);
 		},
 	});
 	const declineMut = useMutation({
-		mutationFn: declineTransferRequest,
+		mutationFn: useCases.declineTransferRequest,
 		onSuccess: (res) => {
-			invalidateOrders();
+			cache.invalidateOrders();
 			setResult(
 				res.success
 					? "Transfer declined."

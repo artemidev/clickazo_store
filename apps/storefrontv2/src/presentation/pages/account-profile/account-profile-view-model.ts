@@ -1,24 +1,22 @@
 import { useForm } from "@tanstack/react-form";
-import {
-	useMutation,
-	useQueryClient,
-	useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useCacheActions } from "@/application/cache";
 import { customerQueryOptions } from "@/application/customer.queries";
-import { queryKeys } from "@/application/query-keys";
 import { useUseCases } from "@/di/context";
+import { getErrorMessage } from "@/lib/utils";
 
 /** Profile view model: customer read + update form (TanStack Form). */
 export function useProfileViewModel() {
-	const { data: customer } = useSuspenseQuery(customerQueryOptions());
-	const { updateCustomer } = useUseCases();
-	const queryClient = useQueryClient();
+	const useCases = useUseCases();
+	const cache = useCacheActions();
+
+	const customerQuery = useSuspenseQuery(customerQueryOptions());
+	const customer = customerQuery.data;
 
 	const updateMut = useMutation({
-		mutationFn: updateCustomer,
-		onSuccess: () =>
-			queryClient.invalidateQueries({ queryKey: queryKeys.customer() }),
+		mutationFn: useCases.updateCustomer,
+		onSuccess: cache.invalidateCustomer,
 	});
 
 	const form = useForm({
@@ -36,7 +34,7 @@ export function useProfileViewModel() {
 				});
 				toast.success("Profile updated");
 			} catch (error) {
-				toast.error(error instanceof Error ? error.message : "Failed");
+				toast.error(getErrorMessage(error, "Failed"));
 			}
 		},
 	});

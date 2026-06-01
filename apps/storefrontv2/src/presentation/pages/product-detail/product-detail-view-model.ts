@@ -1,26 +1,16 @@
 import type { HttpTypes } from "@medusajs/types";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { queryKeys } from "@/application/query-keys";
+import { useCacheActions } from "@/application/cache";
 import { useUseCases } from "@/di/context";
 import { getProductPrice } from "@/domain/product/pricing";
+import {
+	type OptionRecord,
+	variantToOptionRecord,
+} from "@/domain/product/variant-options";
 import { useCountryCode } from "@/lib/hooks/use-country-code";
-
-type OptionRecord = Record<string, string | undefined>;
-
-/** Builds `{ [optionId]: value }` for a variant's selected option values. */
-function variantToOptionRecord(
-	variant: HttpTypes.StoreProductVariant,
-): OptionRecord {
-	const record: OptionRecord = {};
-	for (const value of variant.options ?? []) {
-		if (value.option_id) {
-			record[value.option_id] = value.value;
-		}
-	}
-	return record;
-}
+import { getErrorMessage } from "@/lib/utils";
 
 type ProductActionsOptions = {
 	/** Called after a successful add-to-cart (e.g. to open the cart drawer). */
@@ -37,14 +27,14 @@ export function useProductActionsViewModel(
 	config: ProductActionsOptions = {},
 ) {
 	const countryCode = useCountryCode();
-	const { addToCart } = useUseCases();
-	const queryClient = useQueryClient();
+	const useCases = useUseCases();
+	const cache = useCacheActions();
 
+	// Seed the cache with the returned cart so the drawer shows the new item
+	// instantly, with no refetch flicker.
 	const addToCartMut = useMutation({
-		mutationFn: addToCart,
-		// Seed the cache with the returned cart so the drawer shows the new item
-		// instantly, with no refetch flicker.
-		onSuccess: (cart) => queryClient.setQueryData(queryKeys.cart(), cart),
+		mutationFn: useCases.addToCart,
+		onSuccess: cache.seedCart,
 	});
 
 	const [options, setOptions] = useState<OptionRecord>(() => {
@@ -98,9 +88,7 @@ export function useProductActionsViewModel(
 					{
 						onSuccess: () => config.onAdded?.(),
 						onError: (error) =>
-							toast.error(
-								error instanceof Error ? error.message : "Failed to add",
-							),
+							toast.error(getErrorMessage(error, "Failed to add")),
 					},
 				);
 			},
