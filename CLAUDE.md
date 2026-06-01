@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-A pnpm + Turborepo monorepo for a direct-to-consumer ecommerce store: a **Medusa v2 backend** (`apps/backend`) and a **Next.js 15 App Router storefront** (`apps/storefront`). Both pin `@medusajs/*` at `2.15.3` — keep this version aligned across the two apps when upgrading.
+A pnpm + Turborepo monorepo for a direct-to-consumer ecommerce store: a **Medusa v2 backend** (`apps/backend`) and a **Next.js 15 App Router storefront** (`apps/storefront`). Both pin `@medusajs/*` at `2.15.3` — keep this version aligned across the two apps when upgrading. A newer **TanStack Start storefront** (`apps/storefrontv2`) is also under active development following a hexagonal/MVVM architecture (see "Storefrontv2 architecture" below).
 
 ## Commands
 
@@ -67,6 +67,20 @@ Next.js App Router. Routing is locale/region-prefixed: `app/[countryCode]/...`.
 
 Note: `next.config.js` sets `eslint.ignoreDuringBuilds` and `typescript.ignoreBuildErrors` — type/lint errors do not fail the storefront build, so run `pnpm lint` explicitly.
 
+## Storefrontv2 architecture (`apps/storefrontv2/src`)
+
+A **TanStack Start** storefront (TanStack Router file-based routing, Vitest, Biome, shadcn) organized in **hexagonal / MVVM layers**. The top-level folders *are* the architecture — keep new code inside the matching layer instead of adding new top-level buckets. The dependency rule points inward: `routes → presentation → application → domain`; `infrastructure` implements the application's ports; `di` is the composition root wiring them together.
+
+- `domain/` — pure business rules, schemas, and value objects (`auth`, `cart`, `checkout`, `customer`, `product`, `shared`). No imports from other layers.
+- `application/` — the use-case core. `ports/` (repository contracts), `use-cases/` (commands; factories taking `RepoDeps`), `queries/` (TanStack Query `queryOptions` read models — called directly from route loaders during SSR), plus `cache.ts` and `query-keys.ts`. Reads go through queries; **commands** go through DI → use case → repository.
+- `infrastructure/` — adapters. `medusa/` (SDK client + raw fetchers), `server/` (TanStack Start server functions), `adapters/` (port implementations), `medusa-error.ts`.
+- `presentation/` — all UI. `pages/<page>/` holds a `*-page.tsx` + colocated `*-view-model.ts` (and a `components/` subfolder for single-page components); `features/<domain>/` holds cross-page/feature components; `shared-view-models/`, `providers/`, `hooks/`, and app-shell `components/` (e.g. `localized-link`, error boundaries).
+- `design-system/` — domain-agnostic primitives: `ui/` (shadcn — see `components.json` aliases), `brand/`, `form/`. Must not import from `presentation`/`domain`.
+- `di/` — composition root (`container.ts`, `context.tsx`, `types.ts`). Only this layer imports `infrastructure/adapters`. View models pull commands via `useUseCases()`.
+- `shared/` — cross-cutting `env.ts` / `utils.ts`. `routes/` — TanStack file-based routes (framework-mandated location; keep thin, delegate to `presentation`).
+
+Path aliases: `@/*` and `#/*` → `src/*` (see `tsconfig.json`). Verify with `npx tsc --noEmit`, `npx vitest run`, and `npx biome check src`.
+
 ## Docker
 
 **Development** — `docker-compose.yml` brings up postgres (`:5432`), redis (`:6379`), the backend (`:9000`, admin HMR `:5173`), and the storefront (`:8000`). Both services build from `docker/dev.Dockerfile` (shared dev image), mount the repo, and run in dev mode. Entrypoints: `scripts/dev-backend.sh` (migrate + seed + `medusa develop`) and `scripts/dev-storefront.sh` (`next dev`).
@@ -95,5 +109,5 @@ Following Medusa's [worker mode guidance](https://docs.medusajs.com/learn/produc
 Product/category search is powered by `@rokmohar/medusa-plugin-meilisearch`, registered in `apps/backend/medusa-config.ts` (`plugins` array). It indexes into per-language indexes (`products_en`, `products_es`) via the `i18n: { strategy: "separate-index", languages: ["en","es"] }` option, and pulls translated fields from Medusa's **native Translation module** (`featureFlags.translation` + `@medusajs/medusa/translation`) through the transformers in `medusa-config.ts` (helper: `apps/backend/src/utils/translations.ts`).
 
 - **Indexing** is event-driven (plugin subscribers) plus a scheduled job (`meilisearch-products-index`) that runs a full sync on boot. To force a re-sync: `POST /admin/meilisearch/sync`.
-- **Storefront** searches via the plugin's store route `GET /store/meilisearch/products-hits` (no direct browser→Meilisearch access). The index language is derived from the locale cookie. Frontend code: `apps/storefrontv2/src/infrastructure/{medusa,server}/search.ts`, `application/search.queries.ts`, `modules/search/*`, and the `/$countryCode/_storefront/search` route.
+- **Storefront** searches via the plugin's store route `GET /store/meilisearch/products-hits` (no direct browser→Meilisearch access). The index language is derived from the locale cookie. Frontend code: `apps/storefrontv2/src/infrastructure/{medusa,server}/search.ts`, `application/queries/search.queries.ts`, the search UI (`presentation/features/search/search-box.tsx` + `presentation/pages/search/`), and the `/$countryCode/_storefront/search` route.
 - **Env vars** `MEILISEARCH_HOST` and `MEILISEARCH_API_KEY` are required on **both** the server and worker instances in production (the worker runs the indexing subscribers/job; the server serves the store route). In docker dev they point at the bundled `meilisearch` service (`docker-compose.yml`), which also includes a `meilisearch-ui` dashboard on `:24900`.
