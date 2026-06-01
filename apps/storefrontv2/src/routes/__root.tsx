@@ -22,7 +22,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 		meta: [
 			{ charSet: "utf-8" },
 			{ name: "viewport", content: "width=device-width, initial-scale=1" },
-			{ title: "Medusa Storefront" },
+			{ title: "Clickazo Store" },
 		],
 		links: [{ rel: "stylesheet", href: appCss }],
 	}),

@@ -13,6 +13,7 @@ import { Route as CountryCodeRouteRouteImport } from './routes/$countryCode/rout
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CountryCodeStorefrontRouteImport } from './routes/$countryCode/_storefront'
 import { Route as CountryCodeStorefrontIndexRouteImport } from './routes/$countryCode/_storefront/index'
+import { Route as DemoSentryTestingRouteImport } from './routes/demo/sentry.testing'
 import { Route as CountryCodeStorefrontStoreRouteImport } from './routes/$countryCode/_storefront/store'
 import { Route as CountryCodeStorefrontSearchRouteImport } from './routes/$countryCode/_storefront/search'
 import { Route as CountryCodeStorefrontCheckoutRouteImport } from './routes/$countryCode/_storefront/checkout'
@@ -49,6 +50,11 @@ const CountryCodeStorefrontIndexRoute =
     path: '/',
     getParentRoute: () => CountryCodeStorefrontRoute,
   } as any)
+const DemoSentryTestingRoute = DemoSentryTestingRouteImport.update({
+  id: '/demo/sentry/testing',
+  path: '/demo/sentry/testing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CountryCodeStorefrontStoreRoute =
   CountryCodeStorefrontStoreRouteImport.update({
     id: '/store',
@@ -148,6 +154,7 @@ export interface FileRoutesByFullPath {
   '/$countryCode/checkout': typeof CountryCodeStorefrontCheckoutRoute
   '/$countryCode/search': typeof CountryCodeStorefrontSearchRoute
   '/$countryCode/store': typeof CountryCodeStorefrontStoreRoute
+  '/demo/sentry/testing': typeof DemoSentryTestingRoute
   '/$countryCode/': typeof CountryCodeStorefrontIndexRoute
   '/$countryCode/account/addresses': typeof CountryCodeStorefrontAccountAddressesRoute
   '/$countryCode/account/profile': typeof CountryCodeStorefrontAccountProfileRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/$countryCode/checkout': typeof CountryCodeStorefrontCheckoutRoute
   '/$countryCode/search': typeof CountryCodeStorefrontSearchRoute
   '/$countryCode/store': typeof CountryCodeStorefrontStoreRoute
+  '/demo/sentry/testing': typeof DemoSentryTestingRoute
   '/$countryCode/account/addresses': typeof CountryCodeStorefrontAccountAddressesRoute
   '/$countryCode/account/profile': typeof CountryCodeStorefrontAccountProfileRoute
   '/$countryCode/categories/$': typeof CountryCodeStorefrontCategoriesSplatRoute
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   '/$countryCode/_storefront/checkout': typeof CountryCodeStorefrontCheckoutRoute
   '/$countryCode/_storefront/search': typeof CountryCodeStorefrontSearchRoute
   '/$countryCode/_storefront/store': typeof CountryCodeStorefrontStoreRoute
+  '/demo/sentry/testing': typeof DemoSentryTestingRoute
   '/$countryCode/_storefront/': typeof CountryCodeStorefrontIndexRoute
   '/$countryCode/_storefront/account/addresses': typeof CountryCodeStorefrontAccountAddressesRoute
   '/$countryCode/_storefront/account/profile': typeof CountryCodeStorefrontAccountProfileRoute
@@ -210,6 +219,7 @@ export interface FileRouteTypes {
     | '/$countryCode/checkout'
     | '/$countryCode/search'
     | '/$countryCode/store'
+    | '/demo/sentry/testing'
     | '/$countryCode/'
     | '/$countryCode/account/addresses'
     | '/$countryCode/account/profile'
@@ -229,6 +239,7 @@ export interface FileRouteTypes {
     | '/$countryCode/checkout'
     | '/$countryCode/search'
     | '/$countryCode/store'
+    | '/demo/sentry/testing'
     | '/$countryCode/account/addresses'
     | '/$countryCode/account/profile'
     | '/$countryCode/categories/$'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/$countryCode/_storefront/checkout'
     | '/$countryCode/_storefront/search'
     | '/$countryCode/_storefront/store'
+    | '/demo/sentry/testing'
     | '/$countryCode/_storefront/'
     | '/$countryCode/_storefront/account/addresses'
     | '/$countryCode/_storefront/account/profile'
@@ -265,6 +277,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CountryCodeRouteRoute: typeof CountryCodeRouteRouteWithChildren
+  DemoSentryTestingRoute: typeof DemoSentryTestingRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -296,6 +309,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/$countryCode/'
       preLoaderRoute: typeof CountryCodeStorefrontIndexRouteImport
       parentRoute: typeof CountryCodeStorefrontRoute
+    }
+    '/demo/sentry/testing': {
+      id: '/demo/sentry/testing'
+      path: '/demo/sentry/testing'
+      fullPath: '/demo/sentry/testing'
+      preLoaderRoute: typeof DemoSentryTestingRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/$countryCode/_storefront/store': {
       id: '/$countryCode/_storefront/store'
@@ -485,6 +505,7 @@ const CountryCodeRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CountryCodeRouteRoute: CountryCodeRouteRouteWithChildren,
+  DemoSentryTestingRoute: DemoSentryTestingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
