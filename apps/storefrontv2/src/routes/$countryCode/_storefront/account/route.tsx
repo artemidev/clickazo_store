@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { customerQueryOptions } from "@/application/customer.queries";
-import { Eyebrow } from "@/components/brand/eyebrow";
-import { AccountNav } from "@/modules/account/account-nav";
-import { AuthPanel } from "@/modules/account/auth-panel";
+import { customerQueryOptions } from "@/application/queries/customer.queries";
+import { Eyebrow } from "@/design-system/brand/eyebrow";
+import { AccountNav } from "@/presentation/features/account/account-nav";
+import { AuthPanel } from "@/presentation/features/account/auth-panel";
 
 export const Route = createFileRoute("/$countryCode/_storefront/account")({
 	loader: ({ context }) =>

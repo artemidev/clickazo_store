@@ -1,17 +1,19 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { productByHandleQueryOptions } from "@/application/products.queries";
-import { Eyebrow } from "@/components/brand/eyebrow";
+import { productByHandleQueryOptions } from "@/application/queries/products.queries";
+import { Eyebrow } from "@/design-system/brand/eyebrow";
 import {
 	Accordion,
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@/components/ui/accordion";
-import { ProductActions } from "@/modules/products/product-actions";
+} from "@/design-system/ui/accordion";
+import { ProductActions } from "@/presentation/pages/product-detail/components/product-actions";
 
 export function ProductPage() {
-	const { countryCode, handle } = useParams({ from: "/$countryCode/_storefront/products/$handle" });
+	const { countryCode, handle } = useParams({
+		from: "/$countryCode/_storefront/products/$handle",
+	});
 	const { data: product } = useSuspenseQuery(
 		productByHandleQueryOptions(handle, countryCode),
 	);

@@ -2,6 +2,7 @@ import type { HttpTypes } from "@medusajs/types";
 import { createServerFn } from "@tanstack/react-start";
 import { sdk } from "@/infrastructure/medusa/client";
 import { getRegionForCountry } from "@/infrastructure/medusa/regions";
+import { medusaError } from "@/infrastructure/medusa-error";
 import {
 	getCartId,
 	getLocale,
@@ -9,7 +10,6 @@ import {
 	removeCartId,
 	setCartId,
 } from "@/infrastructure/server/session";
-import { medusaError } from "@/lib/medusa-error";
 
 /**
  * Cart server functions. Ports `lib/data/cart.ts`. Cache invalidation that the

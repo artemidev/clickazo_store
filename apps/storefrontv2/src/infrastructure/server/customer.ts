@@ -1,6 +1,7 @@
 import type { HttpTypes } from "@medusajs/types";
 import { createServerFn } from "@tanstack/react-start";
 import { sdk } from "@/infrastructure/medusa/client";
+import { medusaError } from "@/infrastructure/medusa-error";
 import {
 	getCartId,
 	getRequestHeaders,
@@ -8,7 +9,6 @@ import {
 	removeCartId,
 	setAuthToken,
 } from "@/infrastructure/server/session";
-import { medusaError } from "@/lib/medusa-error";
 
 /**
  * Customer + auth server functions. Ports `lib/data/customer.ts`, replacing the

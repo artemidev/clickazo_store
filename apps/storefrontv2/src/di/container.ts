@@ -1,7 +1,3 @@
-import { serverCartRepository } from "@/infrastructure/adapters/server-cart-repository";
-import { serverCustomerRepository } from "@/infrastructure/adapters/server-customer-repository";
-import { serverLocaleRepository } from "@/infrastructure/adapters/server-locale-repository";
-import { serverOrderRepository } from "@/infrastructure/adapters/server-order-repository";
 import {
 	makeAddToCartUseCase,
 	makeApplyPromotionsUseCase,
@@ -12,7 +8,7 @@ import {
 	makeSetShippingMethodUseCase,
 	makeUpdateCartUseCase,
 	makeUpdateLineItemUseCase,
-} from "@/usecases/cart";
+} from "@/application/use-cases/cart";
 import {
 	makeAddCustomerAddressUseCase,
 	makeDeleteCustomerAddressUseCase,
@@ -21,13 +17,17 @@ import {
 	makeSignupUseCase,
 	makeUpdateCustomerAddressUseCase,
 	makeUpdateCustomerUseCase,
-} from "@/usecases/customer";
-import { makeUpdateLocaleUseCase } from "@/usecases/locale";
+} from "@/application/use-cases/customer";
+import { makeUpdateLocaleUseCase } from "@/application/use-cases/locale";
 import {
 	makeAcceptTransferRequestUseCase,
 	makeCreateTransferRequestUseCase,
 	makeDeclineTransferRequestUseCase,
-} from "@/usecases/order";
+} from "@/application/use-cases/order";
+import { serverCartRepository } from "@/infrastructure/adapters/server-cart-repository";
+import { serverCustomerRepository } from "@/infrastructure/adapters/server-customer-repository";
+import { serverLocaleRepository } from "@/infrastructure/adapters/server-locale-repository";
+import { serverOrderRepository } from "@/infrastructure/adapters/server-order-repository";
 import type { RepoDeps, Repositories } from "./types";
 
 /**

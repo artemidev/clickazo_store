@@ -1,13 +1,18 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
-import { orderQueryOptions } from "@/application/orders.queries";
-import { LocalizedLink } from "@/components/localized-link";
-import { Card } from "@/components/ui/card";
-import { CartTotals } from "@/modules/common/cart-totals";
-import { OrderItems, orderToTotals } from "@/modules/order/order-items";
+import { orderQueryOptions } from "@/application/queries/orders.queries";
+import { Card } from "@/design-system/ui/card";
+import { LocalizedLink } from "@/presentation/components/localized-link";
+import { CartTotals } from "@/presentation/features/common/cart-totals";
+import {
+	OrderItems,
+	orderToTotals,
+} from "@/presentation/features/order/order-items";
 
 export function OrderDetailPage() {
-	const { orderId } = useParams({ from: "/$countryCode/_storefront/account/orders/$orderId" });
+	const { orderId } = useParams({
+		from: "/$countryCode/_storefront/account/orders/$orderId",
+	});
 	const { data: order } = useSuspenseQuery(orderQueryOptions(orderId));
 
 	return (

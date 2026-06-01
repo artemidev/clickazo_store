@@ -1,5 +1,5 @@
 import type { HttpTypes } from "@medusajs/types";
-import { convertToLocale } from "@/lib/money";
+import { convertToLocale } from "@/domain/shared/money";
 
 export type VariantPrice = {
 	calculated_price_number: number;

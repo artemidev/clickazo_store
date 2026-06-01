@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { collectionByHandleQueryOptions } from "@/application/catalog.queries";
-import { productsListQueryOptions } from "@/application/products.queries";
+import { collectionByHandleQueryOptions } from "@/application/queries/catalog.queries";
+import { productsListQueryOptions } from "@/application/queries/products.queries";
 import { CollectionPage } from "@/presentation/pages/collection-detail/collection-detail-page";
 
 export const Route = createFileRoute(

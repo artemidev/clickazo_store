@@ -1,10 +1,10 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import { cartQueryOptions } from "@/application/cart.queries";
-import { Toaster } from "@/components/ui/sonner";
-import { CartUIProvider } from "@/lib/context/cart-ui";
-import { CartSheet } from "@/modules/cart/cart-sheet";
-import { Footer } from "@/modules/layout/footer";
-import { Header } from "@/modules/layout/header";
+import { cartQueryOptions } from "@/application/queries/cart.queries";
+import { Toaster } from "@/design-system/ui/sonner";
+import { CartSheet } from "@/presentation/features/cart/cart-sheet";
+import { Footer } from "@/presentation/features/layout/footer";
+import { Header } from "@/presentation/features/layout/header";
+import { CartUIProvider } from "@/presentation/providers/cart-ui";
 
 /** Main shopping layout: header + content + footer + global cart drawer. */
 export const Route = createFileRoute("/$countryCode/_storefront")({

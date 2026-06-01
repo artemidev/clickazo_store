@@ -1,10 +1,12 @@
 import { useParams } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Button } from "@/design-system/ui/button";
+import { Card } from "@/design-system/ui/card";
 import { useOrderTransferViewModel } from "./order-transfer-view-model";
 
 export function TransferPage() {
-	const { orderId, token } = useParams({ from: "/$countryCode/_storefront/order/$orderId/transfer/$token" });
+	const { orderId, token } = useParams({
+		from: "/$countryCode/_storefront/order/$orderId/transfer/$token",
+	});
 	const { state, actions } = useOrderTransferViewModel({ orderId, token });
 
 	return (
@@ -15,7 +17,9 @@ export function TransferPage() {
 				</h1>
 				<p className="text-muted-foreground">
 					Accept or decline the request to transfer order{" "}
-					<span className="font-mono font-bold text-foreground">#{orderId}</span>{" "}
+					<span className="font-mono font-bold text-foreground">
+						#{orderId}
+					</span>{" "}
 					to your account.
 				</p>
 

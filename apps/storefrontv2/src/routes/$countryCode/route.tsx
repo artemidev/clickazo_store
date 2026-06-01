@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { regionQueryOptions } from "@/application/regions.queries";
+import { regionQueryOptions } from "@/application/queries/regions.queries";
 
 /**
  * Region layout. Ensures the `:countryCode` maps to a real Medusa region

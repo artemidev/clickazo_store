@@ -7,9 +7,9 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { DefaultCatchBoundary } from "../components/default-catch-boundary";
-import { NotFound } from "../components/not-found";
-import { ThemeProvider } from "../components/theme-provider";
+import { DefaultCatchBoundary } from "@/presentation/components/default-catch-boundary";
+import { NotFound } from "@/presentation/components/not-found";
+import { ThemeProvider } from "@/presentation/providers/theme-provider";
 import { DependencyProvider } from "../di/context";
 import appCss from "../styles.css?url";
 

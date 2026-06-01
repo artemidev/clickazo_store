@@ -1,15 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { ShoppingBag } from "lucide-react";
-import { shippingOptionsQueryOptions } from "@/application/checkout.queries";
-import { Eyebrow } from "@/components/brand/eyebrow";
-import { LocalizedLink } from "@/components/localized-link";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { shippingOptionsQueryOptions } from "@/application/queries/checkout.queries";
+import { Eyebrow } from "@/design-system/brand/eyebrow";
+import { Button } from "@/design-system/ui/button";
+import { Card } from "@/design-system/ui/card";
+import { Input } from "@/design-system/ui/input";
 import { computeFreeShipping } from "@/domain/cart/free-shipping";
-import { CartLineItem } from "@/modules/cart/cart-line-item";
-import { FreeShippingBar } from "@/modules/cart/free-shipping-bar";
-import { CartTotals } from "@/modules/common/cart-totals";
+import { LocalizedLink } from "@/presentation/components/localized-link";
+import { CartLineItem } from "@/presentation/features/cart/cart-line-item";
+import { FreeShippingBar } from "@/presentation/features/cart/free-shipping-bar";
+import { CartTotals } from "@/presentation/features/common/cart-totals";
 import { useCartViewModel } from "./cart-view-model";
 
 export function CartPage() {
@@ -26,7 +26,9 @@ export function CartPage() {
 				<div className="flex size-16 items-center justify-center rounded-full bg-surface-inset text-muted-foreground">
 					<ShoppingBag className="size-7" />
 				</div>
-				<h1 className="text-h4 font-bold text-foreground">Your cart is empty</h1>
+				<h1 className="text-h4 font-bold text-foreground">
+					Your cart is empty
+				</h1>
 				<p className="text-muted-foreground">
 					Looks like you haven't added anything yet.
 				</p>

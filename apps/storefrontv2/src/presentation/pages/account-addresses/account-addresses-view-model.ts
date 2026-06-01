@@ -3,14 +3,14 @@ import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useCacheActions } from "@/application/cache";
-import { customerQueryOptions } from "@/application/customer.queries";
-import { regionQueryOptions } from "@/application/regions.queries";
+import { customerQueryOptions } from "@/application/queries/customer.queries";
+import { regionQueryOptions } from "@/application/queries/regions.queries";
 import { useUseCases } from "@/di/context";
 import {
 	type AddressBookValues,
 	addressBookSchema,
 } from "@/domain/customer/address-book-schema";
-import { getErrorMessage } from "@/lib/utils";
+import { getErrorMessage } from "@/shared/utils";
 
 /** Address-book view model: customer addresses + add/delete commands + form. */
 export function useAddressesViewModel(countryCode: string) {

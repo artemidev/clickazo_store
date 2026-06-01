@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { productsListQueryOptions } from "@/application/products.queries";
+import { productsListQueryOptions } from "@/application/queries/products.queries";
 import { HomePage } from "@/presentation/pages/home/home-page";
 
 export const Route = createFileRoute("/$countryCode/_storefront/")({

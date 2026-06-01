@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ordersListQueryOptions } from "@/application/orders.queries";
-import { LocalizedLink } from "@/components/localized-link";
-import { Card } from "@/components/ui/card";
-import { convertToLocale } from "@/lib/money";
+import { ordersListQueryOptions } from "@/application/queries/orders.queries";
+import { Card } from "@/design-system/ui/card";
+import { convertToLocale } from "@/domain/shared/money";
+import { LocalizedLink } from "@/presentation/components/localized-link";
 
 export function OrdersPage() {
 	const { data: orders } = useSuspenseQuery(ordersListQueryOptions());

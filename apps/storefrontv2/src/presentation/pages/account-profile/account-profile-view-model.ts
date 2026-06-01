@@ -2,9 +2,9 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useCacheActions } from "@/application/cache";
-import { customerQueryOptions } from "@/application/customer.queries";
+import { customerQueryOptions } from "@/application/queries/customer.queries";
 import { useUseCases } from "@/di/context";
-import { getErrorMessage } from "@/lib/utils";
+import { getErrorMessage } from "@/shared/utils";
 
 /** Profile view model: customer read + update form (TanStack Form). */
 export function useProfileViewModel() {

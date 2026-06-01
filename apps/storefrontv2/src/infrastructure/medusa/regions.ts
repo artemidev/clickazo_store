@@ -1,6 +1,6 @@
 import type { HttpTypes } from "@medusajs/types";
 import { sdk } from "@/infrastructure/medusa/client";
-import { env } from "@/lib/env";
+import { env } from "@/shared/env";
 
 /**
  * Medusa region adapter (plain, server-side). Holds the country -> region map

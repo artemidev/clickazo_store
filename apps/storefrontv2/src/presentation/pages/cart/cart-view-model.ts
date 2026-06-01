@@ -1,7 +1,7 @@
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { useCacheActions } from "@/application/cache";
-import { cartQueryOptions } from "@/application/cart.queries";
+import { cartQueryOptions } from "@/application/queries/cart.queries";
 import { useUseCases } from "@/di/context";
 import { isCartEmpty } from "@/domain/cart/cart-rules";
 

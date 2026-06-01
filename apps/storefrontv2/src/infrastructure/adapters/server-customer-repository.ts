@@ -1,3 +1,4 @@
+import type { CustomerRepository } from "@/application/ports/customer-repository";
 import {
 	addCustomerAddress,
 	deleteCustomerAddress,
@@ -7,7 +8,6 @@ import {
 	updateCustomer,
 	updateCustomerAddress,
 } from "@/infrastructure/server/customer";
-import type { CustomerRepository } from "@/ports/customer-repository";
 
 /** Server-function-backed CustomerRepository. */
 export const serverCustomerRepository: CustomerRepository = {

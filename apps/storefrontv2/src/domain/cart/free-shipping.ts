@@ -26,9 +26,7 @@ export type FreeShippingProgress = {
 
 type PriceRule = NonNullable<HttpTypes.StorePrice["price_rules"]>[number];
 
-function findItemTotalRule(
-	price: HttpTypes.StorePrice,
-): PriceRule | undefined {
+function findItemTotalRule(price: HttpTypes.StorePrice): PriceRule | undefined {
 	return (price.price_rules ?? []).find(
 		(rule) => rule.attribute === "item_total",
 	);

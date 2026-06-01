@@ -2,10 +2,10 @@ import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import { productSearchQueryOptions } from "@/application/search.queries";
-import { Eyebrow } from "@/components/brand/eyebrow";
-import { Input } from "@/components/ui/input";
-import { SearchHitCard } from "@/modules/search/search-hit-card";
+import { productSearchQueryOptions } from "@/application/queries/search.queries";
+import { Eyebrow } from "@/design-system/brand/eyebrow";
+import { Input } from "@/design-system/ui/input";
+import { SearchHitCard } from "@/presentation/pages/search/components/search-hit-card";
 
 const routeApi = getRouteApi("/$countryCode/_storefront/search");
 

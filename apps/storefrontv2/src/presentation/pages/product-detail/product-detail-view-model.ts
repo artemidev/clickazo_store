@@ -9,8 +9,8 @@ import {
 	type OptionRecord,
 	variantToOptionRecord,
 } from "@/domain/product/variant-options";
-import { useCountryCode } from "@/lib/hooks/use-country-code";
-import { getErrorMessage } from "@/lib/utils";
+import { useCountryCode } from "@/presentation/hooks/use-country-code";
+import { getErrorMessage } from "@/shared/utils";
 
 type ProductActionsOptions = {
 	/** Called after a successful add-to-cart (e.g. to open the cart drawer). */

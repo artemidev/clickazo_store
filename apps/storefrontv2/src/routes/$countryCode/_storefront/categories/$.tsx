@@ -1,6 +1,6 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { categoryByHandleQueryOptions } from "@/application/catalog.queries";
-import { productsListQueryOptions } from "@/application/products.queries";
+import { categoryByHandleQueryOptions } from "@/application/queries/catalog.queries";
+import { productsListQueryOptions } from "@/application/queries/products.queries";
 import { CategoryPage } from "@/presentation/pages/category/category-page";
 
 export const Route = createFileRoute("/$countryCode/_storefront/categories/$")({

@@ -1,10 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { productsListQueryOptions } from "@/application/products.queries";
+import { productsListQueryOptions } from "@/application/queries/products.queries";
 import type { SortOptions } from "@/domain/product/sort";
 import { StorePage } from "@/presentation/pages/store/store-page";
 
 export const Route = createFileRoute("/$countryCode/_storefront/store")({
-	validateSearch: (search: Record<string, unknown>): { page: number; sortBy: SortOptions } => ({
+	validateSearch: (
+		search: Record<string, unknown>,
+	): { page: number; sortBy: SortOptions } => ({
 		page: Number(search.page ?? 1) || 1,
 		sortBy: (search.sortBy as SortOptions) ?? "created_at",
 	}),

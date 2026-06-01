@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import { resolveCountryCode } from "@/infrastructure/server/regions";
-import { env } from "@/lib/env";
+import { env } from "@/shared/env";
 
 /**
  * Root entry. Resolves the best country code (cookie/default/first region) and

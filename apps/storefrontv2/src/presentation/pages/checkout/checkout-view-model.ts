@@ -2,12 +2,12 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useReducer } from "react";
 import { useCacheActions } from "@/application/cache";
-import { cartQueryOptions } from "@/application/cart.queries";
+import { cartQueryOptions } from "@/application/queries/cart.queries";
 import {
 	paymentMethodsQueryOptions,
 	shippingOptionsQueryOptions,
-} from "@/application/checkout.queries";
-import { regionQueryOptions } from "@/application/regions.queries";
+} from "@/application/queries/checkout.queries";
+import { regionQueryOptions } from "@/application/queries/regions.queries";
 import { useUseCases } from "@/di/context";
 import { canPlaceOrder as canPlaceOrderRule } from "@/domain/cart/cart-rules";
 import {
@@ -18,7 +18,7 @@ import {
 	isCulqiSession,
 	resolveCulqiProviderId,
 } from "@/domain/checkout/payment";
-import { useCulqiCheckout } from "@/lib/hooks/use-culqi-checkout";
+import { useCulqiCheckout } from "@/presentation/hooks/use-culqi-checkout";
 import {
 	type CheckoutStep,
 	checkoutReducer,

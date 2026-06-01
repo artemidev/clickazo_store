@@ -10,7 +10,7 @@ import {
 	type SignupFormValues,
 	signupSchema,
 } from "@/domain/auth/auth-schemas";
-import { getErrorMessage } from "@/lib/utils";
+import { getErrorMessage } from "@/shared/utils";
 
 /**
  * Auth view model: owns the login + signup TanStack Forms, the active tab and

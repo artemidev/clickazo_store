@@ -1,3 +1,4 @@
+import type { CartRepository } from "@/application/ports/cart-repository";
 import {
 	addToCart,
 	applyPromotions,
@@ -11,7 +12,6 @@ import {
 	updateLineItem,
 } from "@/infrastructure/server/cart";
 import { initiatePaymentSession } from "@/infrastructure/server/payment";
-import type { CartRepository } from "@/ports/cart-repository";
 
 /**
  * Server-function-backed CartRepository. Each method hides the `{ data }`

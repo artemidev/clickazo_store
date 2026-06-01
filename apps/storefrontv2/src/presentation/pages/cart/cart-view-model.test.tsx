@@ -3,10 +3,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
+import type { CartRepository } from "@/application/ports/cart-repository";
 import { queryKeys } from "@/application/query-keys";
 import { buildContainer } from "@/di/container";
 import { DependencyProvider } from "@/di/context";
-import type { CartRepository } from "@/ports/cart-repository";
 import { useCartViewModel } from "./cart-view-model";
 
 /**

@@ -1,16 +1,18 @@
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { convertToLocale } from "@/lib/money";
-import { AddressForm } from "@/modules/checkout/address-form";
-import { CulqiPayment } from "@/modules/checkout/culqi-payment";
-import { CartTotals } from "@/modules/common/cart-totals";
+import { Button } from "@/design-system/ui/button";
+import { Card } from "@/design-system/ui/card";
+import { Label } from "@/design-system/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/design-system/ui/radio-group";
+import { convertToLocale } from "@/domain/shared/money";
+import { CartTotals } from "@/presentation/features/common/cart-totals";
+import { AddressForm } from "@/presentation/pages/checkout/components/address-form";
+import { CulqiPayment } from "@/presentation/pages/checkout/components/culqi-payment";
 import { useCheckoutViewModel } from "./checkout-view-model";
 
 export function CheckoutPage() {
-	const { countryCode } = useParams({ from: "/$countryCode/_storefront/checkout" });
+	const { countryCode } = useParams({
+		from: "/$countryCode/_storefront/checkout",
+	});
 	const navigate = useNavigate();
 
 	const { state, actions } = useCheckoutViewModel({

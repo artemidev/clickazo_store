@@ -1,11 +1,11 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
-import { productsListQueryOptions } from "@/application/products.queries";
-import { Eyebrow } from "@/components/brand/eyebrow";
-import { LocalizedLink } from "@/components/localized-link";
-import { Button } from "@/components/ui/button";
-import { ProductCard } from "@/modules/products/product-card";
+import { productsListQueryOptions } from "@/application/queries/products.queries";
+import { Eyebrow } from "@/design-system/brand/eyebrow";
+import { Button } from "@/design-system/ui/button";
+import { LocalizedLink } from "@/presentation/components/localized-link";
+import { ProductCard } from "@/presentation/features/products/product-card";
 
 export function HomePage() {
 	const { countryCode } = useParams({ from: "/$countryCode/_storefront/" });

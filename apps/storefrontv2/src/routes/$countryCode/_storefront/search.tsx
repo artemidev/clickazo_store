@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { productSearchQueryOptions } from "@/application/search.queries";
+import { productSearchQueryOptions } from "@/application/queries/search.queries";
 import { SearchPage } from "@/presentation/pages/search/search-page";
 
 export const Route = createFileRoute("/$countryCode/_storefront/search")({

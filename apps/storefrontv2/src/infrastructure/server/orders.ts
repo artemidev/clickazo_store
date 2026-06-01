@@ -1,8 +1,8 @@
 import type { HttpTypes } from "@medusajs/types";
 import { createServerFn } from "@tanstack/react-start";
 import { sdk } from "@/infrastructure/medusa/client";
+import { medusaError } from "@/infrastructure/medusa-error";
 import { getRequestHeaders } from "@/infrastructure/server/session";
-import { medusaError } from "@/lib/medusa-error";
 
 export const retrieveOrder = createServerFn({ method: "GET", strict: false })
 	.inputValidator((id: string) => id)

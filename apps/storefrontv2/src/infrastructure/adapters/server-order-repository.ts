@@ -1,9 +1,9 @@
+import type { OrderRepository } from "@/application/ports/order-repository";
 import {
 	acceptTransferRequest,
 	createTransferRequest,
 	declineTransferRequest,
 } from "@/infrastructure/server/orders";
-import type { OrderRepository } from "@/ports/order-repository";
 
 /** Server-function-backed OrderRepository (transfer-request commands only). */
 export const serverOrderRepository: OrderRepository = {

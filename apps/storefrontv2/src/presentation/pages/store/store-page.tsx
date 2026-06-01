@@ -1,17 +1,17 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
-import { productsListQueryOptions } from "@/application/products.queries";
-import { Button } from "@/components/ui/button";
+import { productsListQueryOptions } from "@/application/queries/products.queries";
+import { Eyebrow } from "@/design-system/brand/eyebrow";
+import { Button } from "@/design-system/ui/button";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import { Eyebrow } from "@/components/brand/eyebrow";
+} from "@/design-system/ui/select";
 import { type SortOptions, sortOptions } from "@/domain/product/sort";
-import { ProductCard } from "@/modules/products/product-card";
+import { ProductCard } from "@/presentation/features/products/product-card";
 
 const routeApi = getRouteApi("/$countryCode/_storefront/store");
 const PAGE_SIZE = 12;

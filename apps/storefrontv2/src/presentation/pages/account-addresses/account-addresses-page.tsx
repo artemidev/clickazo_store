@@ -1,20 +1,22 @@
-import { Trash2 } from "lucide-react";
 import { useParams } from "@tanstack/react-router";
-import { TextField } from "@/components/form/text-field";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { Trash2 } from "lucide-react";
+import { TextField } from "@/design-system/form/text-field";
+import { Button } from "@/design-system/ui/button";
+import { Card } from "@/design-system/ui/card";
+import { Label } from "@/design-system/ui/label";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@/design-system/ui/select";
 import { useAddressesViewModel } from "./account-addresses-view-model";
 
 export function AddressesPage() {
-	const { countryCode } = useParams({ from: "/$countryCode/_storefront/account/addresses" });
+	const { countryCode } = useParams({
+		from: "/$countryCode/_storefront/account/addresses",
+	});
 	const { state, actions } = useAddressesViewModel(countryCode);
 	const { region, form } = state;
 

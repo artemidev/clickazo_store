@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { orderQueryOptions } from "@/application/orders.queries";
+import { orderQueryOptions } from "@/application/queries/orders.queries";
 import { OrderDetailPage } from "@/presentation/pages/order-detail/order-detail-page";
 
 export const Route = createFileRoute(

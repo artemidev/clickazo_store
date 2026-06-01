@@ -1,8 +1,8 @@
-import { TextField } from "@/components/form/text-field";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { TextField } from "@/design-system/form/text-field";
+import { Button } from "@/design-system/ui/button";
+import { Card } from "@/design-system/ui/card";
+import { Input } from "@/design-system/ui/input";
+import { Label } from "@/design-system/ui/label";
 import { useProfileViewModel } from "./account-profile-view-model";
 
 export function ProfilePage() {

@@ -1,5 +1,5 @@
 import Medusa from "@medusajs/js-sdk";
-import { env } from "@/lib/env";
+import { env } from "@/shared/env";
 
 /**
  * The single Medusa JS SDK instance.

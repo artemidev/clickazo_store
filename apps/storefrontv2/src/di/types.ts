@@ -1,7 +1,7 @@
-import type { CartRepository } from "@/ports/cart-repository";
-import type { CustomerRepository } from "@/ports/customer-repository";
-import type { LocaleRepository } from "@/ports/locale-repository";
-import type { OrderRepository } from "@/ports/order-repository";
+import type { CartRepository } from "@/application/ports/cart-repository";
+import type { CustomerRepository } from "@/application/ports/customer-repository";
+import type { LocaleRepository } from "@/application/ports/locale-repository";
+import type { OrderRepository } from "@/application/ports/order-repository";
 
 /** The set of repository ports the app depends on. */
 export interface Repositories {

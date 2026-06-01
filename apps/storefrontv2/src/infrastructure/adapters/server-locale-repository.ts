@@ -1,5 +1,5 @@
+import type { LocaleRepository } from "@/application/ports/locale-repository";
 import { updateLocale } from "@/infrastructure/server/locales";
-import type { LocaleRepository } from "@/ports/locale-repository";
 
 /** Server-function-backed LocaleRepository. */
 export const serverLocaleRepository: LocaleRepository = {
