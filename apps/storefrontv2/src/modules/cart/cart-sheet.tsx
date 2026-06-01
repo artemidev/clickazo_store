@@ -16,7 +16,7 @@ import {
 import { computeFreeShipping } from "@/domain/cart/free-shipping";
 import { useCartUI } from "@/lib/context/cart-ui";
 import { convertToLocale } from "@/lib/money";
-import { useCartViewModel } from "@/presentation/pages/cart/use-cart-view-model";
+import { useCartViewModel } from "@/presentation/pages/cart/cart-view-model";
 import { CartLineItem } from "./cart-line-item";
 import { FreeShippingBar } from "./free-shipping-bar";
 

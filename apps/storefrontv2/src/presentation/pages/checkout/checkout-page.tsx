@@ -7,7 +7,7 @@ import { convertToLocale } from "@/lib/money";
 import { AddressForm } from "@/modules/checkout/address-form";
 import { CulqiPayment } from "@/modules/checkout/culqi-payment";
 import { CartTotals } from "@/modules/common/cart-totals";
-import { useCheckoutViewModel } from "./use-checkout-view-model";
+import { useCheckoutViewModel } from "./checkout-view-model";
 
 export function CheckoutPage() {
 	const { countryCode } = useParams({ from: "/$countryCode/_storefront/checkout" });

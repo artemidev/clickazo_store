@@ -7,7 +7,7 @@ import { queryKeys } from "@/application/query-keys";
 import { buildContainer } from "@/di/container";
 import { DependencyProvider } from "@/di/context";
 import type { CartRepository } from "@/ports/cart-repository";
-import { useCartViewModel } from "./use-cart-view-model";
+import { useCartViewModel } from "./cart-view-model";
 
 /**
  * View-model test: a fake CartRepository is injected through the DI container,

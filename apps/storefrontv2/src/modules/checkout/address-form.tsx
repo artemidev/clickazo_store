@@ -9,7 +9,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import type { CheckoutViewModel } from "@/presentation/pages/checkout/use-checkout-view-model";
+import type { CheckoutViewModel } from "@/presentation/pages/checkout/checkout-view-model";
 
 type AddressFormApi = CheckoutViewModel["state"]["addressForm"];
 

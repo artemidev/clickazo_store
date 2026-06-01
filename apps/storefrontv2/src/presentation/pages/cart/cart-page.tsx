@@ -10,7 +10,7 @@ import { computeFreeShipping } from "@/domain/cart/free-shipping";
 import { CartLineItem } from "@/modules/cart/cart-line-item";
 import { FreeShippingBar } from "@/modules/cart/free-shipping-bar";
 import { CartTotals } from "@/modules/common/cart-totals";
-import { useCartViewModel } from "./use-cart-view-model";
+import { useCartViewModel } from "./cart-view-model";
 
 export function CartPage() {
 	const { state, actions } = useCartViewModel();

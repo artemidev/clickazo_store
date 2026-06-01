@@ -2,7 +2,7 @@ import { TextField } from "@/components/form/text-field";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuthViewModel } from "@/presentation/shared-view-models/use-auth-view-model";
+import { useAuthViewModel } from "@/presentation/shared-view-models/auth-view-model";
 
 export function AuthPanel() {
 	const { state, actions } = useAuthViewModel();

@@ -11,7 +11,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { useAddressesViewModel } from "./use-addresses-view-model";
+import { useAddressesViewModel } from "./account-addresses-view-model";
 
 export function AddressesPage() {
 	const { countryCode } = useParams({ from: "/$countryCode/_storefront/account/addresses" });
