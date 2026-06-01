@@ -48,10 +48,16 @@ export function getAuthHeaders(): AuthHeaders {
 /**
  * Merged headers attached to every Medusa request: auth bearer (when logged in)
  * plus the preferred locale (so the backend can localize responses).
+ *
+ * Pass `authToken` to override the cookie-derived token. This is required for
+ * calls made in the same request that just issued a token: unlike Next.js'
+ * mutable cookie store, `setCookie` here writes a *response* cookie that
+ * `getCookie` (which reads the *request*) cannot see until the next request.
+ * So a freshly minted token must be threaded through explicitly.
  */
-export function getRequestHeaders(): Record<string, string> {
+export function getRequestHeaders(authToken?: string): Record<string, string> {
 	const headers: Record<string, string> = {};
-	const token = getCookie(AUTH_TOKEN_COOKIE);
+	const token = authToken ?? getCookie(AUTH_TOKEN_COOKIE);
 	if (token) {
 		headers.authorization = `Bearer ${token}`;
 	}

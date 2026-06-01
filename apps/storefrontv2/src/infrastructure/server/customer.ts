@@ -36,13 +36,17 @@ export const retrieveCustomer = createServerFn({
 
 /**
  * Transfers the guest cart to the now-authenticated customer. Best-effort.
+ *
+ * `authToken` is the token just issued in this request; it must be passed
+ * explicitly because the response cookie set by `setAuthToken` is not yet
+ * readable from the request within the same call (see `getRequestHeaders`).
  */
-async function transferCartToCustomer(): Promise<void> {
+async function transferCartToCustomer(authToken?: string): Promise<void> {
 	const cartId = getCartId();
 	if (!cartId) {
 		return;
 	}
-	await sdk.store.cart.transferCart(cartId, {}, getRequestHeaders());
+	await sdk.store.cart.transferCart(cartId, {}, getRequestHeaders(authToken));
 }
 
 export const transferCart = createServerFn({
@@ -72,38 +76,50 @@ export const signup = createServerFn({ method: "POST", strict: false })
 	.handler(async ({ data }) => {
 		const { email, password, first_name, last_name, phone } = data;
 
-		const token = await sdk.auth.register("customer", "emailpass", {
-			email,
-			password,
-		});
-		setAuthToken(token as string);
+		try {
+			// Registration token: authorizes the customer.create call below. It
+			// must be threaded through explicitly — the cookie set here is a
+			// response cookie not readable from this same request.
+			const registerToken = (await sdk.auth.register("customer", "emailpass", {
+				email,
+				password,
+			})) as string;
 
-		const { customer } = await sdk.store.customer.create(
-			{ email, first_name, last_name, phone },
-			{},
-			getRequestHeaders(),
-		);
+			const { customer } = await sdk.store.customer.create(
+				{ email, first_name, last_name, phone },
+				{},
+				getRequestHeaders(registerToken),
+			);
 
-		const loginToken = await sdk.auth.login("customer", "emailpass", {
-			email,
-			password,
-		});
-		setAuthToken(loginToken as string);
+			// Re-login so the token is scoped to the now-existing customer, then
+			// persist it for subsequent requests.
+			const loginToken = (await sdk.auth.login("customer", "emailpass", {
+				email,
+				password,
+			})) as string;
+			setAuthToken(loginToken);
 
-		await transferCartToCustomer();
-		return customer;
+			await transferCartToCustomer(loginToken);
+			return customer;
+		} catch (error) {
+			medusaError(error);
+		}
 	});
 
 export const login = createServerFn({ method: "POST", strict: false })
 	.inputValidator((input: { email: string; password: string }) => input)
 	.handler(async ({ data: { email, password } }) => {
-		const token = await sdk.auth.login("customer", "emailpass", {
-			email,
-			password,
-		});
-		setAuthToken(token as string);
-		await transferCartToCustomer();
-		return { success: true };
+		try {
+			const token = (await sdk.auth.login("customer", "emailpass", {
+				email,
+				password,
+			})) as string;
+			setAuthToken(token);
+			await transferCartToCustomer(token);
+			return { success: true };
+		} catch (error) {
+			medusaError(error);
+		}
 	});
 
 export const signout = createServerFn({
