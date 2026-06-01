@@ -1,29 +1,23 @@
-import {
-	makeAddToCartUseCase,
-	makeApplyPromotionsUseCase,
-	makeInitiatePaymentSessionUseCase,
-	makePlaceOrderUseCase,
-	makeRemoveLineItemUseCase,
-	makeSetCartAddressesUseCase,
-	makeSetShippingMethodUseCase,
-	makeUpdateCartUseCase,
-	makeUpdateLineItemUseCase,
-} from "@/application/use-cases/cart";
-import {
-	makeAddCustomerAddressUseCase,
-	makeDeleteCustomerAddressUseCase,
-	makeLoginUseCase,
-	makeSignoutUseCase,
-	makeSignupUseCase,
-	makeUpdateCustomerAddressUseCase,
-	makeUpdateCustomerUseCase,
-} from "@/application/use-cases/customer";
-import { makeUpdateLocaleUseCase } from "@/application/use-cases/locale";
-import {
-	makeAcceptTransferRequestUseCase,
-	makeCreateTransferRequestUseCase,
-	makeDeclineTransferRequestUseCase,
-} from "@/application/use-cases/order";
+import { makeAddToCartUseCase } from "@/application/use-cases/cart/add-to-cart-use-case";
+import { makeApplyPromotionsUseCase } from "@/application/use-cases/cart/apply-promotions-use-case";
+import { makeInitiatePaymentSessionUseCase } from "@/application/use-cases/cart/initiate-payment-session-use-case";
+import { makePlaceOrderUseCase } from "@/application/use-cases/cart/place-order-use-case";
+import { makeRemoveLineItemUseCase } from "@/application/use-cases/cart/remove-line-item-use-case";
+import { makeSetCartAddressesUseCase } from "@/application/use-cases/cart/set-cart-addresses-use-case";
+import { makeSetShippingMethodUseCase } from "@/application/use-cases/cart/set-shipping-method-use-case";
+import { makeUpdateCartUseCase } from "@/application/use-cases/cart/update-cart-use-case";
+import { makeUpdateLineItemUseCase } from "@/application/use-cases/cart/update-line-item-use-case";
+import { makeAddCustomerAddressUseCase } from "@/application/use-cases/customer/add-customer-address-use-case";
+import { makeDeleteCustomerAddressUseCase } from "@/application/use-cases/customer/delete-customer-address-use-case";
+import { makeLoginUseCase } from "@/application/use-cases/customer/login-use-case";
+import { makeSignoutUseCase } from "@/application/use-cases/customer/signout-use-case";
+import { makeSignupUseCase } from "@/application/use-cases/customer/signup-use-case";
+import { makeUpdateCustomerAddressUseCase } from "@/application/use-cases/customer/update-customer-address-use-case";
+import { makeUpdateCustomerUseCase } from "@/application/use-cases/customer/update-customer-use-case";
+import { makeUpdateLocaleUseCase } from "@/application/use-cases/locale/update-locale-use-case";
+import { makeAcceptTransferRequestUseCase } from "@/application/use-cases/order/accept-transfer-request-use-case";
+import { makeCreateTransferRequestUseCase } from "@/application/use-cases/order/create-transfer-request-use-case";
+import { makeDeclineTransferRequestUseCase } from "@/application/use-cases/order/decline-transfer-request-use-case";
 import { serverCartRepository } from "@/infrastructure/adapters/server-cart-repository";
 import { serverCustomerRepository } from "@/infrastructure/adapters/server-customer-repository";
 import { serverLocaleRepository } from "@/infrastructure/adapters/server-locale-repository";

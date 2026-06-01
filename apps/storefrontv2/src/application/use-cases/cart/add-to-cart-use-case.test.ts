@@ -1,12 +1,8 @@
 import type { HttpTypes } from "@medusajs/types";
 import { describe, expect, it, vi } from "vitest";
 import type { CartRepository } from "@/application/ports/cart-repository";
-import { makeAddToCartUseCase, makeUpdateLineItemUseCase } from "./cart";
+import { makeAddToCartUseCase } from "./add-to-cart-use-case";
 
-/**
- * Use-case unit tests run with a fake repository — no React, no SSR, no Medusa
- * backend. This is the seam the DI layer exists to provide.
- */
 function makeFakeCartRepo(
 	overrides: Partial<CartRepository> = {},
 ): CartRepository {
@@ -67,17 +63,5 @@ describe("addToCart use case", () => {
 			addToCart({ variantId: "v_1", quantity: 0, countryCode: "dk" }),
 		).rejects.toThrow(/at least 1/i);
 		expect(cart.addLineItem).not.toHaveBeenCalled();
-	});
-});
-
-describe("updateLineItem use case", () => {
-	it("rejects a non-positive quantity", async () => {
-		const cart = makeFakeCartRepo();
-		const updateLineItem = makeUpdateLineItemUseCase(makeDeps(cart));
-
-		await expect(
-			updateLineItem({ lineId: "li_1", quantity: 0 }),
-		).rejects.toThrow(/at least 1/i);
-		expect(cart.updateLineItem).not.toHaveBeenCalled();
 	});
 });
