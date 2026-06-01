@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { collectionByHandleQueryOptions } from "@/application/catalog.queries";
 import { productsListQueryOptions } from "@/application/products.queries";
-import { CollectionPage } from "@/presentation/pages/collection-detail-page";
+import { CollectionPage } from "@/presentation/pages/collection-detail/collection-detail-page";
 
 export const Route = createFileRoute(
 	"/$countryCode/_storefront/collections/$handle",

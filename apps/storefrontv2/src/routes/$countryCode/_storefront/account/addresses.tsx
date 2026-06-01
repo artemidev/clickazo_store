@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { AddressesPage } from "@/presentation/pages/account-addresses-page";
+import { AddressesPage } from "@/presentation/pages/account-addresses/account-addresses-page";
 
 export const Route = createFileRoute(
 	"/$countryCode/_storefront/account/addresses",
