@@ -2,7 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { LocalizedLink } from "@/components/localized-link";
 import { Button } from "@/components/ui/button";
 import { useCountryCode } from "@/lib/hooks/use-country-code";
-import { useAccountNavViewModel } from "@/presentation/pages/shared-view-models/use-account-nav-view-model";
+import { useAccountNavViewModel } from "@/presentation/shared-view-models/use-account-nav-view-model";
 
 const links = [
 	{ href: "/account", label: "Overview" },
