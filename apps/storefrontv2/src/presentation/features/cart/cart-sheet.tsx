@@ -14,6 +14,7 @@ import {
 } from "@/design-system/ui/sheet";
 import { computeFreeShipping } from "@/domain/cart/free-shipping";
 import { convertToLocale } from "@/domain/shared/money";
+import { m } from "@/paraglide/messages";
 import { LocalizedLink } from "@/presentation/components/localized-link";
 import { useCartViewModel } from "@/presentation/pages/cart/cart-view-model";
 import { useCartUI } from "@/presentation/providers/cart-ui";
@@ -59,7 +60,7 @@ export function CartSheet() {
 			<SheetContent className="flex w-full flex-col gap-0 p-0 data-[side=right]:sm:max-w-[420px]">
 				<SheetHeader className="flex-row items-center justify-between gap-2 border-b border-border px-5 py-4">
 					<SheetTitle className="text-h5 font-bold">
-						Your bag{" "}
+						{m.cart_title()}{" "}
 						{itemCount > 0 ? (
 							<span className="font-mono text-muted-foreground tabular-nums">
 								({itemCount})
@@ -67,7 +68,7 @@ export function CartSheet() {
 						) : null}
 					</SheetTitle>
 					<SheetDescription className="sr-only">
-						Review the items in your bag and proceed to checkout.
+						{m.cart_review_desc()}
 					</SheetDescription>
 				</SheetHeader>
 
@@ -101,7 +102,7 @@ export function CartSheet() {
 
 						<SheetFooter className="gap-3 border-t border-border px-5 py-5">
 							<div className="flex items-baseline justify-between font-semibold text-foreground">
-								<span>Subtotal</span>
+								<span>{m.cart_subtotal()}</span>
 								<span className="font-mono text-h5 tabular-nums">
 									{convertToLocale({
 										amount: cart.item_total ?? 0,
@@ -110,11 +111,11 @@ export function CartSheet() {
 								</span>
 							</div>
 							<p className="text-xs text-muted-foreground">
-								Taxes and shipping calculated at checkout.
+								{m.cart_taxes_note()}
 							</p>
 							<LocalizedLink href="/checkout" className="w-full no-underline">
 								<Button size="lg" className="w-full">
-									Checkout
+									{m.cart_checkout()}
 								</Button>
 							</LocalizedLink>
 							<button
@@ -122,7 +123,7 @@ export function CartSheet() {
 								onClick={closeCart}
 								className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
 							>
-								or keep shopping
+								{m.cart_keep_shopping()}
 							</button>
 						</SheetFooter>
 					</>
@@ -136,11 +137,13 @@ function EmptyBag({ onContinue }: { onContinue: () => void }) {
 	return (
 		<div className="flex flex-1 flex-col items-center justify-center gap-2 px-6 py-16 text-center">
 			<ShoppingBag className="mb-2 size-10 text-muted-foreground/60" />
-			<p className="text-lg font-semibold text-foreground">Your bag's empty.</p>
-			<p className="text-sm text-muted-foreground">Go find something good.</p>
+			<p className="text-lg font-semibold text-foreground">
+				{m.cart_empty_title()}
+			</p>
+			<p className="text-sm text-muted-foreground">{m.cart_empty_subtitle()}</p>
 			<LocalizedLink href="/store" className="mt-4 no-underline">
 				<Button variant="outline" onClick={onContinue}>
-					Continue shopping
+					{m.cart_continue_shopping()}
 				</Button>
 			</LocalizedLink>
 		</div>

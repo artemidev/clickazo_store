@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 import { cartQueryOptions } from "@/application/queries/cart.queries";
 import { Toaster } from "@/design-system/ui/sonner";
+import { SeoHreflang } from "@/presentation/components/seo-hreflang";
 import { CartSheet } from "@/presentation/features/cart/cart-sheet";
 import { Footer } from "@/presentation/features/layout/footer";
 import { Header } from "@/presentation/features/layout/header";
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/$countryCode/_storefront")({
 function StorefrontLayout() {
 	return (
 		<CartUIProvider>
+			<SeoHreflang />
 			<div className="flex min-h-screen flex-col">
 				<Header />
 				<main className="flex-1">

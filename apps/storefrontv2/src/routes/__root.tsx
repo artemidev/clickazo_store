@@ -7,6 +7,7 @@ import {
 	Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { getLocale } from "@/paraglide/runtime";
 import { DefaultCatchBoundary } from "@/presentation/components/default-catch-boundary";
 import { NotFound } from "@/presentation/components/not-found";
 import { ThemeProvider } from "@/presentation/providers/theme-provider";
@@ -33,7 +34,7 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en" suppressHydrationWarning>
+		<html lang={getLocale()} suppressHydrationWarning>
 			<head>
 				<HeadContent />
 			</head>

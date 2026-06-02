@@ -2,6 +2,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { type FormEvent, useState } from "react";
 import { Input } from "@/design-system/ui/input";
+import { m } from "@/paraglide/messages";
 import { useCountryCode } from "@/presentation/hooks/use-country-code";
 
 /**
@@ -41,8 +42,8 @@ export function SearchBox({ className }: { className?: string }) {
 				name="q"
 				value={value}
 				onChange={(event) => setValue(event.target.value)}
-				placeholder="Search products"
-				aria-label="Search products"
+				placeholder={m.search_placeholder()}
+				aria-label={m.search_placeholder()}
 				className="pl-9"
 			/>
 		</form>

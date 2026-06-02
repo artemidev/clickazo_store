@@ -8,6 +8,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/design-system/ui/select";
+import { m } from "@/paraglide/messages";
 import { useCountryCode } from "@/presentation/hooks/use-country-code";
 
 type CountryOption = { code: string; label: string };
@@ -36,7 +37,7 @@ export function RegionSelect() {
 			}
 		>
 			<SelectTrigger size="sm" className="w-[140px]">
-				<SelectValue placeholder="Region" />
+				<SelectValue placeholder={m.region_placeholder()} />
 			</SelectTrigger>
 			<SelectContent>
 				{options.map((option) => (

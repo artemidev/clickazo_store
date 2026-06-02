@@ -1,9 +1,11 @@
 import { User } from "lucide-react";
 import { ThemeToggle } from "@/design-system/brand/theme-toggle";
 import { Button } from "@/design-system/ui/button";
+import { m } from "@/paraglide/messages";
 import { LocalizedLink } from "@/presentation/components/localized-link";
 import { SearchBox } from "@/presentation/features/search/search-box";
 import { CartButton } from "./cart-button";
+import { LanguageSelect } from "./language-select";
 import { RegionSelect } from "./region-select";
 
 export function Header() {
@@ -26,14 +28,15 @@ export function Header() {
 						href="/store"
 						className="rounded-sm px-3 py-2 text-sm font-medium text-foreground/80 no-underline transition-colors hover:bg-accent hover:text-foreground"
 					>
-						Store
+						{m.nav_store()}
 					</LocalizedLink>
 				</nav>
 				<SearchBox className="relative ml-auto hidden w-full max-w-sm md:block" />
 				<div className="ml-auto flex items-center gap-2 md:ml-4">
+					<LanguageSelect />
 					<RegionSelect />
 					<ThemeToggle />
-					<LocalizedLink href="/account" aria-label="Account">
+					<LocalizedLink href="/account" aria-label={m.nav_account()}>
 						<Button variant="ghost" size="icon-sm">
 							<User />
 						</Button>

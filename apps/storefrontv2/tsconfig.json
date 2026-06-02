@@ -1,6 +1,10 @@
 {
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
+    // Lets tsc read the JSDoc types from Paraglide's generated `.js` output
+    // (src/paraglide). The `include` globs only match .ts/.tsx, so the generated
+    // JS is used for type info but not type-checked (checkJs is off).
+    "allowJs": true,
     "target": "ES2022",
     "jsx": "react-jsx",
     "module": "ESNext",

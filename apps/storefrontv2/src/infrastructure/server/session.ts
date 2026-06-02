@@ -3,6 +3,7 @@ import {
 	getCookie,
 	setCookie,
 } from "@tanstack/react-start/server";
+import { getLocale as getRequestLocale } from "@/paraglide/runtime";
 
 /**
  * Server-side session adapter.
@@ -61,7 +62,12 @@ export function getRequestHeaders(authToken?: string): Record<string, string> {
 	if (token) {
 		headers.authorization = `Bearer ${token}`;
 	}
-	const locale = getCookie(LOCALE_COOKIE);
+	// Locale is derived from Paraglide's request-scoped resolver (URL → cookie →
+	// Accept-Language → base), not the raw cookie. On a first visit to `/es/...`
+	// the cookie may not be set yet, but the URL-derived locale is always
+	// correct — this sidesteps the cookie read-after-write gap (see
+	// `getLocale`/`setLocale` below and memory `storefrontv2-cookie-read-after-write`).
+	const locale = getRequestLocale();
 	if (locale) {
 		headers["x-medusa-locale"] = locale;
 	}

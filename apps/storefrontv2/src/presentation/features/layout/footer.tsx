@@ -1,26 +1,30 @@
 import { Eyebrow } from "@/design-system/brand/eyebrow";
+import { m } from "@/paraglide/messages";
 import { LocalizedLink } from "@/presentation/components/localized-link";
 
-const COLUMNS: { heading: string; links: { label: string; href: string }[] }[] =
-	[
+export function Footer() {
+	// Built inside the component so messages resolve against the active locale.
+	const columns: {
+		heading: string;
+		links: { label: string; href: string }[];
+	}[] = [
 		{
-			heading: "Shop",
+			heading: m.footer_shop(),
 			links: [
-				{ label: "All products", href: "/store" },
-				{ label: "Your cart", href: "/cart" },
+				{ label: m.footer_all_products(), href: "/store" },
+				{ label: m.footer_your_cart(), href: "/cart" },
 			],
 		},
 		{
-			heading: "Account",
+			heading: m.footer_account(),
 			links: [
-				{ label: "Sign in", href: "/account" },
-				{ label: "Orders", href: "/account/orders" },
-				{ label: "Addresses", href: "/account/addresses" },
+				{ label: m.footer_sign_in(), href: "/account" },
+				{ label: m.footer_orders(), href: "/account/orders" },
+				{ label: m.footer_addresses(), href: "/account/addresses" },
 			],
 		},
 	];
 
-export function Footer() {
 	return (
 		<footer className="mt-20 border-t border-border bg-bg-subtle">
 			<div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.6fr_1fr_1fr] lg:px-10">
@@ -37,11 +41,10 @@ export function Footer() {
 						</span>
 					</LocalizedLink>
 					<p className="max-w-sm text-sm text-muted-foreground">
-						Gear for developers and tech people — code tees, cubes, mugs,
-						gadgets and more.
+						{m.footer_tagline()}
 					</p>
 				</div>
-				{COLUMNS.map((column) => (
+				{columns.map((column) => (
 					<div key={column.heading} className="flex flex-col gap-3">
 						<Eyebrow>{column.heading}</Eyebrow>
 						<nav className="flex flex-col gap-1">
@@ -60,8 +63,8 @@ export function Footer() {
 			</div>
 			<div className="border-t border-border">
 				<div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-2 px-4 py-5 text-xs text-muted-foreground sm:px-6 lg:px-10">
-					<p>© {new Date().getFullYear()} Clickazo. All rights reserved.</p>
-					<p className="font-mono">Built for builders.</p>
+					<p>{m.footer_rights({ year: new Date().getFullYear() })}</p>
+					<p className="font-mono">{m.footer_built()}</p>
 				</div>
 			</div>
 		</footer>
