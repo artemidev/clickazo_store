@@ -336,525 +336,478 @@ export default async function initial_data_seed({
 
   logger.info("Seeding product data...");
 
-  const { result: categoryResult } = await createProductCategoriesWorkflow(
+  // ----------------------------------------------------------------------
+  // Category hierarchy (drives the storefront header nav + mega-menu).
+  // Top-level categories become the nav tabs; their children become the
+  // mega-menu columns. Handles are explicit so they stay stable and unique.
+  // ----------------------------------------------------------------------
+  const { result: parentCategories } = await createProductCategoriesWorkflow(
     container
   ).run({
     input: {
       product_categories: [
+        { name: "Apparel", handle: "apparel", is_active: true },
+        { name: "Desk", handle: "desk", is_active: true },
+        { name: "Cubes", handle: "cubes", is_active: true },
+        { name: "Drinkware", handle: "drinkware", is_active: true },
+        { name: "Gym", handle: "gym", is_active: true },
+        { name: "Gadgets", handle: "gadgets", is_active: true },
+      ],
+    },
+  });
+  const parentId = (handle: string) =>
+    parentCategories.find((c) => c.handle === handle)!.id;
+
+  const { result: childCategories } = await createProductCategoriesWorkflow(
+    container
+  ).run({
+    input: {
+      product_categories: [
+        // Apparel
         {
-          name: "Shirts",
+          name: "Tees",
+          handle: "tees",
+          parent_category_id: parentId("apparel"),
           is_active: true,
         },
         {
-          name: "Sweatshirts",
+          name: "Hoodies",
+          handle: "hoodies",
+          parent_category_id: parentId("apparel"),
           is_active: true,
         },
         {
-          name: "Pants",
+          name: "Beanies & Hats",
+          handle: "beanies",
+          parent_category_id: parentId("apparel"),
+          is_active: true,
+        },
+        // Desk
+        {
+          name: "Keyboards",
+          handle: "keyboards",
+          parent_category_id: parentId("desk"),
           is_active: true,
         },
         {
-          name: "Merch",
+          name: "Stands & Risers",
+          handle: "stands",
+          parent_category_id: parentId("desk"),
+          is_active: true,
+        },
+        {
+          name: "Desk Mats",
+          handle: "desk-mats",
+          parent_category_id: parentId("desk"),
+          is_active: true,
+        },
+        {
+          name: "Desk Toys",
+          handle: "desk-toys",
+          parent_category_id: parentId("desk"),
+          is_active: true,
+        },
+        // Cubes
+        {
+          name: "Speed Cubes",
+          handle: "speed-cubes",
+          parent_category_id: parentId("cubes"),
+          is_active: true,
+        },
+        {
+          name: "Timers",
+          handle: "timers",
+          parent_category_id: parentId("cubes"),
+          is_active: true,
+        },
+        // Drinkware
+        {
+          name: "Mugs",
+          handle: "mugs",
+          parent_category_id: parentId("drinkware"),
+          is_active: true,
+        },
+        {
+          name: "Bottles",
+          handle: "bottles",
+          parent_category_id: parentId("drinkware"),
+          is_active: true,
+        },
+        // Gym
+        {
+          name: "Gym Gear",
+          handle: "gym-gear",
+          parent_category_id: parentId("gym"),
+          is_active: true,
+        },
+        // Gadgets
+        {
+          name: "Cables",
+          handle: "cables",
+          parent_category_id: parentId("gadgets"),
+          is_active: true,
+        },
+        {
+          name: "Hubs & Docks",
+          handle: "hubs",
+          parent_category_id: parentId("gadgets"),
+          is_active: true,
+        },
+        {
+          name: "Tools",
+          handle: "tools",
+          parent_category_id: parentId("gadgets"),
           is_active: true,
         },
       ],
     },
   });
+  const categoryId = (handle: string) =>
+    childCategories.find((c) => c.handle === handle)!.id;
+
+  // Map each child category to its parent. Products are assigned to BOTH so
+  // that parent category pages (the header nav tabs) list every descendant
+  // product — Medusa's `category_id` filter does not descend on its own.
+  const CHILD_TO_PARENT: Record<string, string> = {
+    tees: "apparel",
+    hoodies: "apparel",
+    beanies: "apparel",
+    keyboards: "desk",
+    stands: "desk",
+    "desk-mats": "desk",
+    "desk-toys": "desk",
+    "speed-cubes": "cubes",
+    timers: "cubes",
+    mugs: "drinkware",
+    bottles: "drinkware",
+    "gym-gear": "gym",
+    cables: "gadgets",
+    hubs: "gadgets",
+    tools: "gadgets",
+  };
+
+  // Collections power the "New Drops" / "Best Sellers" rails and nav links.
+  const { result: collections } = await createCollectionsWorkflow(
+    container
+  ).run({
+    input: {
+      collections: [
+        { title: "New Drops", handle: "new-drops" },
+        { title: "Best Sellers", handle: "best-sellers" },
+      ],
+    },
+  });
+  const collectionId = (handle: string) =>
+    collections.find((c) => c.handle === handle)!.id;
+
+  // ----------------------------------------------------------------------
+  // Products. A compact spec is expanded into the full create-product input
+  // by `buildProduct`. Apparel reuses Medusa's hosted demo photography; the
+  // remaining categories use deterministic placeholder imagery (swap for real
+  // product photos in production — the `picsum` seeds keep them stable).
+  // ----------------------------------------------------------------------
+  const salesChannelLink = [{ id: defaultSalesChannel.id }];
+  const eurUsd = (eur: number, usd: number) => [
+    { amount: eur, currency_code: "eur" },
+    { amount: usd, currency_code: "usd" },
+  ];
+  const placeholder = (seed: string) => [
+    { url: `https://picsum.photos/seed/${seed}/900/900` },
+    { url: `https://picsum.photos/seed/${seed}-2/900/900` },
+  ];
+
+  const MEDUSA_IMG =
+    "https://medusa-public-images.s3.eu-west-1.amazonaws.com";
+
+  type ProductSpec = {
+    title: string;
+    handle: string;
+    description: string;
+    categoryHandle: string;
+    collectionHandle?: string;
+    images: { url: string }[];
+    weight?: number;
+    sizes?: string[];
+    skuBase: string;
+    eur: number;
+    usd: number;
+  };
+
+  function buildProduct(spec: ProductSpec) {
+    const hasSizes = !!spec.sizes && spec.sizes.length > 0;
+    const options = hasSizes
+      ? [{ title: "Size", values: spec.sizes! }]
+      : [{ title: "Style", values: ["Standard"] }];
+    const variants = hasSizes
+      ? spec.sizes!.map((size) => ({
+          title: size,
+          sku: `${spec.skuBase}-${size}`,
+          options: { Size: size },
+          prices: eurUsd(spec.eur, spec.usd),
+        }))
+      : [
+          {
+            title: "Standard",
+            sku: spec.skuBase,
+            options: { Style: "Standard" },
+            prices: eurUsd(spec.eur, spec.usd),
+          },
+        ];
+
+    return {
+      title: spec.title,
+      handle: spec.handle,
+      description: spec.description,
+      category_ids: [
+        categoryId(spec.categoryHandle),
+        parentId(CHILD_TO_PARENT[spec.categoryHandle]),
+      ],
+      ...(spec.collectionHandle
+        ? { collection_id: collectionId(spec.collectionHandle) }
+        : {}),
+      weight: spec.weight ?? 400,
+      status: ProductStatus.PUBLISHED,
+      shipping_profile_id: shippingProfile.id,
+      images: spec.images,
+      options,
+      variants,
+      sales_channels: salesChannelLink,
+    };
+  }
+
+  const productSpecs: ProductSpec[] = [
+    // --- Apparel ---
+    {
+      title: "Compiles Under Pressure Tee",
+      handle: "compiles-under-pressure-tee",
+      description:
+        "Heavyweight 100% cotton with a soft-hand print that won't crack. The line your code wishes it lived up to.",
+      categoryHandle: "tees",
+      collectionHandle: "best-sellers",
+      images: [
+        { url: `${MEDUSA_IMG}/tee-black-front.png` },
+        { url: `${MEDUSA_IMG}/tee-black-back.png` },
+        { url: `${MEDUSA_IMG}/tee-white-front.png` },
+        { url: `${MEDUSA_IMG}/tee-white-back.png` },
+      ],
+      sizes: ["S", "M", "L", "XL"],
+      skuBase: "TEE-COMPILES",
+      eur: 24,
+      usd: 28,
+    },
+    {
+      title: "Git Blame Hoodie",
+      handle: "git-blame-hoodie",
+      description:
+        "Midweight brushed fleece with a kangaroo pocket deep enough for snacks. Comfortable enough to ship on a Friday.",
+      categoryHandle: "hoodies",
+      images: [
+        { url: `${MEDUSA_IMG}/sweatshirt-vintage-front.png` },
+        { url: `${MEDUSA_IMG}/sweatshirt-vintage-back.png` },
+      ],
+      sizes: ["S", "M", "L", "XL"],
+      skuBase: "HOODIE-GITBLAME",
+      eur: 52,
+      usd: 62,
+    },
+    {
+      title: "Terminal Green Beanie",
+      handle: "terminal-green-beanie",
+      description:
+        "Ribbed knit with a double-folded cuff in phosphor green — like the good old CRTs.",
+      categoryHandle: "beanies",
+      collectionHandle: "new-drops",
+      images: placeholder("cz-beanie"),
+      sizes: ["One Size"],
+      skuBase: "BEANIE-TERMINAL",
+      eur: 20,
+      usd: 24,
+    },
+    // --- Desk ---
+    {
+      title: "75% Mechanical Keyboard",
+      handle: "75-mechanical-keyboard",
+      description:
+        "Hot-swap switches, gasket mount, knob included. Sounds like a thock, types like butter.",
+      categoryHandle: "keyboards",
+      collectionHandle: "best-sellers",
+      images: placeholder("cz-keyboard"),
+      weight: 1100,
+      skuBase: "KB-75",
+      eur: 129,
+      usd: 149,
+    },
+    {
+      title: "Aluminium Laptop Stand",
+      handle: "aluminium-laptop-stand",
+      description:
+        "CNC aluminium, folds flat, raises your screen to where your neck wants it.",
+      categoryHandle: "stands",
+      images: placeholder("cz-stand"),
+      weight: 800,
+      skuBase: "STAND-ALU",
+      eur: 46,
+      usd: 54,
+    },
+    {
+      title: "Pixel-Art Desk Mat",
+      handle: "pixel-art-desk-mat",
+      description:
+        "900×400 stitched-edge mat. Smooth glide, grippy base, eight-bit energy.",
+      categoryHandle: "desk-mats",
+      collectionHandle: "new-drops",
+      images: placeholder("cz-deskmat"),
+      skuBase: "MAT-PIXEL",
+      eur: 25,
+      usd: 29,
+    },
+    {
+      title: "Rubber Duck — Debug Edition",
+      handle: "rubber-duck-debug-edition",
+      description:
+        "The senior engineer who never judges. Explain your bug out loud and watch it dissolve.",
+      categoryHandle: "desk-toys",
+      collectionHandle: "best-sellers",
+      images: placeholder("cz-duck"),
+      weight: 80,
+      skuBase: "DUCK-DEBUG",
+      eur: 10,
+      usd: 12,
+    },
+    // --- Cubes ---
+    {
+      title: "Magnetic 3×3 Speed Cube",
+      handle: "magnetic-3x3-speed-cube",
+      description:
+        "Factory-lubed, magnet-positioned, sub-10-second ready. Corner-cuts like a dream.",
+      categoryHandle: "speed-cubes",
+      collectionHandle: "new-drops",
+      images: placeholder("cz-cube"),
+      weight: 120,
+      skuBase: "CUBE-3X3",
+      eur: 20,
+      usd: 24,
+    },
+    {
+      title: "Pro Cube Timer",
+      handle: "pro-cube-timer",
+      description:
+        "Competition-grade touch timer with 0.001s precision, stack-mat compatible.",
+      categoryHandle: "timers",
+      images: placeholder("cz-timer"),
+      weight: 300,
+      skuBase: "TIMER-PRO",
+      eur: 33,
+      usd: 39,
+    },
+    // --- Drinkware ---
+    {
+      title: "It Works On My Machine Mug",
+      handle: "it-works-on-my-machine-mug",
+      description:
+        "12oz ceramic, dishwasher-safe, holds enough coffee to ship a feature.",
+      categoryHandle: "mugs",
+      collectionHandle: "best-sellers",
+      images: placeholder("cz-mug"),
+      weight: 350,
+      skuBase: "MUG-WORKS",
+      eur: 15,
+      usd: 18,
+    },
+    {
+      title: "404 Insulated Water Bottle",
+      handle: "404-water-bottle",
+      description:
+        "Hydration not found? Not anymore. 750ml, vacuum-insulated, keeps cold for 24 hours.",
+      categoryHandle: "bottles",
+      images: placeholder("cz-bottle"),
+      weight: 400,
+      skuBase: "BOTTLE-404",
+      eur: 18,
+      usd: 22,
+    },
+    // --- Gym ---
+    {
+      title: "Dark Mode Gym Shaker",
+      handle: "dark-mode-gym-shaker",
+      description:
+        "700ml, leak-proof, matte black. For lifting heavier than your node_modules folder.",
+      categoryHandle: "gym-gear",
+      images: placeholder("cz-shaker"),
+      weight: 250,
+      skuBase: "SHAKER-DARK",
+      eur: 19,
+      usd: 22,
+    },
+    {
+      title: "Resistance Band Set",
+      handle: "resistance-band-set",
+      description:
+        "Five stackable latex bands from 5kg to 50kg. Deploy anywhere, no rack required.",
+      categoryHandle: "gym-gear",
+      collectionHandle: "new-drops",
+      images: placeholder("cz-bands"),
+      weight: 600,
+      skuBase: "BANDS-SET",
+      eur: 26,
+      usd: 30,
+    },
+    // --- Gadgets ---
+    {
+      title: "USB-C Everything Cable",
+      handle: "usb-c-everything-cable",
+      description:
+        "100W, braided, 2m, reversible both ends. The one cable that finally fits.",
+      categoryHandle: "cables",
+      collectionHandle: "best-sellers",
+      images: placeholder("cz-cable"),
+      weight: 120,
+      skuBase: "CABLE-USBC",
+      eur: 14,
+      usd: 16,
+    },
+    {
+      title: "Coiled Keyboard Cable",
+      handle: "coiled-keyboard-cable",
+      description:
+        "Aviator-connector coiled cable in five colourways. The finishing touch for your board.",
+      categoryHandle: "cables",
+      images: placeholder("cz-coiled"),
+      weight: 150,
+      skuBase: "CABLE-COILED",
+      eur: 22,
+      usd: 26,
+    },
+    {
+      title: "7-Port USB-C Hub",
+      handle: "7-port-usb-c-hub",
+      description:
+        "HDMI, ethernet, SD and 100W passthrough in one aluminium slab. Reclaim your ports.",
+      categoryHandle: "hubs",
+      images: placeholder("cz-hub"),
+      weight: 200,
+      skuBase: "HUB-7PORT",
+      eur: 39,
+      usd: 45,
+    },
+    {
+      title: "Mechanical Switch Tester",
+      handle: "mechanical-switch-tester",
+      description:
+        "Nine-switch sampler so you can feel linear, tactile and clicky before you commit.",
+      categoryHandle: "tools",
+      collectionHandle: "new-drops",
+      images: placeholder("cz-tester"),
+      weight: 180,
+      skuBase: "TOOL-SWTEST",
+      eur: 17,
+      usd: 20,
+    },
+  ];
 
   await createProductsWorkflow(container).run({
     input: {
-      products: [
-        {
-          title: "Medusa T-Shirt",
-          category_ids: [
-            categoryResult.find((cat) => cat.name === "Shirts")!.id,
-          ],
-          description:
-            "Reimagine the feeling of a classic T-shirt. With our cotton T-shirts, everyday essentials no longer have to be ordinary.",
-          handle: "t-shirt",
-          weight: 400,
-          status: ProductStatus.PUBLISHED,
-          shipping_profile_id: shippingProfile.id,
-          images: [
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/tee-black-front.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/tee-black-back.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/tee-white-front.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/tee-white-back.png",
-            },
-          ],
-          options: [
-            {
-              title: "Size",
-              values: ["S", "M", "L", "XL"],
-            },
-            {
-              title: "Color",
-              values: ["Black", "White"],
-            },
-          ],
-          variants: [
-            {
-              title: "S / Black",
-              sku: "SHIRT-S-BLACK",
-              options: {
-                Size: "S",
-                Color: "Black",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "S / White",
-              sku: "SHIRT-S-WHITE",
-              options: {
-                Size: "S",
-                Color: "White",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "M / Black",
-              sku: "SHIRT-M-BLACK",
-              options: {
-                Size: "M",
-                Color: "Black",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "M / White",
-              sku: "SHIRT-M-WHITE",
-              options: {
-                Size: "M",
-                Color: "White",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "L / Black",
-              sku: "SHIRT-L-BLACK",
-              options: {
-                Size: "L",
-                Color: "Black",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "L / White",
-              sku: "SHIRT-L-WHITE",
-              options: {
-                Size: "L",
-                Color: "White",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "XL / Black",
-              sku: "SHIRT-XL-BLACK",
-              options: {
-                Size: "XL",
-                Color: "Black",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "XL / White",
-              sku: "SHIRT-XL-WHITE",
-              options: {
-                Size: "XL",
-                Color: "White",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-          ],
-          sales_channels: [
-            {
-              id: defaultSalesChannel.id,
-            },
-          ],
-        },
-        {
-          title: "Medusa Sweatshirt",
-          category_ids: [
-            categoryResult.find((cat) => cat.name === "Sweatshirts")!.id,
-          ],
-          description:
-            "Reimagine the feeling of a classic sweatshirt. With our cotton sweatshirt, everyday essentials no longer have to be ordinary.",
-          handle: "sweatshirt",
-          weight: 400,
-          status: ProductStatus.PUBLISHED,
-          shipping_profile_id: shippingProfile.id,
-          images: [
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatshirt-vintage-front.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatshirt-vintage-back.png",
-            },
-          ],
-          options: [
-            {
-              title: "Size",
-              values: ["S", "M", "L", "XL"],
-            },
-          ],
-          variants: [
-            {
-              title: "S",
-              sku: "SWEATSHIRT-S",
-              options: {
-                Size: "S",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "M",
-              sku: "SWEATSHIRT-M",
-              options: {
-                Size: "M",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "L",
-              sku: "SWEATSHIRT-L",
-              options: {
-                Size: "L",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "XL",
-              sku: "SWEATSHIRT-XL",
-              options: {
-                Size: "XL",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-          ],
-          sales_channels: [
-            {
-              id: defaultSalesChannel.id,
-            },
-          ],
-        },
-        {
-          title: "Medusa Sweatpants",
-          category_ids: [
-            categoryResult.find((cat) => cat.name === "Pants")!.id,
-          ],
-          description:
-            "Reimagine the feeling of classic sweatpants. With our cotton sweatpants, everyday essentials no longer have to be ordinary.",
-          handle: "sweatpants",
-          weight: 400,
-          status: ProductStatus.PUBLISHED,
-          shipping_profile_id: shippingProfile.id,
-          images: [
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatpants-gray-front.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/sweatpants-gray-back.png",
-            },
-          ],
-          options: [
-            {
-              title: "Size",
-              values: ["S", "M", "L", "XL"],
-            },
-          ],
-          variants: [
-            {
-              title: "S",
-              sku: "SWEATPANTS-S",
-              options: {
-                Size: "S",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "M",
-              sku: "SWEATPANTS-M",
-              options: {
-                Size: "M",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "L",
-              sku: "SWEATPANTS-L",
-              options: {
-                Size: "L",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "XL",
-              sku: "SWEATPANTS-XL",
-              options: {
-                Size: "XL",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-          ],
-          sales_channels: [
-            {
-              id: defaultSalesChannel.id,
-            },
-          ],
-        },
-        {
-          title: "Medusa Shorts",
-          category_ids: [
-            categoryResult.find((cat) => cat.name === "Merch")!.id,
-          ],
-          description:
-            "Reimagine the feeling of classic shorts. With our cotton shorts, everyday essentials no longer have to be ordinary.",
-          handle: "shorts",
-          weight: 400,
-          status: ProductStatus.PUBLISHED,
-          shipping_profile_id: shippingProfile.id,
-          images: [
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/shorts-vintage-front.png",
-            },
-            {
-              url: "https://medusa-public-images.s3.eu-west-1.amazonaws.com/shorts-vintage-back.png",
-            },
-          ],
-          options: [
-            {
-              title: "Size",
-              values: ["S", "M", "L", "XL"],
-            },
-          ],
-          variants: [
-            {
-              title: "S",
-              sku: "SHORTS-S",
-              options: {
-                Size: "S",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "M",
-              sku: "SHORTS-M",
-              options: {
-                Size: "M",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "L",
-              sku: "SHORTS-L",
-              options: {
-                Size: "L",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-            {
-              title: "XL",
-              sku: "SHORTS-XL",
-              options: {
-                Size: "XL",
-              },
-              prices: [
-                {
-                  amount: 10,
-                  currency_code: "eur",
-                },
-                {
-                  amount: 15,
-                  currency_code: "usd",
-                },
-              ],
-            },
-          ],
-          sales_channels: [
-            {
-              id: defaultSalesChannel.id,
-            },
-          ],
-        },
-      ],
+      products: productSpecs.map(buildProduct),
     },
   });
   logger.info("Finished seeding product data.");
