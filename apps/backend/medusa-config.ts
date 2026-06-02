@@ -37,6 +37,7 @@ module.exports = defineConfig({
             "localhost",
             ".localhost",
             "127.0.0.1",
+            "macbook"
           ],
           hmr: {
             // HMR websocket port inside container
