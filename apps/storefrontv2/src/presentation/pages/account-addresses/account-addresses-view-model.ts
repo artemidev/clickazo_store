@@ -10,6 +10,7 @@ import {
 	type AddressBookValues,
 	addressBookSchema,
 } from "@/domain/customer/address-book-schema";
+import { m } from "@/paraglide/messages";
 import { getErrorMessage } from "@/shared/utils";
 
 /** Address-book view model: customer addresses + add/delete commands + form. */
@@ -48,11 +49,11 @@ export function useAddressesViewModel(countryCode: string) {
 		onSubmit: async ({ value }) => {
 			try {
 				await addMut.mutateAsync(value);
-				toast.success("Address added");
+				toast.success(m.toast_address_added());
 				setShowForm(false);
 				form.reset();
 			} catch (error) {
-				toast.error(getErrorMessage(error, "Failed"));
+				toast.error(getErrorMessage(error, m.common_failed()));
 			}
 		},
 	});
@@ -70,7 +71,7 @@ export function useAddressesViewModel(countryCode: string) {
 			toggleForm: () => setShowForm((value) => !value),
 			deleteAddress: (id: string) =>
 				deleteMut.mutate(id, {
-					onSuccess: () => toast.success("Address removed"),
+					onSuccess: () => toast.success(m.toast_address_removed()),
 				}),
 		},
 	};

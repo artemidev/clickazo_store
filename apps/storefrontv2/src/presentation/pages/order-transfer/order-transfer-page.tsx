@@ -1,6 +1,7 @@
 import { useParams } from "@tanstack/react-router";
 import { Button } from "@/design-system/ui/button";
 import { Card } from "@/design-system/ui/card";
+import { m } from "@/paraglide/messages";
 import { useOrderTransferViewModel } from "./order-transfer-view-model";
 
 export function TransferPage() {
@@ -13,14 +14,14 @@ export function TransferPage() {
 		<div className="mx-auto max-w-xl px-4 py-16">
 			<Card className="flex flex-col gap-4 p-8 text-center">
 				<h1 className="text-h4 font-bold tracking-tight text-foreground">
-					Transfer request
+					{m.transfer_title()}
 				</h1>
 				<p className="text-muted-foreground">
-					Accept or decline the request to transfer order{" "}
+					{m.transfer_desc_prefix()}{" "}
 					<span className="font-mono font-bold text-foreground">
 						#{orderId}
 					</span>{" "}
-					to your account.
+					{m.transfer_desc_suffix()}
 				</p>
 
 				{state.result ? (
@@ -28,14 +29,14 @@ export function TransferPage() {
 				) : (
 					<div className="flex justify-center gap-3">
 						<Button disabled={state.isAccepting} onClick={actions.accept}>
-							Accept transfer
+							{m.transfer_accept()}
 						</Button>
 						<Button
 							variant="outline"
 							disabled={state.isDeclining}
 							onClick={actions.decline}
 						>
-							Decline
+							{m.transfer_decline()}
 						</Button>
 					</div>
 				)}

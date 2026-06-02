@@ -3,6 +3,7 @@ import { Button } from "@/design-system/ui/button";
 import { Card } from "@/design-system/ui/card";
 import { Input } from "@/design-system/ui/input";
 import { Label } from "@/design-system/ui/label";
+import { m } from "@/paraglide/messages";
 import { useProfileViewModel } from "./account-profile-view-model";
 
 export function ProfilePage() {
@@ -12,7 +13,7 @@ export function ProfilePage() {
 	return (
 		<div className="max-w-lg">
 			<h1 className="mb-5 text-h3 font-bold tracking-tight text-foreground">
-				Profile
+				{m.profile_title()}
 			</h1>
 			<Card className="p-6">
 				<form
@@ -27,7 +28,7 @@ export function ProfilePage() {
 							{(field) => (
 								<TextField
 									field={field}
-									label="First name"
+									label={m.address_first_name()}
 									autoComplete="given-name"
 								/>
 							)}
@@ -36,7 +37,7 @@ export function ProfilePage() {
 							{(field) => (
 								<TextField
 									field={field}
-									label="Last name"
+									label={m.address_last_name()}
 									autoComplete="family-name"
 								/>
 							)}
@@ -44,15 +45,19 @@ export function ProfilePage() {
 					</div>
 					<form.Field name="phone">
 						{(field) => (
-							<TextField field={field} label="Phone" autoComplete="tel" />
+							<TextField
+								field={field}
+								label={m.address_phone()}
+								autoComplete="tel"
+							/>
 						)}
 					</form.Field>
 					<div className="flex flex-col gap-2">
-						<Label>Email</Label>
+						<Label>{m.profile_email()}</Label>
 						<Input value={customer?.email ?? ""} disabled />
 					</div>
 					<Button type="submit" className="w-full" disabled={state.isSaving}>
-						{state.isSaving ? "Saving…" : "Save changes"}
+						{state.isSaving ? m.common_saving() : m.profile_save()}
 					</Button>
 				</form>
 			</Card>

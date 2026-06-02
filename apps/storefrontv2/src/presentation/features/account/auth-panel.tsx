@@ -7,6 +7,7 @@ import {
 	TabsList,
 	TabsTrigger,
 } from "@/design-system/ui/tabs";
+import { m } from "@/paraglide/messages";
 import { useAuthViewModel } from "@/presentation/shared-view-models/auth-view-model";
 
 export function AuthPanel() {
@@ -18,10 +19,10 @@ export function AuthPanel() {
 			<Tabs value={state.tab} onValueChange={actions.setTab}>
 				<TabsList className="mb-6 w-full">
 					<TabsTrigger value="login" className="flex-1">
-						Sign in
+						{m.auth_sign_in()}
 					</TabsTrigger>
 					<TabsTrigger value="register" className="flex-1">
-						Register
+						{m.auth_register()}
 					</TabsTrigger>
 				</TabsList>
 
@@ -38,7 +39,7 @@ export function AuthPanel() {
 								{(field) => (
 									<TextField
 										field={field}
-										label="Email"
+										label={m.auth_email()}
 										type="email"
 										autoComplete="email"
 									/>
@@ -48,7 +49,7 @@ export function AuthPanel() {
 								{(field) => (
 									<TextField
 										field={field}
-										label="Password"
+										label={m.auth_password()}
 										type="password"
 										autoComplete="current-password"
 									/>
@@ -59,7 +60,7 @@ export function AuthPanel() {
 								className="w-full"
 								disabled={state.isLoggingIn}
 							>
-								{state.isLoggingIn ? "Signing in…" : "Sign in"}
+								{state.isLoggingIn ? m.auth_signing_in() : m.auth_sign_in()}
 							</Button>
 						</form>
 					</Card>
@@ -79,7 +80,7 @@ export function AuthPanel() {
 									{(field) => (
 										<TextField
 											field={field}
-											label="First name"
+											label={m.auth_first_name()}
 											autoComplete="given-name"
 										/>
 									)}
@@ -88,7 +89,7 @@ export function AuthPanel() {
 									{(field) => (
 										<TextField
 											field={field}
-											label="Last name"
+											label={m.auth_last_name()}
 											autoComplete="family-name"
 										/>
 									)}
@@ -98,7 +99,7 @@ export function AuthPanel() {
 								{(field) => (
 									<TextField
 										field={field}
-										label="Email"
+										label={m.auth_email()}
 										type="email"
 										autoComplete="email"
 									/>
@@ -108,7 +109,7 @@ export function AuthPanel() {
 								{(field) => (
 									<TextField
 										field={field}
-										label="Phone (optional)"
+										label={m.auth_phone_optional()}
 										type="tel"
 										autoComplete="tel"
 									/>
@@ -118,7 +119,7 @@ export function AuthPanel() {
 								{(field) => (
 									<TextField
 										field={field}
-										label="Password"
+										label={m.auth_password()}
 										type="password"
 										autoComplete="new-password"
 									/>
@@ -129,7 +130,9 @@ export function AuthPanel() {
 								className="w-full"
 								disabled={state.isSigningUp}
 							>
-								{state.isSigningUp ? "Creating account…" : "Create account"}
+								{state.isSigningUp
+									? m.auth_creating_account()
+									: m.auth_create_account()}
 							</Button>
 						</form>
 					</Card>

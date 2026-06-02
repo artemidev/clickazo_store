@@ -11,6 +11,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/design-system/ui/select";
+import { m } from "@/paraglide/messages";
 import { useAddressesViewModel } from "./account-addresses-view-model";
 
 export function AddressesPage() {
@@ -24,10 +25,10 @@ export function AddressesPage() {
 		<div className="flex flex-col gap-6">
 			<div className="flex items-center justify-between">
 				<h1 className="text-h3 font-bold tracking-tight text-foreground">
-					Addresses
+					{m.addresses_title()}
 				</h1>
 				<Button variant="outline" onClick={actions.toggleForm}>
-					{state.showForm ? "Cancel" : "Add address"}
+					{state.showForm ? m.common_cancel() : m.addresses_add()}
 				</Button>
 			</div>
 
@@ -45,7 +46,7 @@ export function AddressesPage() {
 								{(field) => (
 									<TextField
 										field={field}
-										label="First name"
+										label={m.address_first_name()}
 										autoComplete="given-name"
 									/>
 								)}
@@ -54,7 +55,7 @@ export function AddressesPage() {
 								{(field) => (
 									<TextField
 										field={field}
-										label="Last name"
+										label={m.address_last_name()}
 										autoComplete="family-name"
 									/>
 								)}
@@ -64,7 +65,7 @@ export function AddressesPage() {
 							{(field) => (
 								<TextField
 									field={field}
-									label="Address"
+									label={m.address_line1()}
 									autoComplete="address-line1"
 								/>
 							)}
@@ -74,7 +75,7 @@ export function AddressesPage() {
 								{(field) => (
 									<TextField
 										field={field}
-										label="Postal code"
+										label={m.address_postal_code()}
 										autoComplete="postal-code"
 									/>
 								)}
@@ -83,7 +84,7 @@ export function AddressesPage() {
 								{(field) => (
 									<TextField
 										field={field}
-										label="City"
+										label={m.address_city()}
 										autoComplete="address-level2"
 									/>
 								)}
@@ -93,13 +94,15 @@ export function AddressesPage() {
 							<form.Field name="country_code">
 								{(field) => (
 									<div className="flex flex-col gap-2">
-										<Label htmlFor={field.name}>Country</Label>
+										<Label htmlFor={field.name}>{m.address_country()}</Label>
 										<Select
 											value={field.state.value}
 											onValueChange={(value) => field.handleChange(value)}
 										>
 											<SelectTrigger className="w-full">
-												<SelectValue placeholder="Country" />
+												<SelectValue
+													placeholder={m.address_country_placeholder()}
+												/>
 											</SelectTrigger>
 											<SelectContent>
 												{(region?.countries ?? []).map((country) => (
@@ -117,12 +120,16 @@ export function AddressesPage() {
 							</form.Field>
 							<form.Field name="phone">
 								{(field) => (
-									<TextField field={field} label="Phone" autoComplete="tel" />
+									<TextField
+										field={field}
+										label={m.address_phone()}
+										autoComplete="tel"
+									/>
 								)}
 							</form.Field>
 						</div>
 						<Button type="submit" className="w-full" disabled={state.isAdding}>
-							{state.isAdding ? "Saving…" : "Save address"}
+							{state.isAdding ? m.common_saving() : m.addresses_save()}
 						</Button>
 					</form>
 				</Card>
@@ -147,7 +154,7 @@ export function AddressesPage() {
 							<Button
 								variant="ghost"
 								size="icon-sm"
-								aria-label="Delete address"
+								aria-label={m.addresses_delete_aria()}
 								onClick={() => actions.deleteAddress(address.id)}
 							>
 								<Trash2 className="size-4" />
@@ -156,7 +163,7 @@ export function AddressesPage() {
 					))}
 				</div>
 			) : (
-				<p className="text-muted-foreground">No saved addresses.</p>
+				<p className="text-muted-foreground">{m.addresses_none()}</p>
 			)}
 		</div>
 	);

@@ -1,20 +1,21 @@
 import { useNavigate } from "@tanstack/react-router";
 import { Button } from "@/design-system/ui/button";
+import { m } from "@/paraglide/messages";
 import { LocalizedLink } from "@/presentation/components/localized-link";
 import { useCountryCode } from "@/presentation/hooks/use-country-code";
 import { useAccountNavViewModel } from "@/presentation/shared-view-models/account-nav-view-model";
-
-const links = [
-	{ href: "/account", label: "Overview" },
-	{ href: "/account/profile", label: "Profile" },
-	{ href: "/account/addresses", label: "Addresses" },
-	{ href: "/account/orders", label: "Orders" },
-];
 
 export function AccountNav() {
 	const { state, actions } = useAccountNavViewModel();
 	const navigate = useNavigate();
 	const countryCode = useCountryCode();
+
+	const links = [
+		{ href: "/account", label: m.account_nav_overview() },
+		{ href: "/account/profile", label: m.account_nav_profile() },
+		{ href: "/account/addresses", label: m.account_nav_addresses() },
+		{ href: "/account/orders", label: m.account_nav_orders() },
+	];
 
 	return (
 		<nav className="flex flex-col gap-1">
@@ -39,7 +40,7 @@ export function AccountNav() {
 					)
 				}
 			>
-				Sign out
+				{m.account_sign_out()}
 			</Button>
 		</nav>
 	);

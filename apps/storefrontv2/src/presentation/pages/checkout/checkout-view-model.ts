@@ -18,6 +18,7 @@ import {
 	isCulqiSession,
 	resolveCulqiProviderId,
 } from "@/domain/checkout/payment";
+import { m } from "@/paraglide/messages";
 import { useCulqiCheckout } from "@/presentation/hooks/use-culqi-checkout";
 import {
 	type CheckoutStep,
@@ -92,13 +93,13 @@ export function useCheckoutViewModel({
 	const payWithCulqiMut = useMutation({
 		mutationFn: async () => {
 			if (!cart) {
-				throw new Error("Cart is not available");
+				throw new Error(m.checkout_cart_unavailable());
 			}
 			const providerId = resolveCulqiProviderId(cart);
 
 			const token = await culqi.openCheckout({
 				amount: Math.round((cart.total ?? 0) * 100),
-				title: "Checkout",
+				title: m.culqi_modal_title(),
 				email: cart.email ?? undefined,
 			});
 

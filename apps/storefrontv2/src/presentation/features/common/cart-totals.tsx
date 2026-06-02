@@ -1,5 +1,6 @@
 import type { HttpTypes } from "@medusajs/types";
 import { convertToLocale } from "@/domain/shared/money";
+import { m } from "@/paraglide/messages";
 
 type Totals = {
 	currency_code: string;
@@ -31,31 +32,31 @@ export function CartTotals({ totals }: { totals: Totals }) {
 	return (
 		<div className="flex flex-col gap-2.5 text-sm">
 			<div className="flex justify-between text-muted-foreground">
-				<span>Subtotal</span>
+				<span>{m.totals_subtotal()}</span>
 				<span className={mono}>{money(subtotal)}</span>
 			</div>
 			{!!discount_total && (
 				<div className="flex justify-between text-success-ink">
-					<span>Discount</span>
+					<span>{m.totals_discount()}</span>
 					<span className={mono}>- {money(discount_total)}</span>
 				</div>
 			)}
 			<div className="flex justify-between text-muted-foreground">
-				<span>Shipping</span>
+				<span>{m.totals_shipping()}</span>
 				<span className={mono}>{money(shipping_subtotal)}</span>
 			</div>
 			<div className="flex justify-between text-muted-foreground">
-				<span>Taxes</span>
+				<span>{m.totals_taxes()}</span>
 				<span className={mono}>{money(tax_total)}</span>
 			</div>
 			{!!gift_card_total && (
 				<div className="flex justify-between text-success-ink">
-					<span>Gift card</span>
+					<span>{m.totals_gift_card()}</span>
 					<span className={mono}>- {money(gift_card_total)}</span>
 				</div>
 			)}
 			<div className="mt-2 flex items-baseline justify-between border-t border-border pt-3 text-base font-semibold text-foreground">
-				<span>Total</span>
+				<span>{m.totals_total()}</span>
 				<span className={`${mono} text-h5 font-bold`}>{money(total)}</span>
 			</div>
 		</div>

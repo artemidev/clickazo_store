@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ordersListQueryOptions } from "@/application/queries/orders.queries";
 import { Card } from "@/design-system/ui/card";
 import { convertToLocale } from "@/domain/shared/money";
+import { m } from "@/paraglide/messages";
 import { LocalizedLink } from "@/presentation/components/localized-link";
 
 export function OrdersPage() {
@@ -10,10 +11,10 @@ export function OrdersPage() {
 	return (
 		<div>
 			<h1 className="mb-5 text-h3 font-bold tracking-tight text-foreground">
-				Orders
+				{m.orders_title()}
 			</h1>
 			{!orders || orders.length === 0 ? (
-				<p className="text-muted-foreground">You have no orders yet.</p>
+				<p className="text-muted-foreground">{m.orders_none()}</p>
 			) : (
 				<div className="flex flex-col gap-3">
 					{orders.map((order) => (
@@ -25,7 +26,7 @@ export function OrdersPage() {
 							<Card className="flex items-center justify-between p-4 transition-[transform,box-shadow,border-color] duration-200 ease-out group-hover:-translate-y-0.5 group-hover:border-border-strong group-hover:shadow-md">
 								<div>
 									<p className="font-mono text-sm font-bold text-foreground">
-										Order #{order.display_id}
+										{m.order_number({ id: String(order.display_id) })}
 									</p>
 									<p className="text-sm text-muted-foreground">
 										{order.created_at

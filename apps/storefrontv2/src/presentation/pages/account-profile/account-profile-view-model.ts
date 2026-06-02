@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { useCacheActions } from "@/application/cache";
 import { customerQueryOptions } from "@/application/queries/customer.queries";
 import { useUseCases } from "@/di/context";
+import { m } from "@/paraglide/messages";
 import { getErrorMessage } from "@/shared/utils";
 
 /** Profile view model: customer read + update form (TanStack Form). */
@@ -32,9 +33,9 @@ export function useProfileViewModel() {
 					last_name: value.last_name,
 					phone: value.phone,
 				});
-				toast.success("Profile updated");
+				toast.success(m.toast_profile_updated());
 			} catch (error) {
-				toast.error(getErrorMessage(error, "Failed"));
+				toast.error(getErrorMessage(error, m.common_failed()));
 			}
 		},
 	});

@@ -9,6 +9,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/design-system/ui/select";
+import { m } from "@/paraglide/messages";
 import type { CheckoutViewModel } from "@/presentation/pages/checkout/checkout-view-model";
 
 type AddressFormApi = CheckoutViewModel["state"]["addressForm"];
@@ -39,7 +40,7 @@ export function AddressForm({
 				{(field) => (
 					<TextField
 						field={field}
-						label="Email"
+						label={m.address_email()}
 						type="email"
 						autoComplete="email"
 					/>
@@ -51,7 +52,7 @@ export function AddressForm({
 					{(field) => (
 						<TextField
 							field={field}
-							label="First name"
+							label={m.address_first_name()}
 							autoComplete="given-name"
 						/>
 					)}
@@ -60,7 +61,7 @@ export function AddressForm({
 					{(field) => (
 						<TextField
 							field={field}
-							label="Last name"
+							label={m.address_last_name()}
 							autoComplete="family-name"
 						/>
 					)}
@@ -68,14 +69,16 @@ export function AddressForm({
 			</div>
 
 			<form.Field name="company">
-				{(field) => <TextField field={field} label="Company (optional)" />}
+				{(field) => (
+					<TextField field={field} label={m.address_company_optional()} />
+				)}
 			</form.Field>
 
 			<form.Field name="address_1">
 				{(field) => (
 					<TextField
 						field={field}
-						label="Address"
+						label={m.address_line1()}
 						autoComplete="address-line1"
 					/>
 				)}
@@ -86,7 +89,7 @@ export function AddressForm({
 					{(field) => (
 						<TextField
 							field={field}
-							label="Postal code"
+							label={m.address_postal_code()}
 							autoComplete="postal-code"
 						/>
 					)}
@@ -95,7 +98,7 @@ export function AddressForm({
 					{(field) => (
 						<TextField
 							field={field}
-							label="City"
+							label={m.address_city()}
 							autoComplete="address-level2"
 						/>
 					)}
@@ -105,19 +108,19 @@ export function AddressForm({
 			<div className="grid grid-cols-2 gap-4">
 				<form.Field name="province">
 					{(field) => (
-						<TextField field={field} label="State / Province (optional)" />
+						<TextField field={field} label={m.address_province_optional()} />
 					)}
 				</form.Field>
 				<form.Field name="country_code">
 					{(field) => (
 						<div className="flex flex-col gap-2">
-							<Label htmlFor={field.name}>Country</Label>
+							<Label htmlFor={field.name}>{m.address_country()}</Label>
 							<Select
 								value={field.state.value}
 								onValueChange={(value) => field.handleChange(value)}
 							>
 								<SelectTrigger className="w-full">
-									<SelectValue placeholder="Select a country" />
+									<SelectValue placeholder={m.address_select_country()} />
 								</SelectTrigger>
 								<SelectContent>
 									{(region.countries ?? []).map((country) => (
@@ -136,14 +139,14 @@ export function AddressForm({
 				{(field) => (
 					<TextField
 						field={field}
-						label="Phone (optional)"
+						label={m.address_phone_optional()}
 						autoComplete="tel"
 					/>
 				)}
 			</form.Field>
 
 			<Button type="submit" className="w-full" disabled={isSubmitting}>
-				{isSubmitting ? "Saving…" : "Save and continue"}
+				{isSubmitting ? m.common_saving() : m.address_save_continue()}
 			</Button>
 		</form>
 	);

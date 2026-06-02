@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useCacheActions } from "@/application/cache";
 import { useUseCases } from "@/di/context";
+import { m } from "@/paraglide/messages";
 
 /**
  * Order transfer view model: accept/decline a transfer request and expose the
@@ -24,7 +25,9 @@ export function useOrderTransferViewModel({
 		onSuccess: (res) => {
 			cache.invalidateOrders();
 			setResult(
-				res.success ? "Transfer accepted." : (res.error ?? "Failed to accept."),
+				res.success
+					? m.toast_transfer_accepted()
+					: (res.error ?? m.toast_transfer_accept_failed()),
 			);
 		},
 	});
@@ -34,8 +37,8 @@ export function useOrderTransferViewModel({
 			cache.invalidateOrders();
 			setResult(
 				res.success
-					? "Transfer declined."
-					: (res.error ?? "Failed to decline."),
+					? m.toast_transfer_declined()
+					: (res.error ?? m.toast_transfer_decline_failed()),
 			);
 		},
 	});

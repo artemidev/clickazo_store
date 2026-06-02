@@ -4,6 +4,7 @@ import { CheckCircle2 } from "lucide-react";
 import { orderQueryOptions } from "@/application/queries/orders.queries";
 import { Button } from "@/design-system/ui/button";
 import { Card } from "@/design-system/ui/card";
+import { m } from "@/paraglide/messages";
 import { LocalizedLink } from "@/presentation/components/localized-link";
 import { CartTotals } from "@/presentation/features/common/cart-totals";
 import {
@@ -24,14 +25,14 @@ export function OrderConfirmedPage() {
 					<CheckCircle2 className="size-7" />
 				</div>
 				<h1 className="text-h3 font-bold tracking-tight text-foreground">
-					Thank you for your order!
+					{m.order_thank_you()}
 				</h1>
 				<p className="text-muted-foreground">
-					Your order{" "}
+					{m.order_confirmed_prefix()}{" "}
 					<span className="font-mono font-bold text-foreground">
 						#{order.display_id}
 					</span>{" "}
-					was placed successfully. A confirmation was sent to {order.email}.
+					{m.order_confirmed_suffix({ email: order.email ?? "" })}
 				</p>
 			</div>
 
@@ -41,7 +42,7 @@ export function OrderConfirmedPage() {
 
 				{order.shipping_address ? (
 					<div className="text-sm">
-						<h3 className="mb-1 font-medium">Shipping to</h3>
+						<h3 className="mb-1 font-medium">{m.order_shipping_to()}</h3>
 						<p className="text-muted-foreground">
 							{order.shipping_address.first_name}{" "}
 							{order.shipping_address.last_name}
@@ -58,7 +59,7 @@ export function OrderConfirmedPage() {
 
 			<div className="mt-8 flex justify-center">
 				<LocalizedLink href="/store">
-					<Button variant="outline">Continue shopping</Button>
+					<Button variant="outline">{m.order_continue_shopping()}</Button>
 				</LocalizedLink>
 			</div>
 		</div>

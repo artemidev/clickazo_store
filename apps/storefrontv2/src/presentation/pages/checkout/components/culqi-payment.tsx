@@ -1,4 +1,5 @@
 import { Button } from "@/design-system/ui/button";
+import { m } from "@/paraglide/messages";
 
 /**
  * Culqi payment action. Opening the hosted Culqi Checkout modal, tokenizing the
@@ -17,7 +18,7 @@ export function CulqiPayment({
 	return (
 		<div className="flex flex-col gap-2">
 			<Button size="lg" disabled={isPaying} onClick={onPay}>
-				{isPaying ? "Procesando pago…" : "Pagar con tarjeta (Culqi)"}
+				{isPaying ? m.culqi_processing() : m.culqi_pay()}
 			</Button>
 			{error && <p className="text-sm text-destructive">{error}</p>}
 		</div>

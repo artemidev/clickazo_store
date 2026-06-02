@@ -4,6 +4,7 @@ import { Card } from "@/design-system/ui/card";
 import { Label } from "@/design-system/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/design-system/ui/radio-group";
 import { convertToLocale } from "@/domain/shared/money";
+import { m } from "@/paraglide/messages";
 import { CartTotals } from "@/presentation/features/common/cart-totals";
 import { AddressForm } from "@/presentation/pages/checkout/components/address-form";
 import { CulqiPayment } from "@/presentation/pages/checkout/components/culqi-payment";
@@ -27,7 +28,7 @@ export function CheckoutPage() {
 	if (!state.cart || !state.cart.items?.length || !state.region) {
 		return (
 			<div className="mx-auto max-w-2xl px-4 py-24 text-center text-muted-foreground">
-				Your cart is empty.
+				{m.checkout_cart_empty()}
 			</div>
 		);
 	}
@@ -40,7 +41,7 @@ export function CheckoutPage() {
 				{/* 1. Address */}
 				<section>
 					<h2 className="mb-4 text-h5 font-bold text-foreground">
-						Shipping address
+						{m.checkout_shipping_address()}
 					</h2>
 					<AddressForm
 						form={state.addressForm}
@@ -55,7 +56,9 @@ export function CheckoutPage() {
 						state.deliveryUnlocked ? "" : "pointer-events-none opacity-50"
 					}
 				>
-					<h2 className="mb-4 text-h5 font-bold text-foreground">Delivery</h2>
+					<h2 className="mb-4 text-h5 font-bold text-foreground">
+						{m.checkout_delivery()}
+					</h2>
 					<RadioGroup
 						value={state.selectedShippingId ?? ""}
 						onValueChange={actions.selectShipping}
@@ -80,7 +83,7 @@ export function CheckoutPage() {
 						))}
 						{state.shippingOptions && state.shippingOptions.length === 0 && (
 							<p className="text-sm text-muted-foreground">
-								No delivery options available.
+								{m.checkout_no_delivery()}
 							</p>
 						)}
 					</RadioGroup>
@@ -92,7 +95,9 @@ export function CheckoutPage() {
 						state.paymentUnlocked ? "" : "pointer-events-none opacity-50"
 					}
 				>
-					<h2 className="mb-4 text-h5 font-bold text-foreground">Payment</h2>
+					<h2 className="mb-4 text-h5 font-bold text-foreground">
+						{m.checkout_payment()}
+					</h2>
 					<RadioGroup
 						value={state.activeSession?.provider_id ?? ""}
 						onValueChange={actions.selectPayment}
@@ -109,7 +114,7 @@ export function CheckoutPage() {
 						))}
 						{state.paymentMethods && state.paymentMethods.length === 0 && (
 							<p className="text-sm text-muted-foreground">
-								No payment providers configured for this region.
+								{m.checkout_no_payment()}
 							</p>
 						)}
 					</RadioGroup>
@@ -131,7 +136,9 @@ export function CheckoutPage() {
 							disabled={!state.canPlaceOrder || state.isPlacingOrder}
 							onClick={actions.placeOrder}
 						>
-							{state.isPlacingOrder ? "Placing order…" : "Place order"}
+							{state.isPlacingOrder
+								? m.checkout_placing_order()
+								: m.checkout_place_order()}
 						</Button>
 					)}
 				</Card>
