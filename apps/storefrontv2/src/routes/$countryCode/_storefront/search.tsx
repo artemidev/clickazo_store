@@ -7,9 +7,13 @@ export const Route = createFileRoute("/$countryCode/_storefront/search")({
 		q: typeof search.q === "string" ? search.q : "",
 	}),
 	loaderDeps: ({ search }) => ({ q: search.q }),
-	loader: ({ context, deps }) =>
+	loader: ({ context, deps, params }) =>
 		context.queryClient.ensureQueryData(
-			productSearchQueryOptions({ query: deps.q }),
+			productSearchQueryOptions({
+				query: deps.q,
+				countryCode: params.countryCode,
+				limit: 24,
+			}),
 		),
 	component: SearchPage,
 });

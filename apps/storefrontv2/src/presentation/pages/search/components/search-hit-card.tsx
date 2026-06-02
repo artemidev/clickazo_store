@@ -1,11 +1,14 @@
+import { Eyebrow } from "@/design-system/brand/eyebrow";
+import { Price } from "@/design-system/brand/price";
+import { Badge } from "@/design-system/ui/badge";
 import { Card } from "@/design-system/ui/card";
 import type { ProductSearchHit } from "@/infrastructure/medusa/search";
 import { LocalizedLink } from "@/presentation/components/localized-link";
 
 /**
- * Renders a single Meilisearch product hit. Hits carry no pricing (see
- * `infrastructure/medusa/search.ts`), so this is a lightweight card that links
- * through to the priced product detail page.
+ * Grid card for a search result on the full `/search` page. Hits are hydrated
+ * with region-aware pricing and a category in the search layer, so this mirrors
+ * the regular product card.
  */
 export function SearchHitCard({ hit }: { hit: ProductSearchHit }) {
 	return (
@@ -24,15 +27,24 @@ export function SearchHitCard({ hit }: { hit: ProductSearchHit }) {
 							No image
 						</div>
 					)}
+					{hit.price?.isSale ? (
+						<Badge variant="sale" className="absolute top-2.5 left-2.5">
+							Sale
+						</Badge>
+					) : null}
 				</div>
 				<div className="flex flex-col gap-1.5 p-3.5">
+					{hit.category ? <Eyebrow>{hit.category}</Eyebrow> : null}
 					<h3 className="line-clamp-1 text-sm font-semibold tracking-tight text-card-foreground">
 						{hit.title}
 					</h3>
-					{hit.description ? (
-						<p className="line-clamp-2 text-xs text-muted-foreground">
-							{hit.description}
-						</p>
+					{hit.price ? (
+						<Price
+							className="mt-0.5 text-sm"
+							amount={hit.price.calculated}
+							originalAmount={hit.price.original}
+							isSale={hit.price.isSale}
+						/>
 					) : null}
 				</div>
 			</Card>

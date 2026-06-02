@@ -48,8 +48,11 @@ export const queryKeys = {
 
 	search: {
 		all: () => ["search"] as const,
-		products: (params: { query: string; limit?: number }) =>
-			["search", "products", params] as const,
+		products: (params: {
+			query: string;
+			countryCode: string;
+			limit?: number;
+		}) => ["search", "products", params] as const,
 	},
 
 	shippingOptions: (cartId: string) => ["shipping-options", cartId] as const,

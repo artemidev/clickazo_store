@@ -161,8 +161,18 @@ module.exports = defineConfig({
           host: process.env.MEILISEARCH_HOST ?? "",
           apiKey: process.env.MEILISEARCH_API_KEY ?? "",
         },
+        // Single-index "field-suffix" i18n strategy: every product/category
+        // lives in ONE index ("products" / "categories") and each translatable
+        // field gets a language-suffixed sibling (e.g. `title_es`). This avoids
+        // the duplicate-results bug the plugin's "separate-index" strategy has in
+        // v1.4.3 (its sync step writes the default-language documents into both
+        // `<index>_<lang>` indexes, so a search merged across them returns every
+        // product twice). With a single index the store route can never merge
+        // duplicates, and Spanish search works the moment translations exist.
+        // `translatableFields` is left unset so the transformer auto-detects the
+        // string fields it has translations for (title/description, name/...).
         i18n: {
-          strategy: "separate-index",
+          strategy: "field-suffix",
           languages: ["en", "es"],
           defaultLanguage: "en",
         },
@@ -179,12 +189,23 @@ module.exports = defineConfig({
               "variant_sku",
             ],
             indexSettings: {
-              searchableAttributes: ["title", "description", "variant_sku"],
+              // Include the `_es` siblings so a Spanish query matches Spanish
+              // text once translations are loaded. They have no effect until the
+              // Translation module is populated (fields simply stay absent).
+              searchableAttributes: [
+                "title",
+                "title_es",
+                "description",
+                "description_es",
+                "variant_sku",
+              ],
               displayedAttributes: [
                 "id",
                 "handle",
                 "title",
+                "title_es",
                 "description",
+                "description_es",
                 "thumbnail",
               ],
               filterableAttributes: ["id", "handle"],
@@ -212,8 +233,13 @@ module.exports = defineConfig({
             enabled: true,
             fields: ["id", "name", "description", "handle", "is_active", "parent_id"],
             indexSettings: {
-              searchableAttributes: ["name", "description"],
-              displayedAttributes: ["id", "name", "handle"],
+              searchableAttributes: [
+                "name",
+                "name_es",
+                "description",
+                "description_es",
+              ],
+              displayedAttributes: ["id", "name", "name_es", "handle"],
               filterableAttributes: ["id", "handle", "is_active", "parent_id"],
             },
             primaryKey: "id",
