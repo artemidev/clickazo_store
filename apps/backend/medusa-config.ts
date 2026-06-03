@@ -260,6 +260,20 @@ module.exports = defineConfig({
             },
           },
         },
+        // AI-powered semantic / hybrid search using Meilisearch native embedders.
+        // Requires Meilisearch v1.5+ and an OPENAI_API_KEY env variable.
+        // Meilisearch generates embeddings automatically at indexing time.
+        vectorSearch: {
+          enabled: true,
+          embedding: {
+            provider: 'openai',
+            apiKey: process.env.OPENAI_API_KEY ?? '',
+            model: 'text-embedding-3-small',
+          },
+          embeddingFields: ['title', 'description'],
+          semanticRatio: 0.5, // 0.0 = keyword only, 1.0 = pure semantic
+          dimensions: 1536,
+        },
       } satisfies MeilisearchPluginOptions,
     },
   ],
