@@ -16,7 +16,7 @@ import { updateShippingOptionsWorkflow } from "@medusajs/medusa/core-flows";
  *
  * Keep `FREE_SHIPPING_THRESHOLD` in sync with the seed.
  */
-const FREE_SHIPPING_THRESHOLD = 50;
+const FREE_SHIPPING_THRESHOLD = 200;
 
 export default async function addFreeShipping({
   container,
@@ -29,12 +29,12 @@ export default async function addFreeShipping({
   const { data: options } = await query.graph({
     entity: "shipping_option",
     fields: ["id", "name"],
-    filters: { name: "Standard Shipping" },
+    filters: { name: "Envío Estándar" },
   });
 
   if (!options.length) {
     logger.warn(
-      "No 'Standard Shipping' shipping option found — nothing to update."
+      "No se encontró la opción de envío 'Envío Estándar' — nada que actualizar."
     );
     return;
   }
@@ -56,12 +56,12 @@ export default async function addFreeShipping({
   // for the supported currencies and every region. Providing the complete list
   // is required because the update workflow replaces the option's prices.
   const prices = [
-    { currency_code: "usd", amount: 10 },
-    { currency_code: "eur", amount: 10 },
+    { currency_code: "usd", amount: 4 },
+    { currency_code: "pen", amount: 15 },
     { currency_code: "usd", amount: 0, rules: freeShippingRules },
-    { currency_code: "eur", amount: 0, rules: freeShippingRules },
+    { currency_code: "pen", amount: 0, rules: freeShippingRules },
     ...regions.flatMap((region) => [
-      { region_id: region.id, amount: 10 },
+      { region_id: region.id, amount: 15 },
       { region_id: region.id, amount: 0, rules: freeShippingRules },
     ]),
   ];
@@ -71,7 +71,7 @@ export default async function addFreeShipping({
       input: [{ id: option.id, prices }],
     });
     logger.info(
-      `Updated '${option.name}' (${option.id}) with a free-shipping price rule (item_total >= ${FREE_SHIPPING_THRESHOLD}).`
+      `Actualizado '${option.name}' (${option.id}) con regla de envío gratis (item_total >= ${FREE_SHIPPING_THRESHOLD}).`
     );
   }
 

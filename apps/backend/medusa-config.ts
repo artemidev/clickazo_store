@@ -175,7 +175,7 @@ module.exports = defineConfig({
         i18n: {
           strategy: "field-suffix",
           languages: ["en", "es"],
-          defaultLanguage: "en",
+          defaultLanguage: "es",
         },
         settings: {
           products: {

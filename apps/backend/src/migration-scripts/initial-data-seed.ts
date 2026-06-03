@@ -34,13 +34,13 @@ export default async function initial_data_seed({
     ModuleRegistrationName.FULFILLMENT
   );
 
-  const countries = ["gb", "de", "dk", "se", "fr", "es", "it"];
+  const countries = ["pe"];
 
   // Order subtotal (in the cart currency, major units) from which Standard
   // Shipping becomes free. Read by the storefront's free-shipping bar via the
   // shipping option's conditional price rule. Keep in sync with the
   // `add-free-shipping` script.
-  const FREE_SHIPPING_THRESHOLD = 50;
+  const FREE_SHIPPING_THRESHOLD = 200;
 
   logger.info("Seeding store data...");
   const {
@@ -49,8 +49,8 @@ export default async function initial_data_seed({
     input: {
       salesChannelsData: [
         {
-          name: "Default Sales Channel",
-          description: "Created by Medusa",
+          name: "Canal de Ventas Principal",
+          description: "Creado por Medusa",
         },
       ],
     },
@@ -62,7 +62,7 @@ export default async function initial_data_seed({
     input: {
       api_keys: [
         {
-          title: "Default Publishable API Key",
+          title: "Clave API Publicable por Defecto",
           type: "publishable",
           created_by: "",
         },
@@ -83,10 +83,10 @@ export default async function initial_data_seed({
     input: {
       stores: [
         {
-          name: "Default Store",
+          name: "Tienda Principal",
           supported_currencies: [
             {
-              currency_code: "eur",
+              currency_code: "pen",
               is_default: true,
             },
             {
@@ -105,10 +105,10 @@ export default async function initial_data_seed({
     input: {
       regions: [
         {
-          name: "Europe",
-          currency_code: "eur",
+          name: "Perú",
+          currency_code: "pen",
           countries,
-          payment_providers: ["pp_system_default"],
+          payment_providers: ["pp_system_default", "pp_culqi_culqi"],
         },
       ],
     },
@@ -132,10 +132,10 @@ export default async function initial_data_seed({
     input: {
       locations: [
         {
-          name: "European Warehouse",
+          name: "Almacén de Lima",
           address: {
-            city: "Copenhagen",
-            country_code: "DK",
+            city: "Lima",
+            country_code: "PE",
             address_1: "",
           },
         },
@@ -162,38 +162,14 @@ export default async function initial_data_seed({
   const shippingProfile = shippingProfileResult[0];
 
   const fulfillmentSet = await fulfillmentModuleService.createFulfillmentSets({
-    name: "European Warehouse delivery",
+    name: "Entrega Almacén Lima",
     type: "shipping",
     service_zones: [
       {
-        name: "Europe",
+        name: "Perú",
         geo_zones: [
           {
-            country_code: "gb",
-            type: "country",
-          },
-          {
-            country_code: "de",
-            type: "country",
-          },
-          {
-            country_code: "dk",
-            type: "country",
-          },
-          {
-            country_code: "se",
-            type: "country",
-          },
-          {
-            country_code: "fr",
-            type: "country",
-          },
-          {
-            country_code: "es",
-            type: "country",
-          },
-          {
-            country_code: "it",
+            country_code: "pe",
             type: "country",
           },
         ],
@@ -213,28 +189,28 @@ export default async function initial_data_seed({
   await createShippingOptionsWorkflow(container).run({
     input: [
       {
-        name: "Standard Shipping",
+        name: "Envío Estándar",
         price_type: "flat",
         provider_id: "manual_manual",
         service_zone_id: fulfillmentSet.service_zones[0].id,
         shipping_profile_id: shippingProfile.id,
         type: {
-          label: "Standard",
-          description: "Ship in 2-3 days.",
+          label: "Estándar",
+          description: "Entrega en 2-3 días.",
           code: "standard",
         },
         prices: [
           {
             currency_code: "usd",
-            amount: 10,
+            amount: 4,
           },
           {
-            currency_code: "eur",
-            amount: 10,
+            currency_code: "pen",
+            amount: 15,
           },
           {
             region_id: region.id,
-            amount: 10,
+            amount: 15,
           },
           // Free shipping once the cart item total reaches the threshold.
           {
@@ -249,7 +225,7 @@ export default async function initial_data_seed({
             ],
           },
           {
-            currency_code: "eur",
+            currency_code: "pen",
             amount: 0,
             rules: [
               {
@@ -285,28 +261,28 @@ export default async function initial_data_seed({
         ],
       },
       {
-        name: "Express Shipping",
+        name: "Envío Express",
         price_type: "flat",
         provider_id: "manual_manual",
         service_zone_id: fulfillmentSet.service_zones[0].id,
         shipping_profile_id: shippingProfile.id,
         type: {
           label: "Express",
-          description: "Ship in 24 hours.",
+          description: "Entrega en 24 horas.",
           code: "express",
         },
         prices: [
           {
             currency_code: "usd",
-            amount: 10,
+            amount: 4,
           },
           {
-            currency_code: "eur",
-            amount: 10,
+            currency_code: "pen",
+            amount: 15,
           },
           {
             region_id: region.id,
-            amount: 10,
+            amount: 15,
           },
         ],
         rules: [
@@ -346,12 +322,12 @@ export default async function initial_data_seed({
   ).run({
     input: {
       product_categories: [
-        { name: "Apparel", handle: "apparel", is_active: true },
-        { name: "Desk", handle: "desk", is_active: true },
-        { name: "Cubes", handle: "cubes", is_active: true },
-        { name: "Drinkware", handle: "drinkware", is_active: true },
-        { name: "Gym", handle: "gym", is_active: true },
-        { name: "Gadgets", handle: "gadgets", is_active: true },
+        { name: "Ropa", handle: "ropa", is_active: true },
+        { name: "Escritorio", handle: "escritorio", is_active: true },
+        { name: "Cubos", handle: "cubos", is_active: true },
+        { name: "Bebidas", handle: "bebidas", is_active: true },
+        { name: "Gimnasio", handle: "gimnasio", is_active: true },
+        { name: "Accesorios", handle: "accesorios", is_active: true },
       ],
     },
   });
@@ -363,100 +339,100 @@ export default async function initial_data_seed({
   ).run({
     input: {
       product_categories: [
-        // Apparel
+        // Ropa
         {
-          name: "Tees",
-          handle: "tees",
-          parent_category_id: parentId("apparel"),
+          name: "Polos",
+          handle: "polos",
+          parent_category_id: parentId("ropa"),
           is_active: true,
         },
         {
-          name: "Hoodies",
-          handle: "hoodies",
-          parent_category_id: parentId("apparel"),
+          name: "Poleras",
+          handle: "poleras",
+          parent_category_id: parentId("ropa"),
           is_active: true,
         },
         {
-          name: "Beanies & Hats",
-          handle: "beanies",
-          parent_category_id: parentId("apparel"),
+          name: "Gorros y Gorras",
+          handle: "gorros",
+          parent_category_id: parentId("ropa"),
           is_active: true,
         },
-        // Desk
+        // Escritorio
         {
-          name: "Keyboards",
-          handle: "keyboards",
-          parent_category_id: parentId("desk"),
-          is_active: true,
-        },
-        {
-          name: "Stands & Risers",
-          handle: "stands",
-          parent_category_id: parentId("desk"),
+          name: "Teclados",
+          handle: "teclados",
+          parent_category_id: parentId("escritorio"),
           is_active: true,
         },
         {
-          name: "Desk Mats",
-          handle: "desk-mats",
-          parent_category_id: parentId("desk"),
+          name: "Soportes y Elevadores",
+          handle: "soportes",
+          parent_category_id: parentId("escritorio"),
           is_active: true,
         },
         {
-          name: "Desk Toys",
-          handle: "desk-toys",
-          parent_category_id: parentId("desk"),
-          is_active: true,
-        },
-        // Cubes
-        {
-          name: "Speed Cubes",
-          handle: "speed-cubes",
-          parent_category_id: parentId("cubes"),
+          name: "Tapetes de Escritorio",
+          handle: "tapetes",
+          parent_category_id: parentId("escritorio"),
           is_active: true,
         },
         {
-          name: "Timers",
-          handle: "timers",
-          parent_category_id: parentId("cubes"),
+          name: "Juguetes de Escritorio",
+          handle: "juguetes",
+          parent_category_id: parentId("escritorio"),
           is_active: true,
         },
-        // Drinkware
+        // Cubos
         {
-          name: "Mugs",
-          handle: "mugs",
-          parent_category_id: parentId("drinkware"),
+          name: "Cubos de Velocidad",
+          handle: "cubos-velocidad",
+          parent_category_id: parentId("cubos"),
           is_active: true,
         },
         {
-          name: "Bottles",
-          handle: "bottles",
-          parent_category_id: parentId("drinkware"),
+          name: "Cronómetros",
+          handle: "cronometros",
+          parent_category_id: parentId("cubos"),
           is_active: true,
         },
-        // Gym
+        // Bebidas
         {
-          name: "Gym Gear",
-          handle: "gym-gear",
-          parent_category_id: parentId("gym"),
+          name: "Tazas",
+          handle: "tazas",
+          parent_category_id: parentId("bebidas"),
           is_active: true,
         },
-        // Gadgets
+        {
+          name: "Botellas",
+          handle: "botellas",
+          parent_category_id: parentId("bebidas"),
+          is_active: true,
+        },
+        // Gimnasio
+        {
+          name: "Equipo de Gimnasio",
+          handle: "equipo-gimnasio",
+          parent_category_id: parentId("gimnasio"),
+          is_active: true,
+        },
+        // Accesorios
         {
           name: "Cables",
           handle: "cables",
-          parent_category_id: parentId("gadgets"),
+          parent_category_id: parentId("accesorios"),
           is_active: true,
         },
         {
-          name: "Hubs & Docks",
+          name: "Hubs y Docks",
           handle: "hubs",
-          parent_category_id: parentId("gadgets"),
+          parent_category_id: parentId("accesorios"),
           is_active: true,
         },
         {
-          name: "Tools",
-          handle: "tools",
-          parent_category_id: parentId("gadgets"),
+          name: "Herramientas",
+          handle: "herramientas",
+          parent_category_id: parentId("accesorios"),
           is_active: true,
         },
       ],
@@ -469,21 +445,21 @@ export default async function initial_data_seed({
   // that parent category pages (the header nav tabs) list every descendant
   // product — Medusa's `category_id` filter does not descend on its own.
   const CHILD_TO_PARENT: Record<string, string> = {
-    tees: "apparel",
-    hoodies: "apparel",
-    beanies: "apparel",
-    keyboards: "desk",
-    stands: "desk",
-    "desk-mats": "desk",
-    "desk-toys": "desk",
-    "speed-cubes": "cubes",
-    timers: "cubes",
-    mugs: "drinkware",
-    bottles: "drinkware",
-    "gym-gear": "gym",
-    cables: "gadgets",
-    hubs: "gadgets",
-    tools: "gadgets",
+    polos: "ropa",
+    poleras: "ropa",
+    gorros: "ropa",
+    teclados: "escritorio",
+    soportes: "escritorio",
+    tapetes: "escritorio",
+    juguetes: "escritorio",
+    "cubos-velocidad": "cubos",
+    cronometros: "cubos",
+    tazas: "bebidas",
+    botellas: "bebidas",
+    "equipo-gimnasio": "gimnasio",
+    cables: "accesorios",
+    hubs: "accesorios",
+    herramientas: "accesorios",
   };
 
   // Collections power the "New Drops" / "Best Sellers" rails and nav links.
@@ -492,8 +468,8 @@ export default async function initial_data_seed({
   ).run({
     input: {
       collections: [
-        { title: "New Drops", handle: "new-drops" },
-        { title: "Best Sellers", handle: "best-sellers" },
+        { title: "Novedades", handle: "novedades" },
+        { title: "Más Vendidos", handle: "mas-vendidos" },
       ],
     },
   });
@@ -507,8 +483,8 @@ export default async function initial_data_seed({
   // product photos in production — the `picsum` seeds keep them stable).
   // ----------------------------------------------------------------------
   const salesChannelLink = [{ id: defaultSalesChannel.id }];
-  const eurUsd = (eur: number, usd: number) => [
-    { amount: eur, currency_code: "eur" },
+  const penUsd = (pen: number, usd: number) => [
+    { amount: pen, currency_code: "pen" },
     { amount: usd, currency_code: "usd" },
   ];
   const placeholder = (seed: string) => [
@@ -529,28 +505,28 @@ export default async function initial_data_seed({
     weight?: number;
     sizes?: string[];
     skuBase: string;
-    eur: number;
+    pen: number;
     usd: number;
   };
 
   function buildProduct(spec: ProductSpec) {
     const hasSizes = !!spec.sizes && spec.sizes.length > 0;
     const options = hasSizes
-      ? [{ title: "Size", values: spec.sizes! }]
-      : [{ title: "Style", values: ["Standard"] }];
+      ? [{ title: "Talla", values: spec.sizes! }]
+      : [{ title: "Estilo", values: ["Estándar"] }];
     const variants = hasSizes
       ? spec.sizes!.map((size) => ({
           title: size,
           sku: `${spec.skuBase}-${size}`,
-          options: { Size: size },
-          prices: eurUsd(spec.eur, spec.usd),
+          options: { Talla: size },
+          prices: penUsd(spec.pen, spec.usd),
         }))
       : [
           {
-            title: "Standard",
+            title: "Estándar",
             sku: spec.skuBase,
-            options: { Style: "Standard" },
-            prices: eurUsd(spec.eur, spec.usd),
+            options: { Estilo: "Estándar" },
+            prices: penUsd(spec.pen, spec.usd),
           },
         ];
 
@@ -576,14 +552,14 @@ export default async function initial_data_seed({
   }
 
   const productSpecs: ProductSpec[] = [
-    // --- Apparel ---
+    // --- Ropa ---
     {
-      title: "Compiles Under Pressure Tee",
-      handle: "compiles-under-pressure-tee",
+      title: "Polo Compila Bajo Presión",
+      handle: "polo-compila-bajo-presion",
       description:
-        "Heavyweight 100% cotton with a soft-hand print that won't crack. The line your code wishes it lived up to.",
-      categoryHandle: "tees",
-      collectionHandle: "best-sellers",
+        "Algodón 100% pesado con estampado de tacto suave que no se agrieta. La frase que tu código desearía cumplir.",
+      categoryHandle: "polos",
+      collectionHandle: "mas-vendidos",
       images: [
         { url: `${MEDUSA_IMG}/tee-black-front.png` },
         { url: `${MEDUSA_IMG}/tee-black-back.png` },
@@ -591,216 +567,216 @@ export default async function initial_data_seed({
         { url: `${MEDUSA_IMG}/tee-white-back.png` },
       ],
       sizes: ["S", "M", "L", "XL"],
-      skuBase: "TEE-COMPILES",
-      eur: 24,
+      skuBase: "POLO-COMPILA",
+      pen: 96,
       usd: 28,
     },
     {
-      title: "Git Blame Hoodie",
-      handle: "git-blame-hoodie",
+      title: "Polera Git Blame",
+      handle: "polera-git-blame",
       description:
-        "Midweight brushed fleece with a kangaroo pocket deep enough for snacks. Comfortable enough to ship on a Friday.",
-      categoryHandle: "hoodies",
+        "Felpa media cepillada con bolsillo canguro lo suficientemente profundo para snacks. Tan cómoda que podrías hacer deploy un viernes.",
+      categoryHandle: "poleras",
       images: [
         { url: `${MEDUSA_IMG}/sweatshirt-vintage-front.png` },
         { url: `${MEDUSA_IMG}/sweatshirt-vintage-back.png` },
       ],
       sizes: ["S", "M", "L", "XL"],
-      skuBase: "HOODIE-GITBLAME",
-      eur: 52,
+      skuBase: "POLERA-GITBLAME",
+      pen: 208,
       usd: 62,
     },
     {
-      title: "Terminal Green Beanie",
-      handle: "terminal-green-beanie",
+      title: "Gorro Verde Terminal",
+      handle: "gorro-verde-terminal",
       description:
-        "Ribbed knit with a double-folded cuff in phosphor green — like the good old CRTs.",
-      categoryHandle: "beanies",
-      collectionHandle: "new-drops",
+        "Tejido acanalado con doblez en verde fósforo — como los buenos viejos monitores CRT.",
+      categoryHandle: "gorros",
+      collectionHandle: "novedades",
       images: placeholder("cz-beanie"),
-      sizes: ["One Size"],
-      skuBase: "BEANIE-TERMINAL",
-      eur: 20,
+      sizes: ["Talla Única"],
+      skuBase: "GORRO-TERMINAL",
+      pen: 80,
       usd: 24,
     },
-    // --- Desk ---
+    // --- Escritorio ---
     {
-      title: "75% Mechanical Keyboard",
-      handle: "75-mechanical-keyboard",
+      title: "Teclado Mecánico 75%",
+      handle: "teclado-mecanico-75",
       description:
-        "Hot-swap switches, gasket mount, knob included. Sounds like a thock, types like butter.",
-      categoryHandle: "keyboards",
-      collectionHandle: "best-sellers",
+        "Switches hot-swap, montaje gasket, knob incluido. Suena a thock, escribe como mantequilla.",
+      categoryHandle: "teclados",
+      collectionHandle: "mas-vendidos",
       images: placeholder("cz-keyboard"),
       weight: 1100,
-      skuBase: "KB-75",
-      eur: 129,
+      skuBase: "TECLADO-75",
+      pen: 516,
       usd: 149,
     },
     {
-      title: "Aluminium Laptop Stand",
-      handle: "aluminium-laptop-stand",
+      title: "Soporte de Aluminio para Laptop",
+      handle: "soporte-aluminio-laptop",
       description:
-        "CNC aluminium, folds flat, raises your screen to where your neck wants it.",
-      categoryHandle: "stands",
+        "Aluminio CNC, se pliega plano, eleva tu pantalla hasta donde tu cuello la quiere.",
+      categoryHandle: "soportes",
       images: placeholder("cz-stand"),
       weight: 800,
-      skuBase: "STAND-ALU",
-      eur: 46,
+      skuBase: "SOPORTE-ALU",
+      pen: 184,
       usd: 54,
     },
     {
-      title: "Pixel-Art Desk Mat",
-      handle: "pixel-art-desk-mat",
+      title: "Tapete de Escritorio Pixel Art",
+      handle: "tapete-pixel-art",
       description:
-        "900×400 stitched-edge mat. Smooth glide, grippy base, eight-bit energy.",
-      categoryHandle: "desk-mats",
-      collectionHandle: "new-drops",
+        "Tapete 900×400 con borde cosido. Deslizamiento suave, base antideslizante, energía de ocho bits.",
+      categoryHandle: "tapetes",
+      collectionHandle: "novedades",
       images: placeholder("cz-deskmat"),
-      skuBase: "MAT-PIXEL",
-      eur: 25,
+      skuBase: "TAPETE-PIXEL",
+      pen: 100,
       usd: 29,
     },
     {
-      title: "Rubber Duck — Debug Edition",
-      handle: "rubber-duck-debug-edition",
+      title: "Pato de Goma — Edición Debug",
+      handle: "pato-goma-debug",
       description:
-        "The senior engineer who never judges. Explain your bug out loud and watch it dissolve.",
-      categoryHandle: "desk-toys",
-      collectionHandle: "best-sellers",
+        "El ingeniero senior que nunca juzga. Explica tu bug en voz alta y míralo disolverse.",
+      categoryHandle: "juguetes",
+      collectionHandle: "mas-vendidos",
       images: placeholder("cz-duck"),
       weight: 80,
-      skuBase: "DUCK-DEBUG",
-      eur: 10,
+      skuBase: "PATO-DEBUG",
+      pen: 40,
       usd: 12,
     },
-    // --- Cubes ---
+    // --- Cubos ---
     {
-      title: "Magnetic 3×3 Speed Cube",
-      handle: "magnetic-3x3-speed-cube",
+      title: "Cubo 3×3 Magnético de Velocidad",
+      handle: "cubo-3x3-magnetico",
       description:
-        "Factory-lubed, magnet-positioned, sub-10-second ready. Corner-cuts like a dream.",
-      categoryHandle: "speed-cubes",
-      collectionHandle: "new-drops",
+        "Lubricado de fábrica, imanes posicionados, listo para sub-10 segundos. Corta esquinas como un sueño.",
+      categoryHandle: "cubos-velocidad",
+      collectionHandle: "novedades",
       images: placeholder("cz-cube"),
       weight: 120,
-      skuBase: "CUBE-3X3",
-      eur: 20,
+      skuBase: "CUBO-3X3",
+      pen: 80,
       usd: 24,
     },
     {
-      title: "Pro Cube Timer",
-      handle: "pro-cube-timer",
+      title: "Cronómetro Pro para Cubos",
+      handle: "cronometro-pro-cubos",
       description:
-        "Competition-grade touch timer with 0.001s precision, stack-mat compatible.",
-      categoryHandle: "timers",
+        "Cronómetro táctil de grado competencia con precisión de 0.001s, compatible con stack-mat.",
+      categoryHandle: "cronometros",
       images: placeholder("cz-timer"),
       weight: 300,
-      skuBase: "TIMER-PRO",
-      eur: 33,
+      skuBase: "CRONO-PRO",
+      pen: 132,
       usd: 39,
     },
-    // --- Drinkware ---
+    // --- Bebidas ---
     {
-      title: "It Works On My Machine Mug",
-      handle: "it-works-on-my-machine-mug",
+      title: "Taza Funciona en Mi Máquina",
+      handle: "taza-funciona-mi-maquina",
       description:
-        "12oz ceramic, dishwasher-safe, holds enough coffee to ship a feature.",
-      categoryHandle: "mugs",
-      collectionHandle: "best-sellers",
+        "Cerámica de 12oz, apta para lavavajillas, con suficiente café para enviar una feature.",
+      categoryHandle: "tazas",
+      collectionHandle: "mas-vendidos",
       images: placeholder("cz-mug"),
       weight: 350,
-      skuBase: "MUG-WORKS",
-      eur: 15,
+      skuBase: "TAZA-FUNCIONA",
+      pen: 60,
       usd: 18,
     },
     {
-      title: "404 Insulated Water Bottle",
-      handle: "404-water-bottle",
+      title: "Botella Térmica 404",
+      handle: "botella-termica-404",
       description:
-        "Hydration not found? Not anymore. 750ml, vacuum-insulated, keeps cold for 24 hours.",
-      categoryHandle: "bottles",
+        "¿Hidratación no encontrada? Eso se acabó. 750ml, vacío aislado, mantiene el frío por 24 horas.",
+      categoryHandle: "botellas",
       images: placeholder("cz-bottle"),
       weight: 400,
-      skuBase: "BOTTLE-404",
-      eur: 18,
+      skuBase: "BOTELLA-404",
+      pen: 72,
       usd: 22,
     },
-    // --- Gym ---
+    // --- Gimnasio ---
     {
-      title: "Dark Mode Gym Shaker",
-      handle: "dark-mode-gym-shaker",
+      title: "Shaker de Gimnasio Modo Oscuro",
+      handle: "shaker-gimnasio-modo-oscuro",
       description:
-        "700ml, leak-proof, matte black. For lifting heavier than your node_modules folder.",
-      categoryHandle: "gym-gear",
+        "700ml, a prueba de fugas, negro mate. Para levantar más pesado que tu carpeta node_modules.",
+      categoryHandle: "equipo-gimnasio",
       images: placeholder("cz-shaker"),
       weight: 250,
-      skuBase: "SHAKER-DARK",
-      eur: 19,
+      skuBase: "SHAKER-OSCURO",
+      pen: 76,
       usd: 22,
     },
     {
-      title: "Resistance Band Set",
-      handle: "resistance-band-set",
+      title: "Set de Bandas de Resistencia",
+      handle: "set-bandas-resistencia",
       description:
-        "Five stackable latex bands from 5kg to 50kg. Deploy anywhere, no rack required.",
-      categoryHandle: "gym-gear",
-      collectionHandle: "new-drops",
+        "Cinco bandas de látex apilables de 5kg a 50kg. Despliégalas donde sea, sin rack.",
+      categoryHandle: "equipo-gimnasio",
+      collectionHandle: "novedades",
       images: placeholder("cz-bands"),
       weight: 600,
-      skuBase: "BANDS-SET",
-      eur: 26,
+      skuBase: "BANDAS-SET",
+      pen: 104,
       usd: 30,
     },
-    // --- Gadgets ---
+    // --- Accesorios ---
     {
-      title: "USB-C Everything Cable",
-      handle: "usb-c-everything-cable",
+      title: "Cable Todo en Uno USB-C",
+      handle: "cable-todo-uno-usb-c",
       description:
-        "100W, braided, 2m, reversible both ends. The one cable that finally fits.",
+        "100W, trenzado, 2m, reversible en ambos extremos. El único cable que finalmente encaja.",
       categoryHandle: "cables",
-      collectionHandle: "best-sellers",
+      collectionHandle: "mas-vendidos",
       images: placeholder("cz-cable"),
       weight: 120,
       skuBase: "CABLE-USBC",
-      eur: 14,
+      pen: 56,
       usd: 16,
     },
     {
-      title: "Coiled Keyboard Cable",
-      handle: "coiled-keyboard-cable",
+      title: "Cable Enrollado para Teclado",
+      handle: "cable-enrollado-teclado",
       description:
-        "Aviator-connector coiled cable in five colourways. The finishing touch for your board.",
+        "Cable enrollado con conector aviador en cinco colores. El toque final para tu teclado.",
       categoryHandle: "cables",
       images: placeholder("cz-coiled"),
       weight: 150,
-      skuBase: "CABLE-COILED",
-      eur: 22,
+      skuBase: "CABLE-ENROLLADO",
+      pen: 88,
       usd: 26,
     },
     {
-      title: "7-Port USB-C Hub",
-      handle: "7-port-usb-c-hub",
+      title: "Hub USB-C de 7 Puertos",
+      handle: "hub-usb-c-7-puertos",
       description:
-        "HDMI, ethernet, SD and 100W passthrough in one aluminium slab. Reclaim your ports.",
+        "HDMI, ethernet, SD y passthrough de 100W en una sola losa de aluminio. Recupera tus puertos.",
       categoryHandle: "hubs",
       images: placeholder("cz-hub"),
       weight: 200,
-      skuBase: "HUB-7PORT",
-      eur: 39,
+      skuBase: "HUB-7PUERTOS",
+      pen: 156,
       usd: 45,
     },
     {
-      title: "Mechanical Switch Tester",
-      handle: "mechanical-switch-tester",
+      title: "Tester de Switches Mecánicos",
+      handle: "tester-switches-mecanicos",
       description:
-        "Nine-switch sampler so you can feel linear, tactile and clicky before you commit.",
-      categoryHandle: "tools",
-      collectionHandle: "new-drops",
+        "Muestrario de nueve switches para que sientas lineal, táctil y clicky antes de comprometerte.",
+      categoryHandle: "herramientas",
+      collectionHandle: "novedades",
       images: placeholder("cz-tester"),
       weight: 180,
-      skuBase: "TOOL-SWTEST",
-      eur: 17,
+      skuBase: "TESTER-SWITCHES",
+      pen: 68,
       usd: 20,
     },
   ];

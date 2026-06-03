@@ -13,9 +13,9 @@ const LOCALE_COOKIE_NAME = "_medusa_locale"
 export const getLocale = async (): Promise<string | null> => {
   try {
     const cookies = await nextCookies()
-    return cookies.get(LOCALE_COOKIE_NAME)?.value ?? null
+    return cookies.get(LOCALE_COOKIE_NAME)?.value ?? "es-PE"
   } catch {
-    return null
+    return "es-PE"
   }
 }
 

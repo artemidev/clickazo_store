@@ -13,6 +13,7 @@ export const LOCALE_MAP: Record<string, string> = {
   es: "es",
   "es-ES": "es",
   "es-MX": "es",
+  "es-PE": "es",
 }
 
 /**
