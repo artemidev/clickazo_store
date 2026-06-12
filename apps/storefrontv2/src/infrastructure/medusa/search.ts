@@ -54,18 +54,32 @@ async function matchProductIds({
 	query,
 	limit,
 	offset,
+	language,
+	semanticRatio,
 	headers,
 }: {
 	query: string;
 	limit: number;
 	offset: number;
+	language?: string;
+	semanticRatio: number;
 	headers?: Record<string, string>;
 }): Promise<{ ids: string[]; estimatedTotalHits: number }> {
 	const res = await sdk.client.fetch<ProductsHitsResponse>(
 		"/store/meilisearch/products-hits",
 		{
 			method: "GET",
-			query: { query, limit, offset },
+			// Hybrid search: keyword + OpenAI vector embeddings. `language` makes the
+			// backend match/return the locale-suffixed fields (base = Spanish, `_en`
+			// = English); `semanticRatio` blends keyword (0) ↔ semantic (1).
+			query: {
+				query,
+				limit,
+				offset,
+				semanticSearch: true,
+				semanticRatio,
+				...(language ? { language } : {}),
+			},
 			headers,
 		},
 	);
@@ -125,17 +139,24 @@ async function hydrateProducts({
 	return byId;
 }
 
+/** Default keyword/semantic blend (0 = keyword only, 1 = pure vector). */
+const DEFAULT_SEMANTIC_RATIO = 0.5;
+
 export async function searchProducts({
 	query,
 	countryCode,
 	limit = 12,
 	offset = 0,
+	language,
+	semanticRatio = DEFAULT_SEMANTIC_RATIO,
 	headers,
 }: {
 	query: string;
 	countryCode: string;
 	limit?: number;
 	offset?: number;
+	language?: string;
+	semanticRatio?: number;
 	headers?: Record<string, string>;
 }): Promise<ProductSearchResult> {
 	const trimmed = query.trim();
@@ -147,6 +168,8 @@ export async function searchProducts({
 		query: trimmed,
 		limit,
 		offset,
+		language,
+		semanticRatio,
 		headers,
 	});
 	if (ids.length === 0) {

@@ -163,15 +163,13 @@ module.exports = defineConfig({
           apiKey: process.env.MEILISEARCH_API_KEY ?? "",
         },
         // Single-index "field-suffix" i18n strategy: every product/category
-        // lives in ONE index ("products" / "categories") and each translatable
-        // field gets a language-suffixed sibling (e.g. `title_es`). This avoids
-        // the duplicate-results bug the plugin's "separate-index" strategy has in
-        // v1.4.3 (its sync step writes the default-language documents into both
-        // `<index>_<lang>` indexes, so a search merged across them returns every
-        // product twice). With a single index the store route can never merge
-        // duplicates, and Spanish search works the moment translations exist.
-        // `translatableFields` is left unset so the transformer auto-detects the
-        // string fields it has translations for (title/description, name/...).
+        // lives in ONE index ("products" / "categories"). The base fields
+        // (`title`, `description`, `name`) hold the DEFAULT language — Spanish —
+        // and each translation from Medusa's Translation module is added as a
+        // language-suffixed sibling. Since `es` is the base, English translations
+        // surface as `_en` fields (`title_en`, `description_en`, `name_en`).
+        // We stay on field-suffix (single index) on purpose: the plugin's
+        // "separate-index" strategy has a duplicate-results bug in v1.4.3.
         i18n: {
           strategy: "field-suffix",
           languages: ["en", "es"],
@@ -190,23 +188,22 @@ module.exports = defineConfig({
               "variant_sku",
             ],
             indexSettings: {
-              // Include the `_es` siblings so a Spanish query matches Spanish
-              // text once translations are loaded. They have no effect until the
-              // Translation module is populated (fields simply stay absent).
+              // Base fields are Spanish; `_en` siblings carry the English
+              // translation (populated once translations exist in admin).
               searchableAttributes: [
                 "title",
-                "title_es",
+                "title_en",
                 "description",
-                "description_es",
+                "description_en",
                 "variant_sku",
               ],
               displayedAttributes: [
                 "id",
                 "handle",
                 "title",
-                "title_es",
+                "title_en",
                 "description",
-                "description_es",
+                "description_en",
                 "thumbnail",
               ],
               filterableAttributes: ["id", "handle"],
@@ -236,11 +233,11 @@ module.exports = defineConfig({
             indexSettings: {
               searchableAttributes: [
                 "name",
-                "name_es",
+                "name_en",
                 "description",
-                "description_es",
+                "description_en",
               ],
-              displayedAttributes: ["id", "name", "name_es", "handle"],
+              displayedAttributes: ["id", "name", "name_en", "handle"],
               filterableAttributes: ["id", "handle", "is_active", "parent_id"],
             },
             primaryKey: "id",
@@ -260,9 +257,14 @@ module.exports = defineConfig({
             },
           },
         },
-        // AI-powered semantic / hybrid search using Meilisearch native embedders.
-        // Requires Meilisearch v1.5+ and an OPENAI_API_KEY env variable.
-        // Meilisearch generates embeddings automatically at indexing time.
+        // AI-powered hybrid search via Meilisearch's native OpenAI embedder
+        // (GA since Meilisearch v1.13). The plugin creates ONE embedder named
+        // `default` per index whose document template concatenates the
+        // `embeddingFields`. We embed BOTH the Spanish base fields and the
+        // English `_en` siblings so a single multilingual vector covers queries
+        // in either language. (text-embedding-3 is multilingual; note the OpenAI
+        // embedder truncates the combined template to 500 bytes, so very long
+        // ES+EN descriptions may be clipped — titles are unaffected.)
         vectorSearch: {
           enabled: true,
           embedding: {
@@ -270,7 +272,7 @@ module.exports = defineConfig({
             apiKey: process.env.OPENAI_API_KEY ?? '',
             model: 'text-embedding-3-small',
           },
-          embeddingFields: ['title', 'description'],
+          embeddingFields: ['title', 'description', 'title_en', 'description_en'],
           semanticRatio: 0.5, // 0.0 = keyword only, 1.0 = pure semantic
           dimensions: 1536,
         },
