@@ -54,6 +54,18 @@ module.exports = defineConfig({
       resolve: "@medusajs/medusa/translation",
     },
     {
+      // AI Product Creation: admin enters a product name, a workflow
+      // researches the real product on the web (Tavily), generates ES copy +
+      // EN translation (OpenAI) and a market price reference, then saves a
+      // draft product for human review.
+      resolve: "./src/modules/aiProduct",
+      options: {
+        openaiApiKey: process.env.OPENAI_API_KEY,
+        tavilyApiKey: process.env.TAVILY_API_KEY,
+        model: process.env.AI_PRODUCT_MODEL,
+      },
+    },
+    {
       resolve: "@medusajs/medusa/event-bus-redis",
       options: {
         redisUrl: process.env.REDIS_URL,
