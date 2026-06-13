@@ -39,6 +39,7 @@ type PriceSuggestion =
 type ResearchData = {
   research: {
     brand: string | null
+    brand_logo_url: string | null
     model: string | null
     category_suggestion: string | null
     colors: string[]
@@ -62,6 +63,7 @@ type AiProductRequest = {
   research_data: ResearchData | null
   price_suggestion: PriceSuggestion | null
   product_id: string | null
+  brand_id: string | null
   error: string | null
   created_at: string
 }
@@ -124,12 +126,91 @@ const PriceReference = ({
   )
 }
 
+const BrandSection = ({
+  request,
+  onConfirm,
+  isConfirming,
+}: {
+  request: AiProductRequest
+  onConfirm: (name: string, logoUrl: string | null) => void
+  isConfirming: boolean
+}) => {
+  const research = request.research_data?.research
+  const detectedName = research?.brand ?? ""
+  const [name, setName] = useState(detectedName)
+
+  // Already linked: show a confirmation, nothing to do.
+  if (request.brand_id) {
+    return (
+      <div className="flex flex-col gap-1">
+        <Text size="small" leading="compact" weight="plus">
+          Marca
+        </Text>
+        <StatusBadge color="green">Marca asociada</StatusBadge>
+      </div>
+    )
+  }
+
+  // No product yet (still running / failed) → can't associate.
+  if (!request.product_id) {
+    return null
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Text size="small" leading="compact" weight="plus">
+        Marca
+      </Text>
+      {detectedName ? (
+        <Text size="small" leading="compact" className="text-ui-fg-subtle">
+          Detectada: <span className="text-ui-fg-base">{detectedName}</span>.
+          Revísala (puedes corregirla) y crea/asóciala. Si ya existe se reutiliza.
+        </Text>
+      ) : (
+        <Text size="small" leading="compact" className="text-ui-fg-subtle">
+          No se detectó marca. Escríbela manualmente para crear/asociar, o
+          déjalo en blanco para omitir.
+        </Text>
+      )}
+      {research?.brand_logo_url && (
+        <img
+          src={research.brand_logo_url}
+          alt={detectedName || "logo"}
+          className="h-10 w-auto max-w-[120px] rounded border border-ui-border-base bg-ui-bg-base object-contain p-1"
+        />
+      )}
+      <div className="flex items-center gap-2">
+        <Input
+          placeholder="Nombre de la marca"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+        />
+        <Button
+          size="small"
+          variant="secondary"
+          isLoading={isConfirming}
+          disabled={isConfirming || name.trim().length < 2}
+          onClick={() =>
+            onConfirm(name.trim(), research?.brand_logo_url ?? null)
+          }
+        >
+          Crear / asociar
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 const RequestDetailDrawer = ({
   request,
   onClose,
+  onConfirmBrand,
+  isConfirmingBrand,
 }: {
   request: AiProductRequest | null
   onClose: () => void
+  onConfirmBrand: (name: string, logoUrl: string | null) => void
+  isConfirmingBrand: boolean
 }) => {
   const research = request?.research_data?.research
   const suggestion = request?.price_suggestion
@@ -179,6 +260,15 @@ const RequestDetailDrawer = ({
                 </div>
               )}
             </div>
+          )}
+
+          {request && (
+            <BrandSection
+              key={request.id}
+              request={request}
+              onConfirm={onConfirmBrand}
+              isConfirming={isConfirmingBrand}
+            />
           )}
 
           <div className="flex flex-col gap-1">
@@ -293,6 +383,26 @@ const AiProductsPage = () => {
     },
   })
 
+  const brandMutation = useMutation({
+    mutationFn: (vars: { id: string; name: string; logo_url: string | null }) =>
+      sdk.client.fetch<{ ai_product_request: AiProductRequest }>(
+        `/admin/ai-products/${vars.id}/brand`,
+        {
+          method: "POST",
+          body: { name: vars.name, logo_url: vars.logo_url },
+        }
+      ),
+    onSuccess: (data) => {
+      toast.success("Marca asociada")
+      // Reflect the new brand_id immediately in the open drawer.
+      setSelected(data.ai_product_request)
+      queryClient.invalidateQueries({ queryKey: ["ai-product-requests"] })
+    },
+    onError: (error: Error) => {
+      toast.error("No se pudo asociar la marca", { description: error.message })
+    },
+  })
+
   const requests = data?.ai_product_requests ?? []
 
   return (
@@ -400,6 +510,11 @@ const AiProductsPage = () => {
       <RequestDetailDrawer
         request={selected}
         onClose={() => setSelected(null)}
+        onConfirmBrand={(name, logoUrl) =>
+          selected &&
+          brandMutation.mutate({ id: selected.id, name, logo_url: logoUrl })
+        }
+        isConfirmingBrand={brandMutation.isPending}
       />
     </Container>
   )

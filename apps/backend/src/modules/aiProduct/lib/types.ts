@@ -40,17 +40,38 @@ export type ProductResearch = {
   brand: string | null
   model: string | null
   category_suggestion: string | null
+  /** Generic product type for the Medusa `product_type` (e.g. "Zapatillas"). */
+  product_type: string | null
+  /** Search/merchandising tags (lowercased keywords, deduped downstream). */
+  tags: string[]
   features: string[]
   specifications: { name: string; value: string; source_url: string }[]
   materials: string[]
+  /** Free-text dimensions kept for humans (e.g. "10 x 5 x 3 cm"). */
   dimensions: string | null
+  /** Structured dimensions normalized to centimeters; null per axis if unknown. */
+  dimensions_cm: {
+    height: number | null
+    width: number | null
+    length: number | null
+  }
   /** Physical weight in grams when discovered, else null. */
   weight_grams: number | null
+  /** ISO 3166-1 alpha-2 country of origin/manufacture when stated, else null. */
+  origin_country: string | null
+  /**
+   * Customs codes. BEST-EFFORT and likely uncertain — surfaced as suggestions
+   * and flagged `customs_unverified` on the product, never treated as authoritative.
+   */
+  hs_code: string | null
+  mid_code: string | null
   colors: string[]
   sizes: string[]
   ecommerce_notes: string | null
   /** Official-looking image URLs found during research (not downloaded). */
   image_urls: string[]
+  /** Best logo image URL for the brand, when found. */
+  brand_logo_url: string | null
 }
 
 export type ResearchResult = {

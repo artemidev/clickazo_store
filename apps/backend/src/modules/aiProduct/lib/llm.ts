@@ -26,6 +26,18 @@ const ResearchSchema = z.object({
     .string()
     .nullable()
     .describe("short generic ecommerce category, e.g. 'Cubos Rubik'"),
+  product_type: z
+    .string()
+    .nullable()
+    .describe(
+      "generic product type/noun for the catalog, e.g. 'Zapatillas', 'Cubo Rubik'"
+    ),
+  tags: z
+    .array(z.string())
+    .describe(
+      "3-8 short lowercase search/merchandising tags derived from the sources " +
+        "(e.g. 'running', 'speedcube', 'inalámbrico'). No brand names."
+    ),
   features: z.array(z.string()),
   specifications: z.array(
     z.object({
@@ -35,14 +47,52 @@ const ResearchSchema = z.object({
     })
   ),
   materials: z.array(z.string()),
-  dimensions: z.string().nullable(),
+  dimensions: z
+    .string()
+    .nullable()
+    .describe("human-readable dimensions as stated, e.g. '10 x 5 x 3 cm'"),
+  dimensions_cm: z
+    .object({
+      height: z.number().nullable(),
+      width: z.number().nullable(),
+      length: z.number().nullable(),
+    })
+    .describe(
+      "the same dimensions converted to CENTIMETERS as numbers; null per axis " +
+        "if not stated. Convert mm/inches to cm. Never guess."
+    ),
   weight_grams: z.number().nullable(),
+  origin_country: z
+    .string()
+    .nullable()
+    .describe(
+      "ISO 3166-1 alpha-2 country code of manufacture/origin if explicitly " +
+        "stated (e.g. 'CN', 'US'); null otherwise. Never infer from the brand."
+    ),
+  hs_code: z
+    .string()
+    .nullable()
+    .describe(
+      "best-effort Harmonized System tariff code if a source states one; null " +
+        "if uncertain. Do NOT fabricate."
+    ),
+  mid_code: z
+    .string()
+    .nullable()
+    .describe("Manufacturer ID code only if literally present; else null"),
   colors: z.array(z.string()).describe("color names in Spanish"),
   sizes: z
     .array(z.string())
     .describe("purchasable sizes if the product has them (e.g. shoe sizes)"),
   ecommerce_notes: z.string().nullable(),
   image_urls: z.array(z.string()),
+  brand_logo_url: z
+    .string()
+    .nullable()
+    .describe(
+      "URL of the brand's official logo image if one appears in the sources; " +
+        "null otherwise"
+    ),
 })
 
 const ContentSchema = z.object({
@@ -101,8 +151,11 @@ export class OpenAiContentGenerator implements ContentGenerator {
       system:
         "You are a meticulous ecommerce product researcher. Use ONLY facts " +
         "present in the provided sources. Never invent specifications, " +
-        "dimensions, weights or colors. Every specification must cite the " +
-        "source URL it came from. If the sources are about different " +
+        "dimensions, weights, colors, customs codes (hs_code/mid_code) or " +
+        "country of origin — leave them null when not explicitly stated. Do " +
+        "NOT treat a marketplace/retailer name (Amazon, MercadoLibre, eBay, " +
+        "AliExpress, the seller) as the brand. Every specification must cite " +
+        "the source URL it came from. If the sources are about different " +
         "products or too thin to identify one specific product, set " +
         "identified=false and a low coherence.",
       prompt:

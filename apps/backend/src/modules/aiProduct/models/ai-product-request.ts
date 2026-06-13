@@ -32,6 +32,9 @@ const AiProductRequest = model.define("ai_product_request", {
   price_suggestion: model.json().nullable(),
   // Draft product created at the end of the workflow.
   product_id: model.text().nullable(),
+  // Brand linked to the product after the admin confirms it in the UI. Null
+  // until confirmed (or when the research found no brand). Set once → idempotent.
+  brand_id: model.text().nullable(),
   error: model.text().nullable(),
 })
 

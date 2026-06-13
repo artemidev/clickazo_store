@@ -22,8 +22,8 @@
           "enumItems": [],
           "mappedType": "text"
         },
-        "input_name": {
-          "name": "input_name",
+        "name": {
+          "name": "name",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -38,8 +38,8 @@
           "enumItems": [],
           "mappedType": "text"
         },
-        "status": {
-          "name": "status",
+        "handle": {
+          "name": "handle",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -49,86 +49,13 @@
           "length": null,
           "precision": null,
           "scale": null,
-          "default": "'pending'",
-          "comment": null,
-          "enumItems": [
-            "pending",
-            "researching",
-            "generating",
-            "translating",
-            "pricing",
-            "creating_product",
-            "completed",
-            "failed"
-          ],
-          "mappedType": "enum"
-        },
-        "research_data": {
-          "name": "research_data",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
           "default": null,
           "comment": null,
           "enumItems": [],
-          "mappedType": "json"
+          "mappedType": "text"
         },
-        "generated_content": {
-          "name": "generated_content",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "enumItems": [],
-          "mappedType": "json"
-        },
-        "translated_content": {
-          "name": "translated_content",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "enumItems": [],
-          "mappedType": "json"
-        },
-        "price_suggestion": {
-          "name": "price_suggestion",
-          "type": "jsonb",
-          "unsigned": false,
-          "autoincrement": false,
-          "primary": false,
-          "nullable": true,
-          "unique": false,
-          "length": null,
-          "precision": null,
-          "scale": null,
-          "default": null,
-          "comment": null,
-          "enumItems": [],
-          "mappedType": "json"
-        },
-        "product_id": {
-          "name": "product_id",
+        "logo_url": {
+          "name": "logo_url",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -143,8 +70,8 @@
           "enumItems": [],
           "mappedType": "text"
         },
-        "brand_id": {
-          "name": "brand_id",
+        "country": {
+          "name": "country",
           "type": "text",
           "unsigned": false,
           "autoincrement": false,
@@ -159,9 +86,9 @@
           "enumItems": [],
           "mappedType": "text"
         },
-        "error": {
-          "name": "error",
-          "type": "text",
+        "metadata": {
+          "name": "metadata",
+          "type": "jsonb",
           "unsigned": false,
           "autoincrement": false,
           "primary": false,
@@ -173,7 +100,7 @@
           "default": null,
           "comment": null,
           "enumItems": [],
-          "mappedType": "text"
+          "mappedType": "json"
         },
         "created_at": {
           "name": "created_at",
@@ -224,20 +151,29 @@
           "mappedType": "datetime"
         }
       },
-      "name": "ai_product_request",
+      "name": "brand",
       "schema": "public",
       "indexes": [
         {
-          "keyName": "IDX_ai_product_request_deleted_at",
+          "keyName": "IDX_brand_deleted_at",
           "columnNames": [],
           "composite": false,
           "constraint": false,
           "primary": false,
           "unique": false,
-          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_ai_product_request_deleted_at\" ON \"ai_product_request\" (\"deleted_at\") WHERE deleted_at IS NULL"
+          "expression": "CREATE INDEX IF NOT EXISTS \"IDX_brand_deleted_at\" ON \"brand\" (\"deleted_at\") WHERE deleted_at IS NULL"
         },
         {
-          "keyName": "ai_product_request_pkey",
+          "keyName": "IDX_brand_handle_unique",
+          "columnNames": [],
+          "composite": false,
+          "constraint": false,
+          "primary": false,
+          "unique": false,
+          "expression": "CREATE UNIQUE INDEX IF NOT EXISTS \"IDX_brand_handle_unique\" ON \"brand\" (\"handle\") WHERE deleted_at IS NULL"
+        },
+        {
+          "keyName": "brand_pkey",
           "columnNames": [
             "id"
           ],

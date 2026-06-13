@@ -54,6 +54,12 @@ module.exports = defineConfig({
       resolve: "@medusajs/medusa/translation",
     },
     {
+      // Generic brand entity (name + unique handle + logo). Linked to products
+      // via src/links/product-brand.ts. Populated by the AI product flow
+      // (get-or-create on confirm) and reusable by manual product creation.
+      resolve: "./src/modules/brand",
+    },
+    {
       // AI Product Creation: admin enters a product name, a workflow
       // researches the real product on the web (Tavily), generates ES copy +
       // EN translation (OpenAI) and a market price reference, then saves a

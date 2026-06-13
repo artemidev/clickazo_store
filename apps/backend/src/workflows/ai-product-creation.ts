@@ -15,6 +15,7 @@ import type {
 } from "../modules/aiProduct/lib/types"
 import { generateContentStep } from "./steps/generate-content"
 import { researchProductStep } from "./steps/research-product"
+import { resolveCatalogClassificationStep } from "./steps/resolve-catalog-classification"
 import { resolveCategoryStep } from "./steps/resolve-category"
 import { saveProductTranslationsStep } from "./steps/save-product-translations"
 import { suggestPriceStep } from "./steps/suggest-price"
@@ -93,6 +94,8 @@ const buildProductInput = (data: {
   translated: GeneratedContent
   price_suggestion: PriceSuggestion
   category_id: string | null
+  type_id: string | null
+  tag_ids: string[]
   shipping_profiles: { id: string }[]
   sales_channels: { id: string }[]
 }) => {
@@ -108,6 +111,18 @@ const buildProductInput = (data: {
     research.sizes
   )
 
+  const dims = research.dimensions_cm ?? {
+    height: null,
+    width: null,
+    length: null,
+  }
+  // HS/MID codes are AI best-effort — flag the product so a human verifies them.
+  const customsUnverified = Boolean(research.hs_code || research.mid_code)
+  // Researched image URLs (deduped, http(s) only); first becomes the thumbnail.
+  const imageUrls = [
+    ...new Set((research.image_urls ?? []).filter((u) => /^https?:\/\//.test(u))),
+  ]
+
   return {
     products: [
       {
@@ -116,7 +131,26 @@ const buildProductInput = (data: {
         description: buildDescription(data.content),
         status: ProductStatus.DRAFT,
         ...(data.category_id ? { category_ids: [data.category_id] } : {}),
+        ...(data.type_id ? { type_id: data.type_id } : {}),
+        ...(data.tag_ids.length > 0 ? { tag_ids: data.tag_ids } : {}),
+        ...(research.materials.length > 0
+          ? { material: research.materials.join(", ").slice(0, 255) }
+          : {}),
         ...(research.weight_grams ? { weight: research.weight_grams } : {}),
+        ...(dims.height ? { height: dims.height } : {}),
+        ...(dims.width ? { width: dims.width } : {}),
+        ...(dims.length ? { length: dims.length } : {}),
+        ...(research.origin_country
+          ? { origin_country: research.origin_country }
+          : {}),
+        ...(research.hs_code ? { hs_code: research.hs_code } : {}),
+        ...(research.mid_code ? { mid_code: research.mid_code } : {}),
+        ...(imageUrls.length > 0
+          ? {
+              thumbnail: imageUrls[0],
+              images: imageUrls.map((url) => ({ url })),
+            }
+          : {}),
         ...(data.shipping_profiles.length > 0
           ? { shipping_profile_id: data.shipping_profiles[0].id }
           : {}),
@@ -133,6 +167,7 @@ const buildProductInput = (data: {
           dimensions: research.dimensions ?? "",
           materials: research.materials.join(", "),
           colors: research.colors.join(", "),
+          customs_unverified: customsUnverified,
           seo_meta_description: data.content.seo_meta_description,
           seo_keywords: data.content.seo_keywords.join(", "),
           seo_meta_description_en: data.translated.seo_meta_description,
@@ -235,6 +270,13 @@ export const aiProductCreationWorkflow = createWorkflow(
       }))
     )
 
+    const classification = resolveCatalogClassificationStep(
+      transform({ researchResult }, (d) => ({
+        product_type: d.researchResult.research.product_type,
+        tags: d.researchResult.research.tags ?? [],
+      }))
+    )
+
     const productInput = transform(
       {
         input,
@@ -243,6 +285,7 @@ export const aiProductCreationWorkflow = createWorkflow(
         translated,
         priceSuggestion,
         categoryId,
+        classification,
         shippingProfiles,
         salesChannels,
       },
@@ -254,6 +297,8 @@ export const aiProductCreationWorkflow = createWorkflow(
           translated: d.translated,
           price_suggestion: d.priceSuggestion,
           category_id: d.categoryId,
+          type_id: d.classification.type_id,
+          tag_ids: d.classification.tag_ids,
           shipping_profiles: d.shippingProfiles,
           sales_channels: d.salesChannels,
         })
