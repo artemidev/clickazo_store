@@ -85,7 +85,6 @@ const ResearchSchema = z.object({
     .array(z.string())
     .describe("purchasable sizes if the product has them (e.g. shoe sizes)"),
   ecommerce_notes: z.string().nullable(),
-  image_urls: z.array(z.string()),
   brand_logo_url: z
     .string()
     .nullable()
@@ -162,7 +161,10 @@ export class OpenAiContentGenerator implements ContentGenerator {
         `Product name entered by a store admin: "${productName}"\n\n` +
         `Web sources:\n\n${formatSources(sources)}`,
     })
-    return object
+    // image_urls are NOT produced by the model (it never sees images and would
+    // hallucinate URLs). The module service fills them from the search
+    // provider's real extracted image URLs after synthesis.
+    return { ...object, image_urls: [] }
   }
 
   async generateContent(

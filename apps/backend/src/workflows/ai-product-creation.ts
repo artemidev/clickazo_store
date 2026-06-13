@@ -100,6 +100,8 @@ const buildProductInput = (data: {
   shipping_profiles: { id: string }[]
   sales_channels: { id: string }[]
   ai_image_url: string | null
+  /** Researched image URLs already validated as reachable images. */
+  reference_image_urls: string[]
 }) => {
   const { research } = data.research_result
   const skuBase = slugify(
@@ -120,12 +122,15 @@ const buildProductInput = (data: {
   }
   // HS/MID codes are AI best-effort — flag the product so a human verifies them.
   const customsUnverified = Boolean(research.hs_code || research.mid_code)
-  // Researched image URLs (deduped, http(s) only). The AI-generated hero image
-  // (already stored in the File module) goes first and becomes the thumbnail;
-  // the researched images follow. If no AI image was produced we fall back to
-  // the previous behavior (first researched image is the thumbnail).
+  // Reference image URLs already downloaded + validated as real, reachable
+  // images by the image step (content-type image/*). The AI-generated hero
+  // image (already stored in the File module) goes first and becomes the
+  // thumbnail; the validated researched images follow. If no AI image was
+  // produced we fall back to the first validated researched image.
   const researchUrls = [
-    ...new Set((research.image_urls ?? []).filter((u) => /^https?:\/\//.test(u))),
+    ...new Set(
+      (data.reference_image_urls ?? []).filter((u) => /^https?:\/\//.test(u))
+    ),
   ]
   const imageUrls = data.ai_image_url
     ? [data.ai_image_url, ...researchUrls]
@@ -321,6 +326,7 @@ export const aiProductCreationWorkflow = createWorkflow(
           shipping_profiles: d.shippingProfiles,
           sales_channels: d.salesChannels,
           ai_image_url: d.aiImage.url,
+          reference_image_urls: d.aiImage.valid_reference_urls,
         })
     )
 

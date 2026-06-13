@@ -81,9 +81,17 @@ class AiProductModuleService extends MedusaService({
     )
 
     const byUrl = new Map<string, ResearchSource>()
-    for (const source of resultsPerQuery.flat()) {
-      if (!byUrl.has(source.url)) {
-        byUrl.set(source.url, source)
+    const imageUrls = new Set<string>()
+    for (const { sources: querySources, images } of resultsPerQuery) {
+      for (const source of querySources) {
+        if (!byUrl.has(source.url)) {
+          byUrl.set(source.url, source)
+        }
+      }
+      for (const image of images) {
+        if (/^https?:\/\//.test(image)) {
+          imageUrls.add(image)
+        }
       }
     }
     const sources = [...byUrl.values()]
@@ -99,6 +107,9 @@ class AiProductModuleService extends MedusaService({
       productName,
       sources
     )
+
+    // Real image URLs come from the search provider, never the LLM.
+    research.image_urls = [...imageUrls]
 
     if (!research.identified || research.coherence < MIN_COHERENCE) {
       throw new MedusaError(

@@ -14,6 +14,12 @@ type StepInput = {
 type StepOutput = {
   /** Stored File-module URL of the AI hero image, or null on any failure. */
   url: string | null
+  /**
+   * Reference URLs that were successfully downloaded AND validated as real
+   * images (content-type `image/*`). Safe to hotlink as product gallery
+   * fallbacks — unlike the raw researched URLs, these are guaranteed reachable.
+   */
+  valid_reference_urls: string[]
 }
 
 /** How many researched images we feed to the model as references. */
@@ -64,14 +70,21 @@ export const generateProductImageStep = createStep(
       logger.info(`Reference URLs: ${urls.join(", ")}`)
 
       if (urls.length === 0) {
-        return new StepResponse({ url: null })
+        return new StepResponse({ url: null, valid_reference_urls: [] })
       }
 
-      const references = (await Promise.all(urls.map(fetchReference))).filter(
-        (r): r is ImageData => r !== null
+      // Download each reference, keeping the URL of the ones that are real,
+      // reachable images so the workflow can reuse them as gallery fallbacks.
+      const fetched = await Promise.all(
+        urls.map(async (url) => ({ url, image: await fetchReference(url) }))
       )
+      const valid = fetched.filter(
+        (f): f is { url: string; image: ImageData } => f.image !== null
+      )
+      const references = valid.map((f) => f.image)
+      const validReferenceUrls = valid.map((f) => f.url)
       if (references.length === 0) {
-        return new StepResponse({ url: null })
+        return new StepResponse({ url: null, valid_reference_urls: [] })
       }
 
       const aiProductService =
@@ -82,7 +95,10 @@ export const generateProductImageStep = createStep(
         references
       )
       if (!image) {
-        return new StepResponse({ url: null })
+        return new StepResponse({
+          url: null,
+          valid_reference_urls: validReferenceUrls,
+        })
       }
 
       const ext = image.mediaType.split("/")[1]?.split("+")[0] || "png"
@@ -96,9 +112,12 @@ export const generateProductImageStep = createStep(
         },
       ])
 
-      return new StepResponse({ url: file?.url ?? null })
+      return new StepResponse({
+        url: file?.url ?? null,
+        valid_reference_urls: validReferenceUrls,
+      })
     } catch {
-      return new StepResponse({ url: null })
+      return new StepResponse({ url: null, valid_reference_urls: [] })
     }
   }
 )

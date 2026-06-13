@@ -29,11 +29,15 @@ export type ResearchSource = {
 }
 
 export interface ResearchProvider {
-  /** Run a single web search and return cleaned page excerpts. */
+  /**
+   * Run a single web search and return cleaned page excerpts plus REAL image
+   * URLs extracted from the result pages (never LLM-generated). `images` holds
+   * direct image-file URLs the caller can download as references.
+   */
   search(
     query: string,
     options?: { maxResults?: number; includeRawContent?: boolean }
-  ): Promise<ResearchSource[]>
+  ): Promise<{ sources: ResearchSource[]; images: string[] }>
 }
 
 /** Structured product knowledge synthesized from real web sources. */
@@ -72,7 +76,11 @@ export type ProductResearch = {
   colors: string[]
   sizes: string[]
   ecommerce_notes: string | null
-  /** Official-looking image URLs found during research (not downloaded). */
+  /**
+   * Real image URLs extracted by the search provider (Tavily `include_images`),
+   * deduped. NOT produced by the LLM — populated by the module service after
+   * synthesis so the model can never hallucinate them.
+   */
   image_urls: string[]
   /** Best logo image URL for the brand, when found. */
   brand_logo_url: string | null
