@@ -69,6 +69,8 @@ module.exports = defineConfig({
         openaiApiKey: process.env.OPENAI_API_KEY,
         tavilyApiKey: process.env.TAVILY_API_KEY,
         model: process.env.AI_PRODUCT_MODEL,
+        googleApiKey: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
+        imageModel: process.env.AI_PRODUCT_IMAGE_MODEL,
       },
     },
     {

@@ -1,5 +1,6 @@
 import { MedusaError, MedusaService } from "@medusajs/framework/utils"
 import AiProductRequest from "./models/ai-product-request"
+import { GeminiImageGenerator } from "./lib/image-gen"
 import { OpenAiContentGenerator } from "./lib/llm"
 import { aggregatePrices } from "./lib/price-aggregator"
 import { TavilyResearchProvider } from "./lib/tavily"
@@ -7,12 +8,16 @@ import type {
   AiProductModuleOptions,
   ContentGenerator,
   GeneratedContent,
+  ImageData,
+  ImageGenerator,
   PriceSuggestion,
   ProductResearch,
   ResearchProvider,
   ResearchResult,
   ResearchSource,
 } from "./lib/types"
+import { MedusaContainer } from "@medusajs/framework"
+import { Logger } from "@medusajs/framework/types"
 
 /** Below this source-agreement level we refuse to create a product. */
 const MIN_COHERENCE = 0.5
@@ -21,25 +26,37 @@ const MIN_COHERENCE = 0.5
 const COMMERCE_PATTERN =
   /amazon\.|ebay\.|mercadolibre|aliexpress|falabella|ripley|walmart|bestbuy|target\.|speedcubeshop|thecubicle|shop|store|tienda|comprar|buy|precio|price|\$\s?\d|S\/\s?\d/i
 
+type InjectedDependencies = {
+  logger: Logger
+}
+
 class AiProductModuleService extends MedusaService({
   AiProductRequest,
 }) {
   private readonly options: AiProductModuleOptions
   private readonly researchProvider: ResearchProvider
   private readonly contentGenerator: ContentGenerator
+  private readonly imageGenerator: ImageGenerator
+  private readonly logger: Logger
 
   constructor(
-    container: Record<string, unknown>,
+    dependencies: InjectedDependencies,
     options?: AiProductModuleOptions
   ) {
-    super(container, options)
+    super(dependencies, options)
     this.options = options ?? {}
     this.researchProvider = new TavilyResearchProvider(
       this.options.tavilyApiKey ?? ""
     )
+    this.logger = dependencies.logger
     this.contentGenerator = new OpenAiContentGenerator(
       this.options.openaiApiKey ?? "",
       this.options.model
+    )
+    this.imageGenerator = new GeminiImageGenerator(
+      this.options.googleApiKey ?? "",
+      this.options.imageModel,
+      this.logger
     )
   }
 
@@ -131,6 +148,24 @@ class AiProductModuleService extends MedusaService({
     categories: { id: string; name: string }[]
   ): Promise<string | null> {
     return this.contentGenerator.chooseCategory(research, categories)
+  }
+
+  /**
+   * Generates a clean ecommerce hero image of the product from the researched
+   * reference images. Returns null when no image could be produced so the
+   * workflow can fall back to a researched image URL.
+   */
+  async generateProductImage(
+    productName: string,
+    content: GeneratedContent,
+    references: ImageData[]
+  ): Promise<ImageData | null> {
+    return this.imageGenerator.generateProductImage({
+      productName,
+      title: content.title,
+      description: content.short_description,
+      references,
+    })
   }
 }
 

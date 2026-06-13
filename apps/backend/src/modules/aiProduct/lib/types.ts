@@ -10,6 +10,10 @@ export type AiProductModuleOptions = {
   tavilyApiKey?: string
   /** OpenAI chat model id. Defaults to "gpt-4o-mini". */
   model?: string
+  /** Google Generative AI API key, used for AI image generation. */
+  googleApiKey?: string
+  /** Gemini image model id. Defaults to "gemini-2.5-flash-image". */
+  imageModel?: string
 }
 
 // ---------------------------------------------------------------------------
@@ -118,6 +122,27 @@ export interface ContentGenerator {
     research: ProductResearch,
     categories: { id: string; name: string }[]
   ): Promise<string | null>
+}
+
+// ---------------------------------------------------------------------------
+// Image generation (AI hero image from reference images)
+// ---------------------------------------------------------------------------
+
+/** Raw bytes of an image plus its MIME type. */
+export type ImageData = { data: Uint8Array; mediaType: string }
+
+export interface ImageGenerator {
+  /**
+   * Generates a clean, ecommerce-ready hero image of the product depicted in
+   * the reference images. Returns null when no image could be produced (no
+   * references, provider error, empty output) so callers can fall back.
+   */
+  generateProductImage(input: {
+    productName: string
+    title: string
+    description: string
+    references: ImageData[]
+  }): Promise<ImageData | null>
 }
 
 // ---------------------------------------------------------------------------

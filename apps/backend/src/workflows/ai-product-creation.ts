@@ -14,6 +14,7 @@ import type {
   ResearchResult,
 } from "../modules/aiProduct/lib/types"
 import { generateContentStep } from "./steps/generate-content"
+import { generateProductImageStep } from "./steps/generate-product-image"
 import { researchProductStep } from "./steps/research-product"
 import { resolveCatalogClassificationStep } from "./steps/resolve-catalog-classification"
 import { resolveCategoryStep } from "./steps/resolve-category"
@@ -98,6 +99,7 @@ const buildProductInput = (data: {
   tag_ids: string[]
   shipping_profiles: { id: string }[]
   sales_channels: { id: string }[]
+  ai_image_url: string | null
 }) => {
   const { research } = data.research_result
   const skuBase = slugify(
@@ -118,10 +120,16 @@ const buildProductInput = (data: {
   }
   // HS/MID codes are AI best-effort — flag the product so a human verifies them.
   const customsUnverified = Boolean(research.hs_code || research.mid_code)
-  // Researched image URLs (deduped, http(s) only); first becomes the thumbnail.
-  const imageUrls = [
+  // Researched image URLs (deduped, http(s) only). The AI-generated hero image
+  // (already stored in the File module) goes first and becomes the thumbnail;
+  // the researched images follow. If no AI image was produced we fall back to
+  // the previous behavior (first researched image is the thumbnail).
+  const researchUrls = [
     ...new Set((research.image_urls ?? []).filter((u) => /^https?:\/\//.test(u))),
   ]
+  const imageUrls = data.ai_image_url
+    ? [data.ai_image_url, ...researchUrls]
+    : researchUrls
 
   return {
     products: [
@@ -220,6 +228,16 @@ export const aiProductCreationWorkflow = createWorkflow(
       name: "persist-content",
     })
 
+    // AI hero image from the researched reference images, stored in the File
+    // module. Resolves to { url: null } on any failure (graceful fallback).
+    const aiImage = generateProductImageStep(
+      transform({ input, researchResult, content }, (d) => ({
+        product_name: d.input.product_name,
+        content: d.content,
+        reference_urls: d.researchResult.research.image_urls ?? [],
+      }))
+    )
+
     const translated = translateContentStep(
       transform({ content }, (d) => ({ content: d.content }))
     )
@@ -288,6 +306,7 @@ export const aiProductCreationWorkflow = createWorkflow(
         classification,
         shippingProfiles,
         salesChannels,
+        aiImage,
       },
       (d) =>
         buildProductInput({
@@ -301,6 +320,7 @@ export const aiProductCreationWorkflow = createWorkflow(
           tag_ids: d.classification.tag_ids,
           shipping_profiles: d.shippingProfiles,
           sales_channels: d.salesChannels,
+          ai_image_url: d.aiImage.url,
         })
     )
 

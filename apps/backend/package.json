@@ -26,6 +26,7 @@
     "db:migrate": "medusa db:migrate"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.82",
     "@ai-sdk/openai": "^3.0.71",
     "@medusajs/admin-sdk": "2.15.3",
     "@medusajs/admin-shared": "2.15.3",
